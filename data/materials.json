@@ -1,319 +1,49 @@
 [
-  {
-    "id": "word_1",
-    "module": "MS Word",
-    "level": 1,
-    "title": "Level 1: Dasar Pengolahan Kata, Antarmuka & Format Dokumen",
-    "sections": [
-      {
-        "heading": "1. Struktur Antarmuka Utama (User Interface)",
-        "points": [
-          "Quick Access Toolbar: Kumpulan tombol cepat di pojok kiri atas seperti Save (Ctrl+S), Undo (Ctrl+Z), dan Redo (Ctrl+Y).",
-          "Ribbon Tab: Kelompok menu utama (Home, Insert, Layout, References, Review, View) yang memuat seluruh ikon perintah.",
-          "Ruler & Margin: Penggaris horizontal dan vertikal untuk mengukur area ketik dan menentukan batas kertas.",
-          "Status Bar: Bagian bawah antarmuka yang menampilkan jumlah kata, jumlah halaman, serta pengatur Zoom level."
+    {
+        "id": "word_1",
+        "module": "Microsoft Word",
+        "level": 1,
+        "title": "Dasar Formatting & Daftar Isi",
+        "sections": [
+            {
+                "heading": "Penggunaan Heading",
+                "points": [
+                    "Heading digunakan untuk menentukan struktur dokumen.",
+                    "Heading 1 untuk Judul Utama, Heading 2 untuk Sub-judul.",
+                    "Memudahkan pembuatan Daftar Isi otomatis via tab References."
+                ]
+            }
         ]
-      },
-      {
-        "heading": "2. Format Teks & Paragraf (Formatting)",
-        "points": [
-          "Gaya Huruf (Font Styles): Menebalkan teks (Ctrl+B / Bold), Miring (Ctrl+I / Italic), Garis Bawah (Ctrl+U / Underline).",
-          "Perataan Paragraf: Rata Kiri (Ctrl+L), Rata Tengah (Ctrl+E), Rata Kanan (Ctrl+R), Rata Kiri-Kanan (Ctrl+J / Justify).",
-          "Ukur Huruf & Change Case: Mengubah teks menjadi Kapital/Kecil secara cepat dengan menekan tombol Shift + F3.",
-          "Line & Paragraph Spacing: Mengatur jarak antar baris kalimat (1.0, 1.15, 1.5, atau 2.0)."
+    },
+    {
+        "id": "word_2",
+        "module": "Microsoft Word",
+        "level": 2,
+        "title": "Shortcut Keyboard Esensial",
+        "sections": [
+            {
+                "heading": "Navigasi Cepat",
+                "points": [
+                    "Ctrl + C : Copy teks",
+                    "Ctrl + V : Paste teks",
+                    "Ctrl + A : Memilih seluruh teks (Select All)"
+                ]
+            }
         ]
-      },
-      {
-        "heading": "3. Pengaturan Halaman (Page Setup)",
-        "points": [
-          "Orientasi Kertas: Portrait (posisi kertas tegak berdiri) dan Landscape (posisi kertas terbentang mendatar).",
-          "Margin Kertas: Jarak batas luar dokumen (Top, Bottom, Left, Right). Standar dokumen formal biasanya 4-4-3-3 cm.",
-          "Ukuran Kertas (Paper Size): Memilih standar ukuran dokumen seperti A4 (21 x 29.7 cm) atau Letter/Legal."
+    },
+    {
+        "id": "excel_1",
+        "module": "Microsoft Excel",
+        "level": 1,
+        "title": "Fungsi Dasar Aritmatika",
+        "sections": [
+            {
+                "heading": "Rumus SUM (Penjumlahan)",
+                "points": [
+                    "Selalu awali rumus dengan tanda sama dengan (=).",
+                    "Contoh: =SUM(A1:A5) untuk menjumlahkan rentang A1 hingga A5."
+                ]
+            }
         ]
-      },
-      {
-        "heading": "4. Tabel Pintas Keyboard (Shortcuts Essential)",
-        "points": [
-          "Ctrl + A: Memilih/memblok seluruh isi dokumen (Select All).",
-          "Ctrl + C / Ctrl + V / Ctrl + X: Salin (Copy) / Tempel (Paste) / Potong (Cut).",
-          "Ctrl + F / Ctrl + H: Mencari Kata (Find) / Mencari dan Mengganti Kata (Replace)."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "word_2",
-    "module": "MS Word",
-    "level": 2,
-    "title": "Level 2: Penyuntingan Lanjutan, Tabel, Breaks & Mail Merge",
-    "sections": [
-      {
-        "heading": "1. Pengolahan Tabel & Objek Visual",
-        "points": [
-          "Desain Tabel: Menggabungkan beberapa sel (Merge Cells), membagi sel (Split Cells), dan meratakan teks tabel.",
-          "Header & Footer: Menambahkan catatan berulang di bagian atas (Header) dan bawah (Footer) halaman.",
-          "Page Numbering: Menyisipkan nomor halaman otomatis di tepi bawah atau atas dokumen."
-        ]
-      },
-      {
-        "heading": "2. Jenis Pemisah Halaman (Breaks & Sections)",
-        "points": [
-          "Page Break (Ctrl + Enter): Memindah ketikan langsung ke halaman berikutnya tanpa merusak format paragraf.",
-          "Section Break (Next Page): Membagi dokumen menjadi beberapa bagian independen (memungkinkan penomoran halaman Romawi dan Angka berada dalam satu file yang sama).",
-          "Watermark & Page Border: Menyisipkan teks transparan latar belakang (Watermark) dan bingkai tepi halaman."
-        ]
-      },
-      {
-        "heading": "3. Dasar Surat Masal (Mail Merge)",
-        "points": [
-          "Fungsi Utama: Membuat ratusan surat, sertifikat, atau label alamat otomatis dengan satu template master.",
-          "Main Document: Dokumen utama yang berisi draft surat.",
-          "Data Source: Tabel sumber data penerima (biasanya diimpor dari file MS Excel atau tabel Word).",
-          "Insert Merge Field: Menyisipkan bidang nama/alamat dinamis ke dalam surat master."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "word_3",
-    "module": "MS Word",
-    "level": 3,
-    "title": "Level 3: Otomatisasi Dokumen Kompleks, Referensi & Keamanan",
-    "sections": [
-      {
-        "heading": "1. Daftar Isi Otomatis & Style Architecture",
-        "points": [
-          "Heading Styles: Wajib menerapkan Heading 1 untuk Judul Bab, Heading 2 untuk Sub-bab, dst.",
-          "Table of Contents (TOC): Menggenerate Daftar Isi otomatis melalui Tab References -> Table of Contents.",
-          "Update Table: Memperbarui nomor halaman daftar isi secara otomatis jika ada revisi halaman."
-        ]
-      },
-      {
-        "heading": "2. Referensi Akademik & Catatan Kaki",
-        "points": [
-          "Footnote (Alt + Ctrl + F): Menyisipkan catatan kaki di bagian paling bawah halaman tempat kursor berada.",
-          "Endnote: Menyisipkan catatan penjelas pada bagian akhir dokumen.",
-          "Cross-reference: Membuat hyperlink internal yang merujuk pada tabel, gambar, atau bab tertentu dalam file."
-        ]
-      },
-      {
-        "heading": "3. Kolaborasi, Tracking & Keamanan",
-        "points": [
-          "Track Changes (Ctrl + Shift + E): Merekam dan menandai setiap perubahan/revisi yang dilakukan oleh penyunting.",
-          "Compare Documents: Membandingkan dua dokumen Word secara otomatis untuk melihat perbedaan revisi.",
-          "Restrict Editing: Mengunci dokumen dengan password agar orang lain hanya bisa membaca (Read-Only) tanpa bisa mengubah isi."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "excel_1",
-    "module": "MS Excel",
-    "level": 1,
-    "title": "Level 1: Konsep Dasar Spreadsheet & Formula Matematika Awal",
-    "sections": [
-      {
-        "heading": "1. Struktur Lembar Kerja (Worksheet Concepts)",
-        "points": [
-          "Cell (Sel): Pertemuan antara Kolom dan Baris (Contoh: A1 artinya Kolom A, Baris 1).",
-          "Column (Kolom): Bagian vertikal yang ditandai dengan Huruf (A, B, C... Z).",
-          "Row (Baris): Bagian horizontal yang ditandai dengan Angka (1, 2, 3... 1048576).",
-          "Range (Rentang): Kumpulan dari beberapa sel terpilih (Contoh: A1:C5)."
-        ]
-      },
-      {
-        "heading": "2. Aturan Penulisan Rumus & Tipe Data",
-        "points": [
-          "Syarat Wajib: Setiap rumus atau formula HARUS diawali dengan tanda sama dengan (=).",
-          "Operator Matematika: Penjumlahan (+), Pengurangan (-), Perkalian (*), Pembagian (/), Perpangkatan (^).",
-          "Format Tipe Data: General, Number, Currency (Mata Uang), Date (Tanggal), dan Percentage (%)."
-        ]
-      },
-      {
-        "heading": "3. Fungsi Statistik Dasar (Basic Functions)",
-        "points": [
-          "=SUM(range): Menjumlahkan seluruh data angka dalam rentang sel.",
-          "=AVERAGE(range): Menghitung nilai rata-rata dari rentang sel.",
-          "=MAX(range) / =MIN(range): Mencari nilai tertinggi dan nilai terendah.",
-          "=COUNT(range): Menhitung jumlah sel yang HANYA berisi angka.",
-          "=COUNTA(range): Menghitung jumlah sel yang TIDAK KOSONG (teks & angka)."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "excel_2",
-    "module": "MS Excel",
-    "level": 2,
-    "title": "Level 2: Alamat Sel Absolut, Fungsi Logika & VLOOKUP/HLOOKUP",
-    "sections": [
-      {
-        "heading": "1. Penguncian Sel / Referensi Absolut ($)",
-        "points": [
-          "Referensi Relatif (A1): Alamat sel berubah otomatis saat rumus disalin ke bawah/samping.",
-          "Referensi Absolut ($A$1): Alamat sel dikunci penuh menggunakan simbol $ agar tidak bergeser sama sekali.",
-          "Tombol F4: Shortcut keyboard cepat untuk menambahkan simbol absolut ($) pada rumus.",
-          "Referensi Campuran ($A1 / A$1): Mengunci kolom saja atau baris saja."
-        ]
-      },
-      {
-        "heading": "2. Fungsi Logika (Logical IF)",
-        "points": [
-          "Fungsi IF Tunggal: =IF(Kondisi, \"Hasil Jika Benar\", \"Hasil Jika Salah\").",
-          "Fungsi IF Majemuk / Bercabang: Penggunaan beberapa IF untuk kondisi kriteria nilai berganda (A, B, C, D).",
-          "Fungsi AND / OR: Menjadi kondisi pendukung jika membutuhkan pengujian lebih dari satu syarat serentak."
-        ]
-      },
-      {
-        "heading": "3. Pembacaan Tabel (VLOOKUP & HLOOKUP)",
-        "points": [
-          "=VLOOKUP(nilai_kunci, tabel_acuan, nomor_kolom, [range_lookup]): Membaca data acuan secara VERTIKAL.",
-          "=HLOOKUP(nilai_kunci, tabel_acuan, nomor_baris, [range_lookup]): Membaca data acuan secara HORISONTAL.",
-          "Range Lookup '0' / 'FALSE': Digunakan untuk mencari pencocokan data yang pasti presisi (Exact Match)."
-        ]
-      },
-      {
-        "heading": "4. Pengolahan Teks & Conditional Formatting",
-        "points": [
-          "Fungsi Teks: =LEFT(teks, jumlah_karakter), =RIGHT(), =MID().",
-          "Conditional Formatting: Mewarnai sel secara otomatis berdasarkan kriteria (misal: warna merah jika nilai < 75)."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "excel_3",
-    "module": "MS Excel",
-    "level": 3,
-    "title": "Level 3: Analisis Data Lanjut, PivotTable, Dashboard & Error Handling",
-    "sections": [
-      {
-        "heading": "1. Fungsi Logika Statistik Bersyarat",
-        "points": [
-          "=SUMIF(range_kriteria, kriteria, [range_jumlah]): Menjumlahkan angka hanya jika memenuhi kriteria tertentu.",
-          "=COUNTIF(range, kriteria): Menghitung banyaknya sel yang sesuai dengan kriteria tunggal.",
-          "=AVERAGEIF(): Menghitung nilai rata-rata angka berdasarkan kriteria."
-        ]
-      },
-      {
-        "heading": "2. Pencarian Fleksibel (INDEX & MATCH / XLOOKUP)",
-        "points": [
-          "INDEX & MATCH: Kombinasi pencarian data yang jauh lebih cepat dan bisa membaca data ke arah kiri (Kelemahan VLOOKUP).",
-          "=XLOOKUP(): Fungsi modern pencarian data serbaguna tanpa perlu menentukan index kolom manual."
-        ]
-      },
-      {
-        "heading": "3. Analisis Data Pintar (PivotTable & Data Validation)",
-        "points": [
-          "PivotTable: Fitur paling ampuh untuk merangkum, menganalisis, dan memfilter ribuan baris data transaksi dalam hitungan detik.",
-          "Data Validation: Membatasi input data pada sel (misal: hanya bisa memilih teks dari Dropdown List).",
-          "Goal Seek: Alat analisis untuk mencari angka input yang pas demi mencapai target nilai hasil rumus."
-        ]
-      },
-      {
-        "heading": "4. Penanganan Pesan Error (Error Handling)",
-        "points": [
-          "#DIV/0!: Terjadi karena adanya rumus pembagian dengan angka Nol (0).",
-          "#N/A: Data acuan yang dicari oleh VLOOKUP/LOOKUP tidak ditemukan.",
-          "#####: Ukuran lebar kolom kurang luas untuk menampilkan seluruh digit angka.",
-          "#VALUE!: Rumus salah menggunakan tipe data (misal: perkalian angka dengan teks)."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "ppt_1",
-    "module": "MS PowerPoint",
-    "level": 1,
-    "title": "Level 1: Dasar Desain Presentation, Tata Letak & Peragaan Slide",
-    "sections": [
-      {
-        "heading": "1. Prinsip & Struktur Presentation",
-        "points": [
-          "Slide: Halaman tunggal lembar kerja pada Microsoft PowerPoint.",
-          "Slide Layout: Pilihan susunan elemen teks/gambar bawaan (Title Slide, Title and Content, Two Content, Blank).",
-          "Desain Tema (Themes): Menentukan kombinasi warna latar belakang, gaya font, dan gaya visual slide."
-        ]
-      },
-      {
-        "heading": "2. Manipulasi Objek & Teks",
-        "points": [
-          "Text Box: Menyisipkan kotak area ketikan teks bebas di mana saja dalam slide.",
-          "Insert Shapes & Pictures: Menyisipkan bentuk vektor (panah, kotak, lingkaran) dan gambar.",
-          "Shortcut New Slide: Menambah slide baru secara cepat dengan kombinasi tombol Ctrl + M.",
-          "Shortcut Duplicate: Menduplikasi slide yang dipilih menggunakan Ctrl + D."
-        ]
-      },
-      {
-        "heading": "3. Peragaan Tayangan (Slide Show Controls)",
-        "points": [
-          "F5: Memulai tayangan Slide Show dari halaman PERTAMA.",
-          "Shift + F5: Memulai peragaan Slide Show LANGSUNG dari slide yang sedang aktif.",
-          "Esc: Menghentikan peragaan Slide Show.",
-          "Tombol B / W saat Slide Show: Mengubah layar tayangan menjadi Hitam (Black) atau Putih (White)."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "ppt_2",
-    "module": "MS PowerPoint",
-    "level": 2,
-    "title": "Level 2: Slide Master, Transisi, Animasi Lanjut & Presenter View",
-    "sections": [
-      {
-        "heading": "1. Penguasaan Slide Master",
-        "points": [
-          "Fungsi Slide Master: Mengatur logo, tata letak, warna, dan font induk secara otomatis ke SELURUH slide.",
-          "Efisiensi Kerja: Mengubah format pada Slide Master otomatis mengupdate puluhan slide tanpa edit manual satu per satu."
-        ]
-      },
-      {
-        "heading": "2. Transisi & Efek Animasi (Transitions vs Animations)",
-        "points": [
-          "Transition: Efek pergerakan visual saat berpindah dari satu SLIDE ke slide berikutnya.",
-          "Animation: Efek pergerakan khusus pada OBJEK (teks, gambar, atau shape) di dalam satu slide.",
-          "Kategori Animasi: Entrance (Kemunculan), Emphasis (Penekanan), Exit (Keluar), Motion Paths (Jalur Pergerakan)."
-        ]
-      },
-      {
-        "heading": "3. Diagram SmartArt & Fitur Presenter View",
-        "points": [
-          "SmartArt: Mengubah teks poin menjadi grafik visual seperti bagan organisasi, proses urutan, dan siklus.",
-          "Presenter View: Mode khusus presentator yang menampilkan catatan rahasia, pengukur waktu, dan slide berikutnya pada layar laptop sementara audiens hanya melihat slide utama."
-        ]
-      }
-    ]
-  },
-  {
-    "id": "ppt_3",
-    "module": "MS PowerPoint",
-    "level": 3,
-    "title": "Level 3: Otomatisasi Interaktif, Trigger, Morph & Ekspor Media",
-    "sections": [
-      {
-        "heading": "1. Animasi Interaktif & Trigger",
-        "points": [
-          "Trigger Animation: Memicu jalannya suatu animasi hanya ketika objek/tombol tertentu diklik oleh pengguna.",
-          "Animation Pane: Panel kontrol untuk mengatur urutan, durasi (Duration), keterlambatan (Delay), dan siklus animasi."
-        ]
-      },
-      {
-        "heading": "2. Transisi Transformasi Modern (Morph Transition)",
-        "points": [
-          "Prinsip Morph: Membuat transformasi pergerakan visual objek yang sangat mulus antar dua slide yang serupa.",
-          "Penggunaan: Sangat cocok untuk simulasi pergeseran peta, pembesaran gambar detail, atau perpindahan elemen visual."
-        ]
-      },
-      {
-        "heading": "3. Navigasi Interaktif & Ekspor Media",
-        "points": [
-          "Action Buttons & Hyperlink (Ctrl + K): Menghubungkan tombol slide ke halaman lain atau file luar.",
-          "Record Slide Show & Screen Recording: Merekam narasi suara, kamera, dan aktivitas layar komputer langsung.",
-          "Format PowerPoint Show (.ppsx): File yang jika diklik langsung menjalankan Slide Show tanpa membuka aplikasi editor.",
-          "Ekspor Video (.mp4): Mengubah seluruh slide presentasi menjadi video bergerak otomatis."
-        ]
-      }
-    ]
-  }
+    }
 ]
