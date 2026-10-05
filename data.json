@@ -2,24 +2,33 @@
   "materi": [
     {
       "id": "word",
-      "title": "Microsoft Word",
-      "icon": "📘",
-      "color": "#2e86de",
-      "content": "Microsoft Word adalah <b>Jagoan Pengolah Kata</b>! Kalau kamu mau membuat cerita, menulis surat, atau bikin laporan tugas, si Biru ini adalah teman terbaikmu.<br><br><h3>✨ Kekuatan Spesial (Fitur Utama):</h3><ul><li><b>Font Formatting:</b> Menyulap tulisan biasa menjadi keren dengan berbagai jenis huruf, warna, dan ukuran.</li><li><b>Insert Picture:</b> Memasukkan gambar-gambar lucu agar ceritamu tidak membosankan.</li><li><b>Table (Tabel):</b> Membuat kotak ajaib untuk menyusun jadwal harianmu dengan rapi.</li></ul><h3>⌨️ Jurus Rahasia (Shortcut):</h3><ul><li><span class='highlight'>Ctrl + B</span> : (Bold) Menebalkan teks seperti otot superhero.</li><li><span class='highlight'>Ctrl + I</span> : (Italic) Memiringkan teks agar terlihat bergaya.</li><li><span class='highlight'>Ctrl + U</span> : (Underline) Memberi garis bawah yang tegas.</li></ul>"
+      "level": "LEVEL 1",
+      "title": "Microsoft Word Mastery",
+      "icon": "fa-solid fa-file-word",
+      "color": "#2b579a",
+      "glow": "rgba(43, 87, 154, 0.5)",
+      "desc": "Sistem Pengolahan Kata Tingkat Lanjut",
+      "content": "Microsoft Word adalah aplikasi pengolah kata (Word Processor) standar industri yang dirancang untuk pembuatan dokumen profesional, laporan, dan publikasi.<br><br><h3><i class='fa-solid fa-layer-group'></i> Komponen Ribbon Utama</h3><ul><li><b>Home:</b> Pusat pengaturan dasar (Clipboard, Font, Paragraph, dan Styles). Digunakan untuk modifikasi tipografi.</li><li><b>Insert:</b> Berfungsi untuk menyisipkan objek non-teks seperti <i>Tables</i>, <i>Pictures</i>, <i>Shapes</i>, <i>SmartArt</i>, dan <i>Page Numbers</i>.</li><li><b>Layout / Page Layout:</b> Mengatur struktur fisik halaman termasuk <i>Margins</i> (Batas tepi), <i>Orientation</i> (Portrait/Landscape), dan <i>Size</i> (Ukuran kertas).</li><li><b>References:</b> Esensial untuk karya ilmiah, digunakan untuk membuat Daftar Isi (Table of Contents), Footnotes, dan Bibliografi.</li></ul><h3><i class='fa-solid fa-wand-magic-sparkles'></i> Fitur Produktivitas Tinggi</h3><ul><li><b>Mail Merge (Cetak Surat Massal):</b> Menggabungkan dokumen utama dengan sumber data (biasanya dari Excel) untuk mencetak ratusan surat dengan nama penerima yang berbeda secara otomatis.</li><li><b>Styles & Formatting:</b> Pengaturan format teks konsisten untuk Heading 1, Heading 2, dst., yang secara otomatis dapat diubah menjadi Daftar Isi.</li></ul><h3><i class='fa-solid fa-keyboard'></i> Shortcut Sistem</h3><ul><li><span class='highlight'>Ctrl + J</span> : Justify (Rata kiri & kanan).</li><li><span class='highlight'>Ctrl + E</span> : Center (Rata tengah).</li><li><span class='highlight'>Ctrl + Enter</span> : Page Break (Berpindah paksa ke halaman baru).</li><li><span class='highlight'>Ctrl + Z</span> : Undo (Membatalkan perintah terakhir).</li></ul>"
     },
     {
       "id": "excel",
-      "title": "Microsoft Excel",
-      "icon": "📗",
-      "color": "#10ac84",
-      "content": "Microsoft Excel adalah <b>Raja Berhitung (Pengolah Angka)</b>! Tampilannya dipenuhi dengan kotak-kotak kecil yang siap membantumu menghitung cepat bagai kalkulator super.<br><br><h3>✨ Istilah Penting di Excel:</h3><ul><li><b>Column (Kolom):</b> Deretan kotak dari Atas ke Bawah (A, B, C...).</li><li><b>Row (Baris):</b> Deretan kotak dari Kiri ke Kanan (1, 2, 3...).</li><li><b>Cell (Sel):</b> Titik pertemuan antara Kolom dan Baris. Contoh: <span class='highlight'>Sel A1</span>.</li></ul><h3>🧮 Mantra Hitung (Fungsi):</h3><ul><li><span class='highlight'>=SUM()</span> : Menjumlahkan semua angka dalam sekejap!</li><li><span class='highlight'>=AVERAGE()</span> : Mencari nilai rata-rata dari banyak angka.</li><li><span class='highlight'>=MAX()</span> : Mencari nilai yang paling raksasa (terbesar).</li></ul><i>Ingat! Setiap merapal mantra hitung, selalu awali dengan tanda Sama Dengan (=).</i>"
+      "level": "LEVEL 2",
+      "title": "Microsoft Excel Mastery",
+      "icon": "fa-solid fa-file-excel",
+      "color": "#217346",
+      "glow": "rgba(33, 115, 70, 0.5)",
+      "desc": "Analisis & Pemrosesan Data Kompleks",
+      "content": "Microsoft Excel adalah aplikasi pengolah angka (Spreadsheet) profesional yang digunakan untuk komputasi matematis, analisis data, dan visualisasi grafik.<br><br><h3><i class='fa-solid fa-sitemap'></i> Struktur Hierarki Excel</h3><ul><li><b>Workbook:</b> File utama dokumen Excel.</li><li><b>Worksheet (Sheet):</b> Lembar kerja di dalam Workbook.</li><li><b>Column & Row:</b> Kolom ditandai dengan Huruf (A, B, C), Baris ditandai dengan Angka (1, 2, 3).</li><li><b>Cell:</b> Interseksi tunggal antara Kolom dan Baris (Contoh: <span class='highlight'>C5</span>).</li><li><b>Range:</b> Kumpulan dari beberapa Cell yang diseleksi (Contoh: <span class='highlight'>A1:C10</span>).</li></ul><h3><i class='fa-solid fa-calculator'></i> Fungsi (Function) Esensial</h3><ul><li><span class='highlight'>=SUM(range)</span> : Kalkulasi total nilai data numerik.</li><li><span class='highlight'>=AVERAGE(range)</span> : Menghitung nilai rata-rata (Mean).</li><li><span class='highlight'>=COUNT(range)</span> : Menghitung jumlah Cell yang berisi angka.</li><li><span class='highlight'>=IF(logical_test, true, false)</span> : Fungsi logika untuk menghasilkan nilai berdasarkan kondisi tertentu (Misal: Lulus/Gagal).</li><li><span class='highlight'>=VLOOKUP(...)</span> : Mencari nilai data secara vertikal dari tabel referensi.</li></ul><h3><i class='fa-solid fa-chart-pie'></i> Visualisasi Data</h3><ul><li>Gunakan menu <b>Insert > Charts</b> untuk menyajikan data mentah menjadi bentuk <i>Column Chart</i>, <i>Line Chart</i> (Tren waktu), atau <i>Pie Chart</i> (Persentase).</li></ul>"
     },
     {
       "id": "powerpoint",
-      "title": "PowerPoint",
-      "icon": "📙",
-      "color": "#ee5253",
-      "content": "Microsoft PowerPoint adalah <b>Penyihir Presentasi</b>! Dengan si Oranye ini, kamu bisa bercerita di depan kelas menggunakan gambar yang bisa terbang, berputar, dan bergerak!<br><br><h3>✨ Kemampuan Ajaib:</h3><ul><li><b>Slide:</b> Lembaran kanvas tempat kamu melukis ide-idemu.</li><li><b>Transition (Transisi):</b> Efek keren saat halaman berganti (seperti tirai panggung yang terbuka).</li><li><b>Animation (Animasi):</b> Membuat gambar dan teksmu hidup, melompat, dan menari di layar!</li></ul><h3>🚀 Cara Meluncurkan Presentasi:</h3><ul><li>Tekan tombol <span class='highlight'>F5</span> untuk memulai pertunjukan dari awal panggung.</li><li>Tekan tombol <span class='highlight'>Shift + F5</span> untuk memulai dari halaman yang sedang kamu lihat.</li><li>Tekan <span class='highlight'>ESC</span> untuk menghentikan pertunjukan dan kembali ke ruang ganti.</li></ul>"
+      "level": "LEVEL 3",
+      "title": "PowerPoint Mastery",
+      "icon": "fa-solid fa-file-powerpoint",
+      "color": "#d24726",
+      "glow": "rgba(210, 71, 38, 0.5)",
+      "desc": "Desain Komunikasi Visual & Presentasi",
+      "content": "Microsoft PowerPoint adalah perangkat lunak presentasi yang memadukan teks, grafis, multimedia, dan animasi untuk komunikasi visual yang efektif.<br><br><h3><i class='fa-solid fa-desktop'></i> Arsitektur Presentasi</h3><ul><li><b>Slide Layouts:</b> Pola tata letak baku seperti <i>Title Slide</i>, <i>Title and Content</i>, dan <i>Two Content</i>.</li><li><b>Slide Master:</b> Fitur manajemen tingkat lanjut untuk mengunci desain latar belakang, logo, dan font agar konsisten di seluruh slide. Menghemat waktu desain hingga 80%.</li></ul><h3><i class='fa-solid fa-film'></i> Dinamika Visual (Animasi & Transisi)</h3><ul><li><b>Transitions (Transisi):</b> Efek pergerakan saat perpindahan <u>dari satu slide ke slide lainnya</u> (Contoh: Fade, Wipe, Morph).</li><li><b>Animations (Animasi):</b> Efek pergerakan pada <u>objek/teks tertentu di dalam satu slide</u>. Terbagi menjadi 4 kategori:<br>1. <i>Entrance</i> (Efek Masuk)<br>2. <i>Emphasis</i> (Efek Penekanan/Perhatian)<br>3. <i>Exit</i> (Efek Keluar)<br>4. <i>Motion Paths</i> (Bergerak mengikuti jalur kustom).</li></ul><h3><i class='fa-solid fa-bolt'></i> Mode Eksekusi (Slide Show)</h3><ul><li><span class='highlight'>F5</span> : Mengeksekusi presentasi layar penuh dari Slide pertama.</li><li><span class='highlight'>Shift + F5</span> : Mengeksekusi presentasi dari Slide yang sedang aktif/dibuka.</li><li><span class='highlight'>Tombol B / W</span> : Saat presentasi berjalan, tekan <b>B</b> (Black) untuk menggelapkan layar sementara, atau <b>W</b> (White) untuk memutihkan layar agar audiens fokus pada pembicara.</li></ul>"
     }
   ]
 }
