@@ -2,155 +2,150 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Office Mastery: Professional Certification</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Library untuk mencetak PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-    <div class="simulator-container">
+    <div class="app-container">
         <!-- Header -->
         <header class="top-nav">
             <div class="logo">
                 <i class="fa-solid fa-server"></i> OFFICE MASTERY <span>PRO</span>
             </div>
-            <div class="status">
-                <span class="badge" id="user-status">BELUM LOGIN</span>
+            <div class="status" id="user-status-badge">
+                <span class="badge"><i class="fa-solid fa-circle-xmark"></i> Belum Login</span>
             </div>
         </header>
 
-        <!-- LAYAR 0: Identitas Siswa -->
-        <div id="login-area" class="view-section active">
-            <div class="login-box">
-                <i class="fa-solid fa-user-graduate fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
-                <h2>IDENTITAS SISWA</h2>
-                <p style="margin-bottom: 25px; color: var(--text-muted); font-size: 0.9rem;">Data ini akan digunakan untuk pencetakan Sertifikat.</p>
+        <!-- LAYAR 0: LOGIN IDENTITAS -->
+        <div id="login-area" class="view-section active fade-in">
+            <div class="card login-box">
+                <div class="icon-pulse"><i class="fa-solid fa-user-graduate"></i></div>
+                <h2>IDENTITAS PESERTA</h2>
+                <p class="subtitle">Data digunakan untuk pencetakan sertifikat kelulusan.</p>
                 
                 <div class="input-group">
                     <label>Nama Lengkap</label>
-                    <input type="text" id="input-name" placeholder="Contoh: Budi Santoso" required>
+                    <input type="text" id="input-name" placeholder="Contoh: Budi Santoso" autocomplete="off">
                 </div>
                 <div class="input-group">
                     <label>Kelas</label>
-                    <input type="text" id="input-class" placeholder="Contoh: XI RPL 1" required>
+                    <input type="text" id="input-class" placeholder="Contoh: XI RPL 1" autocomplete="off">
                 </div>
-                <button class="btn btn-primary" onclick="masukSistem()" style="width: 100%; justify-content: center; margin-top: 10px;">
+                <button class="btn btn-primary btn-block" onclick="masukSistem()">
                     MASUK KE SISTEM <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <!-- LAYAR 1: Pilih Modul Utama -->
+        <!-- LAYAR 1: DASHBOARD MODUL -->
         <div id="dashboard" class="view-section">
             <div class="section-header">
-                <h2>DATABASE PELATIHAN</h2>
-                <p>Pilih modul aplikasi perkantoran untuk memulai sertifikasi.</p>
+                <h2>DATABASE MODUL</h2>
+                <p>Pilih aplikasi perkantoran untuk memulai sertifikasi.</p>
             </div>
             <div id="module-grid" class="grid-container"></div>
         </div>
 
-        <!-- LAYAR 2: Pilih Level -->
+        <!-- LAYAR 2: PILIH LEVEL -->
         <div id="level-selection" class="view-section">
-            <div class="reader-header">
-                <button class="btn btn-outline" onclick="showDashboard()">
-                    <i class="fa-solid fa-arrow-left"></i> KEMBALI
-                </button>
-                <div class="level-indicator" id="module-title-display">MODUL</div>
+            <div class="nav-bar">
+                <button class="btn btn-icon" onclick="showDashboard()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="nav-title" id="module-title-display">MODUL</div>
             </div>
             <div class="section-header">
-                <h2>PILIH LEVEL KESULITAN</h2>
-                <p>Selesaikan dari level dasar hingga standar industri.</p>
+                <h2>PILIH TINGKATAN</h2>
+                <p>Selesaikan secara berurutan untuk hasil maksimal.</p>
             </div>
             <div id="level-grid" class="grid-container"></div>
         </div>
 
-        <!-- LAYAR 3: Baca Materi -->
+        <!-- LAYAR 3: MATERI PEMBELAJARAN -->
         <div id="reader" class="view-section">
-            <div class="reader-header">
-                <button class="btn btn-outline" onclick="goBackToLevels()">
-                    <i class="fa-solid fa-arrow-left"></i> KEMBALI
-                </button>
-                <div class="level-indicator" id="level-badge">LEVEL X</div>
+            <div class="nav-bar">
+                <button class="btn btn-icon" onclick="goBackToLevels()"><i class="fa-solid fa-arrow-left"></i> Level</button>
+                <div class="nav-title badge" id="level-badge">LEVEL X</div>
             </div>
             
-            <div class="content-panel" id="materi-panel">
-                <div class="materi-title-area">
-                    <i id="materi-icon" class="fa-brands fa-microsoft fa-3x"></i>
+            <div class="card materi-panel" id="materi-panel">
+                <div class="materi-header">
+                    <i id="materi-icon" class="fa-brands fa-microsoft"></i>
                     <h2 id="materi-title">Judul Materi</h2>
                 </div>
                 <div class="materi-body" id="materi-text"></div>
             </div>
 
-            <div class="action-footer">
-                <button class="btn btn-primary glow-effect" onclick="startQuiz()">
-                    <i class="fa-solid fa-gamepad"></i> MATERI SELESAI, MULAI UJIAN!
-                </button>
-            </div>
+            <button class="btn btn-primary btn-block pulse-btn" onclick="startQuiz()">
+                <i class="fa-solid fa-play"></i> MATERI SELESAI, MULAI UJIAN!
+            </button>
         </div>
 
-        <!-- LAYAR 4: Area Kuis/Game -->
+        <!-- LAYAR 4: KUIS INTERAKTIF -->
         <div id="quiz-area" class="view-section">
-            <div class="quiz-header">
-                <div class="quiz-progress">Pertanyaan <span id="current-q-num">1</span> dari <span id="total-q-num">5</span></div>
-                <div class="score-display">Skor Sementara: <span id="live-score">0</span></div>
+            <div class="quiz-info">
+                <div class="progress-text">Soal <span id="current-q-num">1</span>/<span id="total-q-num">5</span></div>
+                <div class="score-text">Skor: <span id="live-score">0</span></div>
             </div>
-            <div class="quiz-panel">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="quiz-progress"></div></div>
+            
+            <div class="card quiz-card">
                 <h3 id="question-text">Pertanyaan akan muncul di sini?</h3>
                 <div id="options-container" class="options-grid"></div>
             </div>
         </div>
 
-        <!-- LAYAR 5: Hasil Akhir & Download Sertifikat -->
-        <div id="result-area" class="view-section" style="text-align: center;">
-            <i class="fa-solid fa-trophy fa-5x" style="color: #ffd700; margin-bottom: 20px;"></i>
-            <h2 style="font-size: 2.5rem; margin-bottom: 10px;">UJIAN SELESAI!</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 20px;">Skor Akhir Anda:</p>
-            <div id="final-score" style="font-size: 5rem; font-weight: 800; color: #38bdf8; margin-bottom: 30px;">100</div>
+        <!-- LAYAR 5: HASIL & SERTIFIKAT -->
+        <div id="result-area" class="view-section text-center">
+            <div class="result-icon"><i class="fa-solid fa-award"></i></div>
+            <h2 class="result-title">UJIAN SELESAI!</h2>
+            <p>Skor Akhir Anda:</p>
+            <div class="final-score-display" id="final-score">100</div>
+            <p id="result-message" class="subtitle"></p>
             
-            <!-- Tombol Download Sertifikat -->
-            <button id="btn-download-cert" class="btn btn-primary glow-effect" onclick="downloadCertificate()" style="margin: 0 auto 15px auto; background: #10b981; display: none; color: #fff;">
-                <i class="fa-solid fa-download"></i> UNDUH SERTIFIKAT A4
-            </button>
-            
-            <button class="btn btn-outline" onclick="showDashboard()" style="margin: 0 auto;">
-                <i class="fa-solid fa-house"></i> KEMBALI KE MENU
-            </button>
-        </div>
-    </div>
-
-    <!-- TEMPLATE SERTIFIKAT (Disembunyikan, hanya dirender ke PDF) -->
-    <div id="certificate-template" style="display: none;">
-        <div class="cert-container">
-            <div class="cert-border">
-                <div class="cert-header">
-                    <h1 style="color: #2b579a;">SERTIFIKAT KOMPETENSI</h1>
-                    <p style="color: #666; font-size: 24px; letter-spacing: 4px;">OFFICE MASTERY PRO</p>
-                </div>
-                <div class="cert-body">
-                    <p style="font-size: 20px; color: #555; margin-bottom: 10px;">Diberikan dengan bangga kepada:</p>
-                    <h2 id="cert-name" style="font-size: 48px; color: #111; margin: 15px 0; text-transform: uppercase;">NAMA SISWA</h2>
-                    <p style="font-size: 22px; font-weight: bold; color: #444;">Kelas: <span id="cert-class">X</span></p>
-                    <div style="margin: 30px 0; border-top: 2px solid #ddd; width: 60%; margin-left: auto; margin-right: auto;"></div>
-                    <p style="font-size: 18px; color: #555;">Atas keberhasilannya menyelesaikan dan menguasai ujian sertifikasi pada modul:</p>
-                    <h3 id="cert-module" style="font-size: 34px; color: #217346; margin: 20px 0;">Microsoft Word - Level 3</h3>
-                    <p style="font-size: 22px; font-weight: bold;">Predikat: <span id="cert-predikat" style="color: #d24726;">SANGAT BAIK</span></p>
-                </div>
-                <div class="cert-footer">
-                    <div class="signature">
-                        <p style="font-size: 18px; color: #444;">Guru Mata Pelajaran</p>
-                        <br><br><br>
-                        <p style="font-size: 20px; font-weight: bold; color: #111; border-bottom: 1px solid #111; display: inline-block; padding-bottom: 5px;">Otib Subagja, S.Kom.</p>
-                    </div>
-                </div>
+            <div class="action-buttons">
+                <button id="btn-download-cert" class="btn btn-success btn-block" onclick="downloadCertificate()" style="display: none;">
+                    <i class="fa-solid fa-file-pdf"></i> UNDUH SERTIFIKAT
+                </button>
+                <button class="btn btn-outline btn-block" onclick="showDashboard()">
+                    <i class="fa-solid fa-house"></i> KEMBALI KE MENU UTAMA
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- TEMPLATE SERTIFIKAT (Disembunyikan, Inline CSS agar render ke PDF sempurna) -->
+    <div id="certificate-template" style="display: none; width: 1122px; height: 793px; background-color: #fff; padding: 40px; box-sizing: border-box; font-family: 'Poppins', sans-serif;">
+        <div style="border: 10px double #2b579a; border-radius: 10px; height: 100%; padding: 50px; text-align: center; position: relative; box-sizing: border-box; background-image: radial-gradient(#f8f9fa 20%, #e9ecef 100%);">
+            <h1 style="color: #2b579a; font-size: 50px; margin-bottom: 0;">SERTIFIKAT KOMPETENSI</h1>
+            <p style="color: #6c757d; font-size: 24px; letter-spacing: 6px; margin-top: 5px;">OFFICE MASTERY PRO</p>
+            
+            <div style="margin-top: 60px;">
+                <p style="font-size: 22px; color: #495057;">Diberikan dengan bangga kepada:</p>
+                <h2 id="cert-name" style="font-size: 55px; color: #212529; margin: 15px 0; text-transform: uppercase;">NAMA SISWA</h2>
+                <p style="font-size: 24px; font-weight: 600; color: #343a40;">Kelas: <span id="cert-class">X</span></p>
+            </div>
+
+            <div style="margin: 40px auto; border-top: 2px solid #ced4da; width: 70%;"></div>
+
+            <div>
+                <p style="font-size: 20px; color: #495057;">Atas keberhasilannya menyelesaikan ujian sertifikasi pada modul:</p>
+                <h3 id="cert-module" style="font-size: 38px; color: #198754; margin: 20px 0;">Modul</h3>
+                <p style="font-size: 26px; font-weight: bold; color: #212529;">Predikat: <span id="cert-predikat" style="color: #dc3545;">KOMPETEN</span></p>
+            </div>
+
+            <div style="position: absolute; bottom: 50px; right: 80px; text-align: center;">
+                <p style="font-size: 20px; color: #495057; margin-bottom: 60px;">Guru Mata Pelajaran</p>
+                <p style="font-size: 22px; font-weight: 800; color: #212529; border-bottom: 2px solid #212529; display: inline-block; padding-bottom: 5px;">Otib Subagja, S.Kom.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
