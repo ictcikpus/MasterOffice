@@ -10,6 +10,10 @@ const firebaseConfig = {
   measurementId: "G-D652JVJNCY"
 };
 
-// Inisialisasi Firebase Realtime Database
-firebase.initializeApp(firebaseConfig);
+// Inisialisasi Firebase (Gunakan if agar tidak dobel inisialisasi)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Inisialisasi service database
 const db = firebase.database();
