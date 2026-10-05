@@ -32,5 +32,22 @@
         "question": "Tuliskan rumus fungsi Excel untuk menjumlahkan data dari sel A1 sampai A5.",
         "targetAnswers": ["=sum(a1:a5)"],
         "hint": "Gunakan fungsi SUM"
+    },
+    "excel_2": {
+        "type": "quiz",
+        "time": 30,
+        "question": "Fungsi apa yang digunakan untuk mencari nilai rata-rata dari sekumpulan data di Excel?",
+        "options": [
+            { "text": "AVERAGE", "correct": true },
+            { "text": "MEDIAN", "correct": false },
+            { "text": "SUM", "correct": false }
+        ]
+    },
+    "excel_3": {
+        "type": "simulator",
+        "time": 45,
+        "question": "Tuliskan rumus Excel untuk mencari nilai tertinggi dari sel B1 sampai B10.",
+        "targetAnswers": ["=max(b1:b10)", "=max(b1 : b10)"],
+        "hint": "Gunakan fungsi MAX"
     }
 }
