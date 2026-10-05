@@ -1,0 +1,25 @@
+{
+  "materi": [
+    {
+      "id": "word",
+      "title": "Microsoft Word (Si Biru)",
+      "icon": "📘",
+      "color": "#2b579a",
+      "content": "Microsoft Word adalah program <b>Pengolah Kata</b> yang paling populer. Aplikasi ini digunakan untuk mengetik dokumen seperti surat, cerita, laporan, atau puisi!<br><br><h3>✨ Fitur Unggulan MS Word:</h3><ul><li><b>Font Formatting:</b> Mengubah jenis huruf, ukuran, dan warna teks agar lebih menarik.</li><li><b>Paragraph Alignment:</b> Mengatur posisi tulisan (Rata Kiri, Rata Tengah, Rata Kanan, Rata Kiri-Kanan).</li><li><b>Insert Picture & Shapes:</b> Memasukkan gambar lucu dan bentuk-bentuk unik ke dalam tulisanmu.</li><li><b>Table (Tabel):</b> Membuat kotak-kotak rapi untuk menyusun jadwal piket atau jadwal pelajaran.</li><li><b>Page Layout:</b> Mengatur ukuran kertas dan jarak pinggir kertas (Margin).</li></ul><h3>⌨️ Jalan Pintas (Shortcut) Rahasia:</h3><ul><li><span class=\"highlight\">Ctrl + B</span> : (Bold) Menebalkan huruf.</li><li><span class=\"highlight\">Ctrl + I</span> : (Italic) Memiringkan huruf.</li><li><span class=\"highlight\">Ctrl + U</span> : (Underline) Memberi garis bawah pada huruf.</li><li><span class=\"highlight\">Ctrl + S</span> : (Save) Menyimpan hasil kerjamu agar tidak hilang!</li></ul>"
+    },
+    {
+      "id": "excel",
+      "title": "Microsoft Excel (Si Hijau)",
+      "icon": "📗",
+      "color": "#217346",
+      "content": "Microsoft Excel adalah program <b>Pengolah Angka</b>. Tampilannya unik karena penuh dengan kotak-kotak kecil. Sangat cocok untuk berhitung cepat, membuat daftar nilai, dan membuat grafik!<br><br><h3>✨ Istilah Penting di Excel:</h3><ul><li><b>Column (Kolom):</b> Kotak-kotak yang memanjang dari atas ke bawah, dinamai dengan Huruf (A, B, C...).</li><li><b>Row (Baris):</b> Kotak-kotak yang memanjang dari kiri ke kanan, dinamai dengan Angka (1, 2, 3...).</li><li><b>Cell (Sel):</b> Titik pertemuan antara Kolom dan Baris. Contoh: <span class=\"highlight\">Sel A1</span> artinya kolom A baris ke-1.</li><li><b>Range:</b> Kumpulan dari beberapa sel yang diblok secara bersamaan.</li></ul><h3>🧮 Rumus Ajaib (Fungsi Dasar):</h3><ul><li><span class=\"highlight\">=SUM(...)</span> : Untuk menjumlahkan atau menambahkan angka.</li><li><span class=\"highlight\">=AVERAGE(...)</span> : Untuk mencari nilai rata-rata kelasmu.</li><li><span class=\"highlight\">=MAX(...)</span> : Untuk mencari nilai atau angka yang paling besar (Tertinggi).</li><li><span class=\"highlight\">=MIN(...)</span> : Untuk mencari nilai atau angka yang paling kecil (Terendah).</li></ul><i>Ingat! Setiap kali mau menulis rumus di Excel, kamu <b>wajib</b> memulainya dengan tanda sama dengan (=).</i>"
+    },
+    {
+      "id": "powerpoint",
+      "title": "MS PowerPoint (Si Oranye)",
+      "icon": "📙",
+      "color": "#d24726",
+      "content": "Microsoft PowerPoint adalah program <b>Pembuat Presentasi</b>. Dengan PowerPoint, kamu bisa membuat bahan presentasi di depan kelas menjadi sangat seru dengan animasi dan gambar bergerak!<br><br><h3>✨ Fitur Unggulan PowerPoint:</h3><ul><li><b>Slide:</b> Lembaran kerja di PowerPoint tidak disebut halaman, melainkan <i>Slide</i>.</li><li><b>Design Themes:</b> Tema background yang membuat tampilan slide-mu langsung cantik dengan satu kali klik.</li><li><b>Transition (Transisi):</b> Efek keren saat slide satu berganti ke slide berikutnya (seperti efek layar terbuka atau memudar).</li><li><b>Animation (Animasi):</b> Membuat teks atau gambar di dalam slide bisa melompat, berputar, atau terbang masuk!</li></ul><h3>🚀 Cara Menjalankan Presentasi:</h3><ul><li>Tekan tombol <span class=\"highlight\">F5</span> di keyboard untuk memulai presentasi dari layar penuh (Slide Show) dari awal.</li><li>Tekan tombol <span class=\"highlight\">Shift + F5</span> untuk memulai presentasi dari slide yang sedang kamu buka.</li><li>Tekan tombol <span class=\"highlight\">ESC (Escape)</span> di sudut kiri atas keyboard untuk keluar dari layar penuh presentasi.</li></ul>"
+    }
+  ]
+}
