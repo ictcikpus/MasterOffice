@@ -1,7 +1,37 @@
+// ==========================================
+// LEADERBOARD LOGIC (Firebase Realtime Database)
+// ==========================================
+
+// Buat atau ambil User ID unik untuk pemain dari localStorage
+let userId = localStorage.getItem("office_player_id");
+if (!userId) {
+    // Generate ID acak sederhana jika belum ada
+    userId = "player_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("office_player_id", userId);
+}
+
+// Fungsi ini akan dipanggil oleh game.js setiap kali pemain mendapat skor
+window.syncScoreToDatabase = function(name, className, newScore) {
+    if (newScore === 0) return; // Jangan simpan jika skor masih 0
+
+    // Menyimpan/mengupdate data ke Firebase berdasarkan userId
+    db.ref('leaderboard/' + userId).set({
+        name: name,
+        class: className,
+        score: newScore,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).catch(error => {
+        console.error("Gagal menyimpan skor:", error);
+    });
+};
+
+// Listener Realtime untuk menampilkan Top 10
 const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(10);
 
 leaderboardRef.on('value', (snapshot) => {
     const listElement = document.getElementById("leaderboard-list");
+    if (!listElement) return;
+
     listElement.innerHTML = "";
 
     let players = [];
@@ -12,7 +42,7 @@ leaderboardRef.on('value', (snapshot) => {
         });
     });
 
-    // Urutkan dari poin tertinggi ke terendah
+    // Urutkan dari poin tertinggi ke terendah (karena limitToLast mengurutkan sebaliknya)
     players.reverse();
 
     if (players.length === 0) {
@@ -34,7 +64,7 @@ leaderboardRef.on('value', (snapshot) => {
                 <div class="flex items-center gap-3 overflow-hidden">
                     ${rankBadge}
                     <span class="font-medium text-sm text-slate-200 truncate ${isCurrentUser ? 'font-bold text-sky-300' : ''}">
-                        ${player.name} ${isCurrentUser ? '<span class="text-xs text-sky-400 font-normal">(Kamu)</span>' : ''}
+                        ${player.name} ${isCurrentUser ? '<span class="text-xs text-sky-400 font-normal ml-1">(Kamu)</span>' : ''}
                     </span>
                 </div>
                 <span class="font-extrabold text-amber-400 text-sm whitespace-nowrap ml-2">
@@ -46,5 +76,5 @@ leaderboardRef.on('value', (snapshot) => {
     });
 }, (error) => {
     console.error("Kesalahan Leaderboard:", error);
-    document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat papan peringkat. Pastikan Rules Firebase sudah di-Publish.</p>`;
+    document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat papan peringkat.</p>`;
 });
