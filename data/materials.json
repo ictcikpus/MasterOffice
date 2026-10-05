@@ -3,14 +3,20 @@
         "id": "word_1",
         "module": "Microsoft Word",
         "level": 1,
-        "title": "Dasar Formatting & Daftar Isi",
+        "title": "Dasar Pengolahan Dokumen & Formatting",
         "sections": [
             {
-                "heading": "Penggunaan Heading",
+                "heading": "Daftar Isi Otomatis",
                 "points": [
-                    "Heading digunakan untuk menentukan struktur dokumen.",
-                    "Heading 1 untuk Judul Utama, Heading 2 untuk Sub-judul.",
-                    "Memudahkan pembuatan Daftar Isi otomatis via tab References."
+                    "Gunakan Styles (Heading 1, Heading 2) pada setiap judul bab/sub-bab.",
+                    "Masuk ke menu References -> Table of Contents untuk membuat daftar isi otomatis."
+                ]
+            },
+            {
+                "heading": "Pengaturan Spasi & Paragraf",
+                "points": [
+                    "Pengaturan spasi baris berada di tab Home -> grup Paragraph.",
+                    "Gunakan Line Spacing 1.5 atau Double sesuai standar penulisan dokumen resmi."
                 ]
             }
         ]
@@ -19,14 +25,41 @@
         "id": "word_2",
         "module": "Microsoft Word",
         "level": 2,
-        "title": "Shortcut Keyboard Esensial",
+        "title": "Shortcut Keyboard & Find-Replace",
         "sections": [
             {
-                "heading": "Navigasi Cepat",
+                "heading": "Shortcut Penting Word",
                 "points": [
-                    "Ctrl + C : Copy teks",
-                    "Ctrl + V : Paste teks",
-                    "Ctrl + A : Memilih seluruh teks (Select All)"
+                    "Ctrl + A : Memilih/menyorot seluruh teks di dokumen.",
+                    "Ctrl + B : Menebalkan teks (Bold).",
+                    "Ctrl + H : Membuka jendela Find and Replace."
+                ]
+            },
+            {
+                "heading": "Navigasi & Pencarian Teks",
+                "points": [
+                    "Fitur Find & Replace (Ctrl + H) memudahkan penggantian kata yang salah secara cepat di ratusan halaman."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "word_3",
+        "module": "Microsoft Word",
+        "level": 3,
+        "title": "Mail Merge & Layout Lanjutan",
+        "sections": [
+            {
+                "heading": "Fitur Mail Merge",
+                "points": [
+                    "Digunakan untuk membuat surat massal, sertifikat, atau label dengan nama penerima yang berbeda dari database.",
+                    "Akses melalui tab Mailings -> Start Mail Merge."
+                ]
+            },
+            {
+                "heading": "Header, Footer & Page Number",
+                "points": [
+                    "Nomor halaman disisipkan melalui Insert -> Page Number -> Bottom of Page."
                 ]
             }
         ]
@@ -35,13 +68,94 @@
         "id": "excel_1",
         "module": "Microsoft Excel",
         "level": 1,
-        "title": "Fungsi Dasar Aritmatika",
+        "title": "Dasar Rumus Matematika Excel",
         "sections": [
             {
-                "heading": "Rumus SUM (Penjumlahan)",
+                "heading": "Aturan Utama Formula",
                 "points": [
-                    "Selalu awali rumus dengan tanda sama dengan (=).",
-                    "Contoh: =SUM(A1:A5) untuk menjumlahkan rentang A1 hingga A5."
+                    "Setiap rumus/fungsi di Excel WAJIB diawali dengan tanda sama dengan (=).",
+                    "Fungsi SUM digunakan untuk menjumlahkan rentang sel, contoh: =SUM(A1:A10)."
+                ]
+            },
+            {
+                "heading": "Menghitung Rata-rata",
+                "points": [
+                    "Fungsi AVERAGE digunakan untuk menghitung nilai rata-rata, contoh: =AVERAGE(B2:B8)."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "excel_2",
+        "module": "Microsoft Excel",
+        "level": 2,
+        "title": "Fungsi Logika IF & Nilai Ekstrem",
+        "sections": [
+            {
+                "heading": "Fungsi Logika IF",
+                "points": [
+                    "Fungsi IF digunakan untuk pengujian kondisi Benar (True) atau Salah (False).",
+                    "Fungsi MAX digunakan untuk mencari nilai tertinggi, contoh: =MAX(C1:C20).",
+                    "Fungsi MIN digunakan untuk mencari nilai terendah, contoh: =MIN(D1:D15)."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "excel_3",
+        "module": "Microsoft Excel",
+        "level": 3,
+        "title": "Fungsi Pencarian & Statistik (COUNT & VLOOKUP)",
+        "sections": [
+            {
+                "heading": "Fungsi Statistik Data",
+                "points": [
+                    "Fungsi COUNT digunakan untuk menghitung jumlah sel yang berisi angka saja.",
+                    "Fungsi VLOOKUP digunakan untuk mencari data secara vertikal dari tabel referensi."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ppt_1",
+        "module": "Microsoft PPT",
+        "level": 1,
+        "title": "Dasar Presentasi & Slide Show",
+        "sections": [
+            {
+                "heading": "Shortcut Slide Show",
+                "points": [
+                    "Tekan tombol F5 pada keyboard untuk menjalankan presentasi dari slide pertama.",
+                    "Menu Transition digunakan untuk mengatur animasi perpindahan antar slide."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ppt_2",
+        "module": "Microsoft PPT",
+        "level": 2,
+        "title": "Animasi Objek & Fitur Efek",
+        "sections": [
+            {
+                "heading": "Jenis Animasi Objek",
+                "points": [
+                    "Entrance Effects : Efek animasi saat objek baru masuk ke slide.",
+                    "Exit Effects : Efek animasi saat objek keluar dari slide."
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ppt_3",
+        "module": "Microsoft PPT",
+        "level": 3,
+        "title": "Shortcut & Manajemen Slide",
+        "sections": [
+            {
+                "heading": "Shortcut Produktivitas PPT",
+                "points": [
+                    "Gunakan Ctrl + M untuk menambah slide baru secara cepat."
                 ]
             }
         ]
