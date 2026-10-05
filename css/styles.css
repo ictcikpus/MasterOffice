@@ -1,172 +1,24 @@
-/* ==========================================================================
-   MASTER MICROSOFT OFFICE - GLOBAL & CUSTOM STYLES
-   ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap');
-
-:root {
-    --bg-dark: #0f172a;
-    --card-dark: #1e293b;
-    --accent-blue: #3b82f6;
-    --accent-excel: #10b981;
-    --accent-ppt: #f59e0b;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-dark);
-    color: #f8fafc;
-    overflow-x: hidden;
-}
-
-/* Kustom Scrollbar Webkit */
+/* Customisasi Scrollbar Webkit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #0f172a;
+    background: #0f172a; /* Warna background track sesuaikan dengan slate-950 */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #334155; /* Warna thumb sesuaikan dengan slate-700 */
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: #475569; /* Warna saat dihover sesuaikan dengan slate-600 */
 }
 
-/* Transisi Halus Kartu Soal */
-#question-text {
-    transition: all 0.2s ease-in-out;
-}
-
-/* Efek Tombol Pilihan Jawaban */
-#options-container button {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-}
-
-#options-container button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.2);
-}
-
-#options-container button:active {
-    transform: translateY(0);
-}
-
-/* Efek Glow & Badge Poin */
-.glow-gold {
-    box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
-}
-
-.glow-blue {
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
-}
-
-/* ==========================================================================
-   TATA LETAK CETAK SERTIFIKAT A4 LANDSCAPE (PDF PRINT STYLES)
-   ========================================================================== */
-
-@media print {
-    @page {
-        size: A4 landscape;
-        margin: 0;
-    }
-
-    body {
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    /* Sembunyikan Seluruh Komponen Web Game */
-    .print\:hidden, 
-    header, 
-    main, 
-    footer,
-    #app-container {
-        display: none !important;
-    }
-
-    /* Tampilkan dan Posisikan Sertifikat Kelulusan Penuh 1 Halaman */
-    #certificate-view {
-        display: flex !important;
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        box-sizing: border-box !important;
-        margin: 0 !important;
-        padding: 2.5rem !important;
-        background: #ffffff !important;
-        z-index: 99999 !important;
-    }
-
-    /* Bingkai Ornamen Cetak Sertifikat */
-    .cert-border {
-        border: 10px double #1e3a8a !important;
-        outline: 2px solid #d97706 !important;
-        outline-offset: -18px !important;
-        padding: 2rem !important;
-        height: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        box-sizing: border-box !important;
-        background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%) !important;
-    }
-
-    .cert-title {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 800 !important;
-        color: #1e3a8a !important;
-        letter-spacing: 0.15em !important;
-        text-transform: uppercase !important;
-    }
-
-    .cert-signature-title {
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-    }
-
-    .cert-watermark {
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        font-size: 28rem !important;
-        color: rgba(30, 58, 138, 0.03) !important;
-        pointer-events: none !important;
-        z-index: 0 !important;
-    }
-}
-
-/* ==========================================================================
-   STYLING PREVIEW SERTIFIKAT DILUAR MODE CETAK
-   ========================================================================== */
-
-#certificate-view {
-    background-color: #ffffff;
-    color: #0f172a;
-}
-
-#certificate-view .cert-border {
-    border: 10px double #1e3a8a;
-    outline: 2px solid #d97706;
-    outline-offset: -16px;
-    padding: 2rem;
-}
-
-.cert-title {
-    font-family: 'Cinzel', serif;
+/* Mematikan seleksi teks pada tombol agar tidak biru saat diklik cepat */
+button {
+    user-select: none;
+    -webkit-user-select: none;
 }
