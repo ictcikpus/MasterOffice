@@ -12,6 +12,7 @@ leaderboardRef.on('value', (snapshot) => {
         });
     });
 
+    // Urutkan dari poin tertinggi ke terendah
     players.reverse();
 
     if (players.length === 0) {
