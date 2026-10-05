@@ -3,67 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard Siswa</title>
-
-    <!-- Tailwind CSS (via CDN karena kode JS menggunakan class Tailwind) -->
+    <title>Office Master - Edu Game</title>
+    <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- FontAwesome (via CDN untuk icon trophy, medal, award) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen p-4 flex justify-center">
 
-    <!-- Kontainer Utama Card Leaderboard -->
-    <div class="w-full max-w-md bg-slate-800/30 border border-slate-700/50 rounded-2xl shadow-2xl backdrop-blur-sm overflow-hidden">
+    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- Header -->
-        <div class="bg-slate-900/50 p-5 border-b border-slate-700/50 flex items-center justify-between">
-            <div>
-                <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-ranking-star text-sky-400"></i>
-                    Peringkat Siswa
-                </h2>
-                <p class="text-xs text-slate-400 mt-1">Top 10 Skor Tertinggi</p>
+        <!-- SIDEBAR KIRI: Profil & Navigasi Level -->
+        <div class="space-y-4">
+            <!-- Profil Siswa -->
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <h3 id="player-name" class="font-bold text-sky-400">Memuat Nama...</h3>
+                <p id="player-class" class="text-xs text-slate-400 mb-3">Kelas: -</p>
+                <div class="flex gap-4 text-sm font-bold">
+                    <span class="text-amber-400"><i class="fa-solid fa-star"></i> Skor: <span id="game-score">0</span></span>
+                    <span class="text-rose-400"><i class="fa-solid fa-heart"></i> Nyawa: <span id="lives-count">3</span></span>
+                </div>
+            </div>
+
+            <!-- Peta Level (Di-generate oleh game.js) -->
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <h3 class="font-bold text-slate-200 mb-3 border-b border-slate-700 pb-2">Pilih Materi</h3>
+                <div id="level-tree"></div>
+                <button id="btn-cert" disabled class="w-full mt-4 bg-amber-600/50 text-amber-200 py-2 rounded-lg text-sm font-bold cursor-not-allowed opacity-50 transition-all hover:bg-amber-500 hover:text-white">
+                    <i class="fa-solid fa-certificate"></i> Cetak Sertifikat
+                </button>
             </div>
         </div>
 
-        <!-- Area Render dari leaderboard.js -->
-        <!-- Ditambahkan class flex-col dan gap-2 agar item memiliki jarak yang rapi -->
-        <div id="leaderboard-list" class="p-4 flex flex-col gap-2 min-h-[200px] max-h-[600px] overflow-y-auto">
-            <!-- Tampilan Loading sementara sebelum Firebase merespon -->
-            <p class="text-center text-slate-500 py-6 text-sm animate-pulse">Memuat papan peringkat...</p>
-        </div>
+        <!-- AREA KANAN: Konten Utama -->
+        <div class="md:col-span-2 space-y-4">
+            
+            <!-- PANEL 1: MATERI -->
+            <div id="panel-material" class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
+                <div class="border-b border-slate-700 pb-4 mb-4">
+                    <h2 id="mat-title" class="text-2xl font-bold text-sky-400">Pilih Level di Kiri</h2>
+                    <p id="mat-module" class="text-sm text-slate-400 mt-1">Silakan mulai dari Modul Word Level 1</p>
+                </div>
+                <div id="mat-content" class="mb-6">
+                    <!-- Konten materi dirender di sini -->
+                </div>
+                <button onclick="startChallengeFromMaterial()" class="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl font-bold transition">
+                    Mulai Tantangan Level Ini <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
 
+            <!-- PANEL 2: GAMEPLAY (Sembunyi secara default) -->
+            <div id="panel-game" class="hidden bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
+                <h2 class="text-xl font-bold text-amber-400 mb-4 border-b border-slate-700 pb-2">Tantangan Aktif</h2>
+                <div id="game-workspace">
+                    <!-- Timer, Soal, dan Jawaban dirender di sini -->
+                </div>
+            </div>
+
+            <!-- LEADERBOARD (Selalu Tampil di Bawah) -->
+            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
+                <h3 class="font-bold text-slate-200 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-ranking-star text-amber-400"></i> Peringkat Top 10</h3>
+                <div id="leaderboard-list" class="space-y-2">
+                    <p class="text-xs text-slate-500 text-center py-4">Memuat papan peringkat...</p>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- Firebase SDK (Gunakan versi Compat untuk sintaks db.ref() di kodemu) -->
+    <!-- Pustaka Firebase (Compat version untuk sintaks realtime database) -->
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
-
-    <script>
-        // 1. Konfigurasi Firebase (Isi dengan config dari project Firebase-mu)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        
-        // Inisialisasi Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // 2. Deklarasi userId 
-        // Variabel ini wajib ada karena di leaderboard.js kamu memanggil: player.id === userId
-        // (Biasanya didapatkan dari Firebase Auth currentUser.uid)
-        let userId = "contoh_id_user_aktif"; 
-    </script>
-
-    <!-- Hubungkan file JS kamu di sini -->
-    <script src="leaderboard.js"></script>
-
+    
+    <!-- Script Kustom Sesuai Struktur Folder -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/certificate.js"></script>
+    <script src="js/game.js"></script>
+    <!-- <script src="js/script.js"></script> Jika ada tambahan interaksi UI -->
 </body>
 </html>
