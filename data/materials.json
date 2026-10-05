@@ -1,23 +1,52 @@
-[
-  {
-    "id": "word_1",
-    "module": "MS Word",
-    "level": 1,
-    "title": "Pengenalan UI & Format Dasar",
-    "content": "Microsoft Word adalah aplikasi pengolah kata. Shortcut penting: Ctrl+S (Simpan), Ctrl+C (Salin), Ctrl+V (Tempel), Ctrl+B (Cetak Tebal), Ctrl+I (Cetak Miring), Ctrl+U (Garis Bawah). Orientasi kertas terbagi dua: Portrait (tegak) dan Landscape (mendatar)."
-  },
-  {
-    "id": "excel_2",
-    "module": "MS Excel",
-    "level": 2,
-    "title": "Fungsi Logika & Lookup",
-    "content": "Gunakan VLOOKUP untuk membaca data dari tabel vertikal dan HLOOKUP untuk tabel horizontal. Simbol absolut ($) digunakan untuk mengunci sel agar tidak bergeser saat formula disalin. Shortcut kunci sel adalah tombol F4."
-  },
-  {
-    "id": "ppt_3",
-    "module": "MS PowerPoint",
-    "level": 3,
-    "title": "Animasi Lanjut & Presenter View",
-    "content": "Trigger digunakan untuk memicu animasi berdasarkan klik objek tertentu. Format .ppsx (PowerPoint Show) langsung menjalankan slide tanpa membuka editor. Fitur Morph memberikan transisi transformasi objek secara mulus antar slide."
-  }
-]
+function loadMaterial(mod, lvl) {
+    const key = `${mod}_${lvl}`;
+    const mat = materialsData.find(m => m.id === key);
+
+    const titleEl = document.getElementById("mat-title");
+    const moduleEl = document.getElementById("mat-module");
+    const contentEl = document.getElementById("mat-content");
+
+    if (!mat) {
+        titleEl.innerText = `Materi ${mod.toUpperCase()} Level ${lvl}`;
+        moduleEl.innerText = `${mod.toUpperCase()} - Level ${lvl}`;
+        contentEl.innerHTML = `<p class="text-slate-400">Materi belum tersedia.</p>`;
+        return;
+    }
+
+    titleEl.innerText = mat.title;
+    moduleEl.innerText = `${mat.module} - Level ${mat.level}`;
+
+    // Format Render HTML untuk Struktur Sections & Points
+    let htmlContent = `<div class="space-y-6">`;
+
+    if (mat.sections && mat.sections.length > 0) {
+        mat.sections.forEach(sec => {
+            htmlContent += `
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
+                    <h4 class="text-md font-bold text-amber-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-bookmark text-xs text-sky-400"></i> ${sec.heading}
+                    </h4>
+                    <ul class="space-y-2 pl-2">
+            `;
+            
+            sec.points.forEach(pt => {
+                htmlContent += `
+                    <li class="text-xs sm:text-sm text-slate-300 flex items-start gap-2.5 leading-relaxed">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-xs mt-1 shrink-0"></i>
+                        <span>${pt}</span>
+                    </li>
+                `;
+            });
+
+            htmlContent += `
+                    </ul>
+                </div>
+            `;
+        });
+    } else {
+        htmlContent += `<p class="text-slate-300 leading-relaxed text-sm">${mat.content}</p>`;
+    }
+
+    htmlContent += `</div>`;
+    contentEl.innerHTML = htmlContent;
+}
