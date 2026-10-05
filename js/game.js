@@ -1,5 +1,6 @@
 let userId = localStorage.getItem("student_id");
 let userName = localStorage.getItem("student_name");
+let userClass = localStorage.getItem("student_class");
 
 function initUser() {
     if (!userId) {
@@ -7,26 +8,42 @@ function initUser() {
         localStorage.setItem("student_id", userId);
     }
     if (!userName) {
-        userName = prompt("Masukkan Nama Lengkap Anda:") || "Siswa " + Math.floor(1000 + Math.random() * 9000);
+        userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
         localStorage.setItem("student_name", userName);
     }
-    document.getElementById("player-name").innerText = userName;
+    if (!userClass) {
+        userClass = prompt("Masukkan Kelas (Contoh: X-RPL 1):") || "Kelas Umum";
+        localStorage.setItem("student_class", userClass);
+    }
+    updateProfileUI();
 }
 
-function changeStudentName() {
-    const newName = prompt("Masukkan nama baru Anda:", userName);
-    if (newName && newName.trim() !== "") {
+function updateProfileUI() {
+    document.getElementById("player-name").innerText = userName;
+    document.getElementById("player-class").innerText = "Kelas: " + userClass;
+}
+
+function editProfile() {
+    const newName = prompt("Edit Nama Lengkap:", userName);
+    const newClass = prompt("Edit Kelas:", userClass);
+    if (newName) {
         userName = newName.trim();
         localStorage.setItem("student_name", userName);
-        document.getElementById("player-name").innerText = userName;
-        userRef.update({ name: userName });
     }
+    if (newClass) {
+        userClass = newClass.trim();
+        localStorage.setItem("student_class", userClass);
+    }
+    updateProfileUI();
+    userRef.update({ name: userName, class: userClass });
 }
 
 initUser();
 
 let currentScore = 0;
-let streakCount = 0;
+let questionsData = [];
+let currentQuestion = null;
+
 const userRef = db.ref('leaderboard/' + userId);
 
 userRef.on('value', (snapshot) => {
@@ -34,100 +51,60 @@ userRef.on('value', (snapshot) => {
     if (data) {
         currentScore = data.score || 0;
     } else {
-        userRef.set({ name: userName, score: 0 });
+        userRef.set({ name: userName, class: userClass, score: 0 });
     }
     document.getElementById("my-score").innerText = currentScore;
+    checkCertificateEligibility();
 });
 
-function updateScoreInFirebase(addedPoints) {
-    currentScore += addedPoints;
-    userRef.update({
-        name: userName,
-        score: currentScore,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP
+// Load Soal dari data/questions.json
+fetch('data/questions.json')
+    .then(response => response.json())
+    .then(data => {
+        questionsData = data;
+        renderNextQuestion();
+    })
+    .catch(err => {
+        document.getElementById("question-text").innerText = "Gagal memuat bank soal questions.json";
+        console.error(err);
     });
-}
 
-// Logika Acak Kuis Office
-let currentQuestionObj = null;
+function renderNextQuestion() {
+    if (questionsData.length === 0) return;
 
-function getRandomQuestion() {
-    const randomIndex = Math.floor(Math.random() * questionBank.length);
-    return questionBank[randomIndex];
-}
+    const randomIndex = Math.floor(Math.random() * questionsData.length);
+    currentQuestion = questionsData[randomIndex];
 
-function renderQuestion() {
-    currentQuestionObj = getRandomQuestion();
-
-    // Badge Kategori
-    const categoryBadge = document.getElementById("category-badge");
-    categoryBadge.innerText = currentQuestionObj.category;
-
-    if (currentQuestionObj.category === "MS Word") {
-        categoryBadge.className = "text-xs px-3 py-1 rounded-full font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30";
-    } else if (currentQuestionObj.category === "MS Excel") {
-        categoryBadge.className = "text-xs px-3 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-    } else {
-        categoryBadge.className = "text-xs px-3 py-1 rounded-full font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
-    }
-
-    document.getElementById("question-text").innerText = currentQuestionObj.question;
-
-    // Salin dan acak urutan pilihan jawaban
-    let optionsWithIndex = currentQuestionObj.options.map((opt, idx) => ({
-        text: opt,
-        originalIndex: idx
-    }));
-
-    optionsWithIndex.sort(() => Math.random() - 0.5);
+    document.getElementById("module-badge").innerText = currentQuestion.module;
+    document.getElementById("level-badge").innerText = "Level " + currentQuestion.level;
+    document.getElementById("question-text").innerText = currentQuestion.question;
 
     const container = document.getElementById("options-container");
     container.innerHTML = "";
 
-    const labels = ["A", "B", "C", "D"];
-
-    optionsWithIndex.forEach((item, idx) => {
+    currentQuestion.options.forEach((opt, idx) => {
         const btn = document.createElement("button");
-        btn.className = "w-full bg-slate-800 hover:bg-sky-600 active:scale-[0.99] border border-slate-700 text-slate-200 font-semibold py-3.5 px-4 rounded-xl transition-all shadow-md text-sm";
-        btn.innerHTML = `<span class="bg-slate-700 px-2 py-1 rounded-lg text-xs font-bold text-sky-400">${labels[idx]}</span> <span>${item.text}</span>`;
-        btn.onclick = () => checkAnswer(item.originalIndex);
+        btn.className = "w-full bg-slate-800 hover:bg-sky-600 border border-slate-700 text-slate-200 font-semibold py-3 px-4 rounded-xl text-left transition-all text-sm";
+        btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+        btn.onclick = () => checkAnswer(idx);
         container.appendChild(btn);
     });
 }
 
-function checkAnswer(selectedIndex) {
-    const feedbackEl = document.getElementById("feedback");
-    const streakBadge = document.getElementById("streak-badge");
-    const streakCountEl = document.getElementById("streak-count");
-
-    if (selectedIndex === currentQuestionObj.answer) {
-        streakCount++;
-        let pointsGained = 10;
-        if (streakCount >= 3) pointsGained += 5; // Bonus streak
-
-        feedbackEl.className = "min-h-[24px] text-sm font-semibold text-emerald-400 animate-bounce";
-        feedbackEl.innerText = `✨ Jawaban Benar! +${pointsGained} Poin`;
-
-        updateScoreInFirebase(pointsGained);
+function checkAnswer(selectedIdx) {
+    const feedback = document.getElementById("feedback");
+    if (selectedIdx === currentQuestion.answer) {
+        feedback.className = "text-emerald-400 font-bold";
+        feedback.innerText = "✨ Jawaban Benar! +10 Poin";
+        currentScore += 10;
+        userRef.update({ name: userName, class: userClass, score: currentScore });
     } else {
-        streakCount = 0;
-        const correctAnswerText = currentQuestionObj.options[currentQuestionObj.answer];
-        feedbackEl.className = "min-h-[24px] text-sm font-semibold text-rose-400";
-        feedbackEl.innerText = `❌ Jawaban Salah! Jawaban Benar: ${correctAnswerText}`;
-    }
-
-    if (streakCount > 1) {
-        streakBadge.classList.remove("hidden");
-        streakCountEl.innerText = streakCount;
-    } else {
-        streakBadge.classList.add("hidden");
+        feedback.className = "text-rose-400 font-bold";
+        feedback.innerText = "❌ Jawaban Kurang Tepat!";
     }
 
     setTimeout(() => {
-        feedbackEl.innerText = "";
-        renderQuestion();
-    }, 1200);
+        feedback.innerText = "";
+        renderNextQuestion();
+    }, 1000);
 }
-
-// Jalankan soal pertama saat dimuat
-renderQuestion();
