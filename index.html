@@ -4,23 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Office Mastery: Professional Certification</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font modern & Ikon Profesional -->
+    <link href="[https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap)" rel="stylesheet">
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="simulator-container">
+        <!-- Header -->
         <header class="top-nav">
             <div class="logo">
                 <i class="fa-solid fa-server"></i> OFFICE MASTERY <span>PRO</span>
             </div>
             <div class="status">
-                <span class="badge" id="user-status">PILIH MODUL</span>
+                <span class="badge" id="user-status">SISTEM AKTIF</span>
             </div>
         </header>
 
-        <!-- 1. Dashboard Utama (Pilih Modul) -->
+        <!-- LAYAR 1: Pilih Modul Utama -->
         <div id="dashboard" class="view-section active">
             <div class="section-header">
                 <h2>DATABASE PELATIHAN</h2>
@@ -29,7 +31,7 @@
             <div id="module-grid" class="grid-container"></div>
         </div>
 
-        <!-- 2. Menu Level (Pilih Level 1, 2, 3) -->
+        <!-- LAYAR 2: Pilih Level (1, 2, 3) -->
         <div id="level-selection" class="view-section">
             <div class="reader-header">
                 <button class="btn btn-outline" onclick="showDashboard()">
@@ -44,7 +46,7 @@
             <div id="level-grid" class="grid-container"></div>
         </div>
 
-        <!-- 3. Area Materi -->
+        <!-- LAYAR 3: Baca Materi -->
         <div id="reader" class="view-section">
             <div class="reader-header">
                 <button class="btn btn-outline" onclick="goBackToLevels()">
@@ -61,14 +63,15 @@
                 <div class="materi-body" id="materi-text"></div>
             </div>
 
+            <!-- Tombol Aktif Memulai Ujian -->
             <div class="action-footer">
                 <button class="btn btn-primary glow-effect" onclick="startQuiz()">
-                    <i class="fa-solid fa-brain"></i> MATERI SELESAI, MULAI UJIAN!
+                    <i class="fa-solid fa-gamepad"></i> MATERI SELESAI, MULAI UJIAN!
                 </button>
             </div>
         </div>
 
-        <!-- 4. Area Kuis -->
+        <!-- LAYAR 4: Area Kuis/Game -->
         <div id="quiz-area" class="view-section">
             <div class="quiz-header">
                 <div class="quiz-progress">Pertanyaan <span id="current-q-num">1</span> dari <span id="total-q-num">5</span></div>
@@ -80,19 +83,21 @@
             </div>
         </div>
 
-        <!-- 5. Layar Hasil Kuis -->
+        <!-- LAYAR 5: Hasil Akhir -->
         <div id="result-area" class="view-section" style="text-align: center;">
             <i class="fa-solid fa-trophy fa-5x" style="color: #ffd700; margin-bottom: 20px;"></i>
             <h2 style="font-size: 2.5rem; margin-bottom: 10px;">UJIAN SELESAI!</h2>
             <p style="font-size: 1.2rem; margin-bottom: 30px;">Skor Akhir Anda:</p>
-            <div id="final-score" style="font-size: 4rem; font-weight: 800; color: #38bdf8; margin-bottom: 40px;">100</div>
-            <button class="btn btn-primary" onclick="goBackToLevels()" style="margin: 0 auto;">
-                <i class="fa-solid fa-check"></i> KEMBALI KE MENU UTAMA
+            <div id="final-score" style="font-size: 5rem; font-weight: 800; color: #38bdf8; margin-bottom: 40px;">100</div>
+            <button class="btn btn-primary" onclick="showDashboard()" style="margin: 0 auto;">
+                <i class="fa-solid fa-house"></i> KEMBALI KE MENU UTAMA
             </button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Script Confetti -->
+    <script src="[https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js](https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js)"></script>
+    <!-- Script Logika Aplikasi -->
     <script src="script.js"></script>
 </body>
 </html>
