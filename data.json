@@ -1,34 +1,146 @@
 {
-  "materi": [
+  "modules": [
     {
       "id": "word",
-      "level": "LEVEL 1",
-      "title": "Microsoft Word Mastery",
+      "name": "Microsoft Word",
       "icon": "fa-solid fa-file-word",
       "color": "#2b579a",
-      "glow": "rgba(43, 87, 154, 0.5)",
-      "desc": "Sistem Pengolahan Kata Tingkat Lanjut",
-      "content": "Microsoft Word adalah aplikasi pengolah kata (Word Processor) standar industri yang dirancang untuk pembuatan dokumen profesional, laporan, dan publikasi.<br><br><h3><i class='fa-solid fa-layer-group'></i> Komponen Ribbon Utama</h3><ul><li><b>Home:</b> Pusat pengaturan dasar (Clipboard, Font, Paragraph, dan Styles). Digunakan untuk modifikasi tipografi.</li><li><b>Insert:</b> Berfungsi untuk menyisipkan objek non-teks seperti <i>Tables</i>, <i>Pictures</i>, <i>Shapes</i>, <i>SmartArt</i>, dan <i>Page Numbers</i>.</li><li><b>Layout / Page Layout:</b> Mengatur struktur fisik halaman termasuk <i>Margins</i> (Batas tepi), <i>Orientation</i> (Portrait/Landscape), dan <i>Size</i> (Ukuran kertas).</li><li><b>References:</b> Esensial untuk karya ilmiah, digunakan untuk membuat Daftar Isi (Table of Contents), Footnotes, dan Bibliografi.</li></ul><h3><i class='fa-solid fa-wand-magic-sparkles'></i> Fitur Produktivitas Tinggi</h3><ul><li><b>Mail Merge (Cetak Surat Massal):</b> Menggabungkan dokumen utama dengan sumber data (biasanya dari Excel) untuk mencetak ratusan surat dengan nama penerima yang berbeda secara otomatis.</li><li><b>Styles & Formatting:</b> Pengaturan format teks konsisten untuk Heading 1, Heading 2, dst., yang secara otomatis dapat diubah menjadi Daftar Isi.</li></ul><h3><i class='fa-solid fa-keyboard'></i> Shortcut Sistem</h3><ul><li><span class='highlight'>Ctrl + J</span> : Justify (Rata kiri & kanan).</li><li><span class='highlight'>Ctrl + E</span> : Center (Rata tengah).</li><li><span class='highlight'>Ctrl + Enter</span> : Page Break (Berpindah paksa ke halaman baru).</li><li><span class='highlight'>Ctrl + Z</span> : Undo (Membatalkan perintah terakhir).</li></ul>"
+      "levels": [
+        {
+          "id": 1,
+          "name": "Dasar & Format Dokumen",
+          "desc": "Fundamental penulisan & format dasar.",
+          "material": "<h3>Tingkat Dasar (Basic)</h3><p>Level ini fokus pada kemampuan esensial dalam membuat dokumen rapi.</p><ul><li><b>Font Formatting:</b> Mengubah jenis huruf (Font Face), Ukuran, Bold (Ctrl+B), Italic (Ctrl+I), Underline (Ctrl+U).</li><li><b>Paragraph Alignment:</b> Mengatur perataan teks: Align Left (Kiri), Center (Tengah), Align Right (Kanan), Justify (Rata Kiri Kanan).</li><li><b>Save & Export:</b> Shortcut <b>Ctrl+S</b> untuk menyimpan, dan menu <i>File > Save As</i> untuk menyimpan sebagai PDF.</li></ul>",
+          "quizBank": [
+            { "question": "Shortcut keyboard untuk menebalkan teks (Bold) adalah?", "options": ["Ctrl + B", "Ctrl + I", "Ctrl + U", "Ctrl + S"], "answer": 0 },
+            { "question": "Untuk membuat teks rata kiri dan kanan secara bersamaan, kita menggunakan fitur...", "options": ["Align Center", "Align Left", "Justify", "Wrap Text"], "answer": 2 },
+            { "question": "Format file default ketika menyimpan dokumen Microsoft Word generasi baru adalah...", "options": [".xls", ".docx", ".pptx", ".txt"], "answer": 1 },
+            { "question": "Bagaimana cara cepat menyimpan dokumen yang sedang dikerjakan?", "options": ["Alt + F4", "Ctrl + S", "Ctrl + P", "Ctrl + X"], "answer": 1 },
+            { "question": "Menu yang digunakan untuk mengubah jenis huruf adalah...", "options": ["Insert", "Page Layout", "Home", "View"], "answer": 2 },
+            { "question": "Fungsi dari shortcut Ctrl+Z adalah untuk?", "options": ["Menyalin teks", "Membatalkan perintah terakhir (Undo)", "Menghapus dokumen", "Menyisipkan gambar"], "answer": 1 }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Sisipan Objek & Tata Letak",
+          "desc": "Menyisipkan Tabel, Gambar, dan Margins.",
+          "material": "<h3>Tingkat Menengah (Intermediate)</h3><p>Meningkatkan visual dokumen dengan objek.</p><ul><li><b>Insert Table:</b> Menu Insert > Table untuk membuat struktur baris dan kolom.</li><li><b>Page Layout (Margins & Orientation):</b> Margins adalah jarak batas tepi kertas. Orientation mengatur kertas berdiri (Portrait) atau memanjang (Landscape).</li><li><b>Header & Footer:</b> Area di bagian paling atas dan bawah dokumen yang akan berulang di setiap halaman (biasanya untuk Kop Surat atau Nomor Halaman).</li></ul>",
+          "quizBank": [
+            { "question": "Di tab menu manakah Anda dapat menyisipkan Tabel (Table)?", "options": ["Home", "Insert", "Design", "References"], "answer": 1 },
+            { "question": "Pengaturan untuk mengubah kertas dari bentuk berdiri menjadi memanjang disebut...", "options": ["Margins", "Size", "Orientation (Landscape)", "Columns"], "answer": 2 },
+            { "question": "Area di bagian paling atas halaman dokumen yang terus berulang disebut...", "options": ["Footer", "Margin", "Header", "Watermark"], "answer": 2 },
+            { "question": "Fitur untuk mengatur jarak batas tepi teks dengan tepi kertas adalah...", "options": ["Spacing", "Indent", "Margins", "Line Space"], "answer": 2 },
+            { "question": "Untuk memasukkan foto ke dalam dokumen, tombol yang diklik adalah...", "options": ["Insert > Picture", "Home > Image", "Design > Photo", "View > Insert"], "answer": 0 }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Standar Industri Profesional",
+          "desc": "Mail Merge, Daftar Isi Otomatis (TOC).",
+          "material": "<h3>Tingkat Lanjut (Advanced/Industry)</h3><p>Kemampuan yang wajib dimiliki di dunia kerja korporat.</p><ul><li><b>Styles (Heading 1, 2, 3):</b> Digunakan untuk membuat struktur bab/sub-bab pada dokumen panjang seperti Skripsi/Laporan.</li><li><b>Table of Contents (TOC):</b> Membuat Daftar Isi secara OTOMATIS (Menu References) berdasarkan Styles Heading yang dibuat.</li><li><b>Mail Merge:</b> Fitur (Tab Mailings) untuk mencetak ratusan surat atau sertifikat undangan dengan nama berbeda secara otomatis dengan mengaitkan Word ke database Excel.</li></ul>",
+          "quizBank": [
+            { "question": "Fitur industri untuk mencetak ratusan surat undangan secara otomatis dengan data dari Excel adalah...", "options": ["Table of Contents", "Track Changes", "Mail Merge", "Macro"], "answer": 2 },
+            { "question": "Syarat utama agar kita bisa membuat Daftar Isi otomatis (Table of Contents) adalah...", "options": ["Mengetik titik-titik manual", "Menggunakan fitur Styles (Heading 1, 2, dll)", "Memasukkan tabel", "Mengubah warna teks"], "answer": 1 },
+            { "question": "Tab menu yang digunakan untuk mengakses fitur Mail Merge adalah...", "options": ["Insert", "Mailings", "Review", "View"], "answer": 1 },
+            { "question": "Daftar isi otomatis dapat diakses melalui tab menu...", "options": ["References", "Home", "Design", "Layout"], "answer": 0 },
+            { "question": "File ekstensi apa yang umumnya dihubungkan dengan Word untuk melakukan Mail Merge?", "options": [".pdf", ".xlsx (Excel)", ".pptx", ".jpg"], "answer": 1 }
+          ]
+        }
+      ]
     },
     {
       "id": "excel",
-      "level": "LEVEL 2",
-      "title": "Microsoft Excel Mastery",
+      "name": "Microsoft Excel",
       "icon": "fa-solid fa-file-excel",
       "color": "#217346",
-      "glow": "rgba(33, 115, 70, 0.5)",
-      "desc": "Analisis & Pemrosesan Data Kompleks",
-      "content": "Microsoft Excel adalah aplikasi pengolah angka (Spreadsheet) profesional yang digunakan untuk komputasi matematis, analisis data, dan visualisasi grafik.<br><br><h3><i class='fa-solid fa-sitemap'></i> Struktur Hierarki Excel</h3><ul><li><b>Workbook:</b> File utama dokumen Excel.</li><li><b>Worksheet (Sheet):</b> Lembar kerja di dalam Workbook.</li><li><b>Column & Row:</b> Kolom ditandai dengan Huruf (A, B, C), Baris ditandai dengan Angka (1, 2, 3).</li><li><b>Cell:</b> Interseksi tunggal antara Kolom dan Baris (Contoh: <span class='highlight'>C5</span>).</li><li><b>Range:</b> Kumpulan dari beberapa Cell yang diseleksi (Contoh: <span class='highlight'>A1:C10</span>).</li></ul><h3><i class='fa-solid fa-calculator'></i> Fungsi (Function) Esensial</h3><ul><li><span class='highlight'>=SUM(range)</span> : Kalkulasi total nilai data numerik.</li><li><span class='highlight'>=AVERAGE(range)</span> : Menghitung nilai rata-rata (Mean).</li><li><span class='highlight'>=COUNT(range)</span> : Menghitung jumlah Cell yang berisi angka.</li><li><span class='highlight'>=IF(logical_test, true, false)</span> : Fungsi logika untuk menghasilkan nilai berdasarkan kondisi tertentu (Misal: Lulus/Gagal).</li><li><span class='highlight'>=VLOOKUP(...)</span> : Mencari nilai data secara vertikal dari tabel referensi.</li></ul><h3><i class='fa-solid fa-chart-pie'></i> Visualisasi Data</h3><ul><li>Gunakan menu <b>Insert > Charts</b> untuk menyajikan data mentah menjadi bentuk <i>Column Chart</i>, <i>Line Chart</i> (Tren waktu), atau <i>Pie Chart</i> (Persentase).</li></ul>"
+      "levels": [
+        {
+          "id": 1,
+          "name": "Fundamental Spreadsheet",
+          "desc": "Sel, Baris, Kolom & Aritmatika Dasar.",
+          "material": "<h3>Tingkat Dasar (Basic Excel)</h3><ul><li><b>Kolom (Column):</b> Deret Vertikal (A, B, C). <b>Baris (Row):</b> Deret Horizontal (1, 2, 3).</li><li><b>Sel (Cell):</b> Titik temu kolom dan baris (Contoh: B5).</li><li><b>Aritmatika Dasar:</b> Penjumlahan (+), Pengurangan (-), Perkalian (*), dan Pembagian (/). Semua rumus Excel WAJIB diawali dengan tanda sama dengan (=).</li></ul>",
+          "quizBank": [
+            { "question": "Semua rumus atau fungsi dalam Excel wajib diawali dengan tanda...", "options": ["+", "@", "=", "#"], "answer": 2 },
+            { "question": "Pertemuan antara kolom C dan baris ke 5 disebut sebagai sel...", "options": ["5C", "C5", "Row C", "Col 5"], "answer": 1 },
+            { "question": "Simbol matematika yang digunakan untuk operasi perkalian di Excel adalah...", "options": ["x", "*", "/", "+"], "answer": 1 },
+            { "question": "Kolom dalam Excel direpresentasikan menggunakan...", "options": ["Angka (1,2,3...)", "Huruf (A,B,C...)", "Simbol", "Warna"], "answer": 1 },
+            { "question": "Lembar kerja dalam aplikasi Excel disebut...", "options": ["Document", "Presentation", "Worksheet", "Database"], "answer": 2 }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Fungsi Statistik & Logika",
+          "desc": "SUM, AVERAGE, MIN/MAX & Logika IF.",
+          "material": "<h3>Tingkat Menengah (Intermediate)</h3><ul><li><b>=SUM(range)</b>: Menjumlahkan deret angka.</li><li><b>=AVERAGE(range)</b>: Menghitung rata-rata.</li><li><b>=MAX / MIN</b>: Mencari nilai terbesar / terkecil.</li><li><b>Fungsi Logika IF:</b> Menentukan hasil berdasarkan kondisi. Format: <code>=IF(kondisi, \"Jika Benar\", \"Jika Salah\")</code>. <br>Contoh: <code>=IF(A1>=75, \"Lulus\", \"Gagal\")</code></li></ul>",
+          "quizBank": [
+            { "question": "Fungsi yang digunakan untuk menjumlahkan sekumpulan angka adalah...", "options": ["=COUNT()", "=AVERAGE()", "=SUM()", "=MAX()"], "answer": 2 },
+            { "question": "Jika ingin mencari nilai rata-rata ujian siswa, kita menggunakan fungsi...", "options": ["=MEAN()", "=AVERAGE()", "=MEDIAN()", "=SUM()"], "answer": 1 },
+            { "question": "Penulisan fungsi logika IF yang benar untuk kelulusan nilai KKM 75 adalah...", "options": ["=IF(A1>75, Lulus, Gagal)", "=IF(A1>=75, \"Lulus\", \"Gagal\")", "=IF(A1=75, Lulus)", "=IF(Lulus, Gagal, 75)"], "answer": 1 },
+            { "question": "Fungsi =MAX(A1:A10) digunakan untuk...", "options": ["Mencari rata-rata", "Mencari nilai tertinggi", "Mencari nilai terendah", "Menghitung jumlah data"], "answer": 1 },
+            { "question": "Untuk menghitung banyaknya data numerik (angka) dalam rentang sel, digunakan fungsi...", "options": ["=SUM()", "=COUNT()", "=TOTAL()", "=IF()"], "answer": 1 }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Analisis Data Industri",
+          "desc": "VLOOKUP, Referensi Absolut & Pivot Table.",
+          "material": "<h3>Tingkat Lanjut (Advanced/Industry)</h3><ul><li><b>VLOOKUP:</b> Rumus industri untuk menarik/mencari data dari tabel referensi (Master Data) secara Vertikal. Format: <code>=VLOOKUP(Sel_Acuan, Tabel_Referensi, Kolom_ke, 0)</code></li><li><b>Referensi Absolut ($):</b> Mengunci posisi sel agar tidak bergeser saat rumus di-copy (di-drag) ke bawah. Contoh: <code>$A$1</code>. (Tekan F4).</li><li><b>Pivot Table:</b> Alat tingkat lanjut untuk merangkum dan menganalisa ribuan baris data transaksi hanya dengan drag-and-drop, tanpa rumus manual.</li></ul>",
+          "quizBank": [
+            { "question": "Simbol yang digunakan untuk mengunci sel (Absolute Reference) di Excel agar tidak bergeser saat ditarik adalah...", "options": ["%", "&", "$", "#"], "answer": 2 },
+            { "question": "Fungsi yang paling sering digunakan admin perusahaan untuk mencari data dari tabel referensi master secara vertikal adalah...", "options": ["=HLOOKUP", "=VLOOKUP", "=SEARCH", "=MATCH"], "answer": 1 },
+            { "question": "Tombol keyboard (shortcut) untuk mengunci sel dengan cepat (memberikan simbol $) adalah...", "options": ["F1", "F2", "F4", "F12"], "answer": 2 },
+            { "question": "Fitur analisis data powerful di Excel yang merangkum ribuan data tanpa harus menulis rumus manual adalah...", "options": ["Conditional Formatting", "Pivot Table", "Chart", "Data Validation"], "answer": 1 },
+            { "question": "Dalam rumus =VLOOKUP(A2, Data!A1:D100, 2, 0), angka '0' di belakang berfungsi sebagai...", "options": ["Pencarian data perkiraan (Approximate Match)", "Pencarian data pasti (Exact Match/False)", "Nomor baris", "Nomor kolom"], "answer": 1 }
+          ]
+        }
+      ]
     },
     {
       "id": "powerpoint",
-      "level": "LEVEL 3",
-      "title": "PowerPoint Mastery",
+      "name": "PowerPoint",
       "icon": "fa-solid fa-file-powerpoint",
       "color": "#d24726",
-      "glow": "rgba(210, 71, 38, 0.5)",
-      "desc": "Desain Komunikasi Visual & Presentasi",
-      "content": "Microsoft PowerPoint adalah perangkat lunak presentasi yang memadukan teks, grafis, multimedia, dan animasi untuk komunikasi visual yang efektif.<br><br><h3><i class='fa-solid fa-desktop'></i> Arsitektur Presentasi</h3><ul><li><b>Slide Layouts:</b> Pola tata letak baku seperti <i>Title Slide</i>, <i>Title and Content</i>, dan <i>Two Content</i>.</li><li><b>Slide Master:</b> Fitur manajemen tingkat lanjut untuk mengunci desain latar belakang, logo, dan font agar konsisten di seluruh slide. Menghemat waktu desain hingga 80%.</li></ul><h3><i class='fa-solid fa-film'></i> Dinamika Visual (Animasi & Transisi)</h3><ul><li><b>Transitions (Transisi):</b> Efek pergerakan saat perpindahan <u>dari satu slide ke slide lainnya</u> (Contoh: Fade, Wipe, Morph).</li><li><b>Animations (Animasi):</b> Efek pergerakan pada <u>objek/teks tertentu di dalam satu slide</u>. Terbagi menjadi 4 kategori:<br>1. <i>Entrance</i> (Efek Masuk)<br>2. <i>Emphasis</i> (Efek Penekanan/Perhatian)<br>3. <i>Exit</i> (Efek Keluar)<br>4. <i>Motion Paths</i> (Bergerak mengikuti jalur kustom).</li></ul><h3><i class='fa-solid fa-bolt'></i> Mode Eksekusi (Slide Show)</h3><ul><li><span class='highlight'>F5</span> : Mengeksekusi presentasi layar penuh dari Slide pertama.</li><li><span class='highlight'>Shift + F5</span> : Mengeksekusi presentasi dari Slide yang sedang aktif/dibuka.</li><li><span class='highlight'>Tombol B / W</span> : Saat presentasi berjalan, tekan <b>B</b> (Black) untuk menggelapkan layar sementara, atau <b>W</b> (White) untuk memutihkan layar agar audiens fokus pada pembicara.</li></ul>"
+      "levels": [
+        {
+          "id": 1,
+          "name": "Desain Slide & Layout Dasar",
+          "desc": "Pola tata letak presentasi efektif.",
+          "material": "<h3>Tingkat Dasar (Basic)</h3><ul><li><b>New Slide & Layout:</b> Memilih pola halaman yang tepat, seperti <i>Title Slide</i> (Halaman Judul), atau <i>Title and Content</i> (Untuk daftar poin).</li><li><b>Design Themes:</b> Menerapkan template desain warna profesional dengan 1 klik (Tab Design).</li><li><b>Tampilan Presentasi:</b> Shortcut utama meluncurkan layar penuh (Slide Show) dari halaman pertama adalah <b>F5</b>.</li></ul>",
+          "quizBank": [
+            { "question": "Tombol shortcut keyboard untuk menjalankan presentasi (Slide Show) dari slide PERTAMA adalah...", "options": ["F1", "F5", "Shift + F5", "Esc"], "answer": 1 },
+            { "question": "Layout slide yang biasanya digunakan untuk halaman pertama presentasi adalah...", "options": ["Blank", "Title Slide", "Two Content", "Picture with Caption"], "answer": 1 },
+            { "question": "Tab menu yang digunakan untuk mengubah tema template warna presentasi secara keseluruhan adalah...", "options": ["Home", "Insert", "Design", "Animations"], "answer": 2 },
+            { "question": "Untuk mengakhiri tampilan Slide Show dan kembali ke area kerja, kita menekan tombol...", "options": ["Enter", "Spacebar", "Esc", "Backspace"], "answer": 2 },
+            { "question": "Tombol shortcut untuk menjalankan presentasi dimulai dari slide yang sedang aktif / dibuka saat ini adalah...", "options": ["F5", "Shift + F5", "Ctrl + P", "Alt + F4"], "answer": 1 }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Dinamika Animasi & Transisi",
+          "desc": "Menghidupkan objek dan perpindahan slide.",
+          "material": "<h3>Tingkat Menengah (Intermediate)</h3><ul><li><b>Transitions (Transisi):</b> Efek pergerakan perpindahan antarahalaman slide. (Contoh: Fade, Morph, Wipe).</li><li><b>Animations (Animasi):</b> Efek pada teks/gambar <b>di dalam</b> satu slide. Terbagi menjadi: <i>Entrance</i> (Masuk layar), <i>Emphasis</i> (Bergetar/Berkedip menarik perhatian), dan <i>Exit</i> (Keluar layar).</li><li><b>Multimedia:</b> Memasukkan Video dan Audio ke dalam presentasi untuk interaktivitas maksimal.</li></ul>",
+          "quizBank": [
+            { "question": "Efek visual yang muncul saat berpindah dari SATU SLIDE ke SLIDE LAINNYA disebut...", "options": ["Animations", "Transitions", "Design", "Slide Master"], "answer": 1 },
+            { "question": "Animasi jenis 'Entrance' (berwarna hijau) memiliki fungsi untuk...", "options": ["Membuat objek menghilang", "Membawa objek masuk ke dalam layar slide", "Mengubah warna objek di tempat", "Memindahkan objek dari slide 1 ke slide 2"], "answer": 1 },
+            { "question": "Fitur untuk mengatur durasi (waktu) cepat lambatnya sebuah animasi bergerak disebut...", "options": ["Delay", "Duration", "Trigger", "Effect Options"], "answer": 1 },
+            { "question": "Jika kita ingin teks berputar-putar di tempat untuk menarik perhatian audiens, kita menggunakan animasi kategori...", "options": ["Entrance", "Emphasis (Kuning)", "Exit", "Motion Paths"], "answer": 1 },
+            { "question": "Di menu manakah kita bisa memasukkan file video (MP4) ke dalam presentasi?", "options": ["Design > Video", "Transitions > Media", "Insert > Video", "Animations > Play"], "answer": 2 }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Presentasi Master & Ekspor",
+          "desc": "Slide Master, Export Video, Handouts.",
+          "material": "<h3>Tingkat Lanjut (Advanced/Industry)</h3><ul><li><b>Slide Master (View > Slide Master):</b> Fitur tingkat dewa untuk mengedit struktur kerangka tema. Menyisipkan logo perusahaan di Slide Master akan membuatnya otomatis muncul di SELURUH halaman tanpa bisa tergeser.</li><li><b>Export to Video:</b> PowerPoint bisa mengubah presentasi beserta animasinya menjadi file video (MP4) di menu <i>File > Export > Create a Video</i>.</li><li><b>Presenter View:</b> Mode presentasi profesional dimana audiens melihat layar penuh di proyektor, sementara Anda (pembicara) melihat catatan rahasia dan timer di layar laptop.</li></ul>",
+          "quizBank": [
+            { "question": "Fitur yang sangat tepat digunakan jika ingin meletakkan logo perusahaan agar otomatis muncul di semua slide dan tidak bisa tergeser/terklik secara tak sengaja adalah...", "options": ["Copy Paste biasa", "Slide Master", "Group Objects", "Transitions"], "answer": 1 },
+            { "question": "Mode yang menampilkan catatan pembicara (Notes) dan Timer di layar laptop, namun audiens hanya melihat slide layar penuh di proyektor disebut...", "options": ["Slide Sorter", "Presenter View", "Reading View", "Normal View"], "answer": 1 },
+            { "question": "PowerPoint modern memungkinkan kita mengubah file presentasi (.pptx) menjadi file video (.mp4). Menu yang digunakan adalah...", "options": ["File > Save As > Word", "File > Export > Create a Video", "Insert > Video", "Slide Show > Record"], "answer": 1 },
+            { "question": "Tampilan untuk melihat semua slide presentasi secara bersamaan dalam ukuran kecil (thumbnail) untuk mengatur urutannya disebut...", "options": ["Normal", "Slide Sorter", "Notes Page", "Slide Master"], "answer": 1 },
+            { "question": "Menu yang tepat untuk mengeprint presentasi dalam bentuk 'Handouts' (misal: 6 slide dalam 1 halaman kertas) berada di bagian pengaturan...", "options": ["File > Print > Print Layout", "Design > Page Setup", "View > Handout Master", "Review > Print"], "answer": 0 }
+          ]
+        }
+      ]
     }
   ]
 }
