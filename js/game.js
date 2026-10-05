@@ -1,30 +1,22 @@
 /**
  * GAME ENGINE - EDP (OFFICE MASTER)
- * - Murni Logika Game (Tanpa Konfigurasi Firebase)
- * - Terintegrasi dengan materials.json & questions.json
+ * Murni Logika Game - Membaca JSON via Fetch
  */
 
 const LEVEL_SEQUENCE = [
     "word_1", "word_2", "word_3",
-    "excel_1", "excel_2", "excel_3",
-    "ppt_1", "ppt_2", "ppt_3"
-];
+    "excel_1", "excel_2", "excel_3"
+]; // Tambahkan ppt_1 dst jika modul sudah siap
 
 const MODULE_CONFIG = [
     { id: "word", name: "Microsoft Word", icon: "fa-file-word text-blue-500" },
-    { id: "excel", name: "Microsoft Excel", icon: "fa-file-excel text-emerald-500" },
-    { id: "ppt", name: "Microsoft PPT", icon: "fa-file-powerpoint text-amber-500" }
+    { id: "excel", name: "Microsoft Excel", icon: "fa-file-excel text-emerald-500" }
 ];
 
 let QUESTION_BANK = {}; 
 let materialsData = []; 
 
-let userProgress = JSON.parse(localStorage.getItem("office_progress")) || {
-    "word_1": false, "word_2": false, "word_3": false,
-    "excel_1": false, "excel_2": false, "excel_3": false,
-    "ppt_1": false, "ppt_2": false, "ppt_3": false
-};
-
+let userProgress = JSON.parse(localStorage.getItem("office_progress")) || {};
 let currentModule = "word";
 let currentLevel = 1;
 let lives = 3;
@@ -36,18 +28,19 @@ let gameTimerInterval;
 let timeLeft = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Inisialisasi Profil
     if (!localStorage.getItem("student_name")) {
         userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
-        userClass = prompt("Masukkan Kelas:") || "Kelas Umum";
+        userClass = prompt("Masukkan Kelas (Contoh: X-RPL 1):") || "Kelas Umum";
         localStorage.setItem("student_name", userName);
         localStorage.setItem("student_class", userClass);
     }
     updateProfileUI();
 
-    // Membaca file JSON dari folder data/
+    // 2. Fetch Data JSON menggunakan path relatif ./data/ (Aman untuk GitHub Pages)
     Promise.all([
-        fetch('data/materials.json').then(res => res.json()),
-        fetch('data/questions.json').then(res => res.json())
+        fetch('./data/materials.json').then(res => res.json()),
+        fetch('./data/questions.json').then(res => res.json())
     ])
     .then(([materials, questions]) => {
         materialsData = materials;
@@ -56,13 +49,21 @@ document.addEventListener("DOMContentLoaded", () => {
         renderLevelTree();
         loadMaterial(currentModule, currentLevel);
         checkAllLevelsCompleted();
+        
+        // Pancing pengiriman data awal ke Firebase jika skor sudah ada
+        if (score > 0 && typeof window.syncScoreToDatabase === 'function') {
+            window.syncScoreToDatabase(userName, userClass, score);
+        }
     })
-    .catch(err => console.error("Gagal memuat data JSON:", err));
+    .catch(err => {
+        console.error("Gagal memuat JSON:", err);
+        document.getElementById("mat-content").innerHTML = `<p class="text-rose-500">Gagal memuat data. Jika di lokal, gunakan Live Server.</p>`;
+    });
 });
 
 function isLevelUnlocked(levelId) {
     const index = LEVEL_SEQUENCE.indexOf(levelId);
-    if (index === 0) return true;
+    if (index === 0) return true; // Level pertama selalu terbuka
     return userProgress[LEVEL_SEQUENCE[index - 1]] === true;
 }
 
@@ -70,17 +71,20 @@ function saveProgress() {
     localStorage.setItem("office_progress", JSON.stringify(userProgress));
     localStorage.setItem("student_score", score.toString());
     
-    // ==========================================
-    // DELEGASI KE LEADERBOARD.JS
-    // ==========================================
-    // Fungsi ini harus Anda buat di dalam js/leaderboard.js
-    // game.js tidak peduli bagaimana leaderboard.js mengirimnya ke Firebase
+    // Delegasikan penyimpanan ke Firebase melalui leaderboard.js
     if (typeof window.syncScoreToDatabase === 'function') {
         window.syncScoreToDatabase(userName, userClass, score);
     }
     
     renderLevelTree();
     checkAllLevelsCompleted();
+}
+
+function updateProfileUI() { 
+    if(document.getElementById("player-name")) document.getElementById("player-name").innerText = userName; 
+    if(document.getElementById("player-class")) document.getElementById("player-class").innerText = "Kelas: " + userClass;
+    if(document.getElementById("game-score")) document.getElementById("game-score").innerText = score;
+    if(document.getElementById("lives-count")) document.getElementById("lives-count").innerText = lives;
 }
 
 function renderLevelTree() {
@@ -111,9 +115,11 @@ function renderLevelTree() {
 }
 
 function selectLevel(mod, lvl) {
-    if (!isLevelUnlocked(`${mod}_${lvl}`)) return alert("🔒 Level terkunci!");
+    if (!isLevelUnlocked(`${mod}_${lvl}`)) return alert("🔒 Selesaikan level sebelumnya dulu!");
     currentModule = mod; currentLevel = lvl;
-    renderLevelTree(); loadMaterial(mod, lvl); switchTab('material');
+    renderLevelTree(); 
+    loadMaterial(mod, lvl); 
+    switchTab('material');
 }
 
 function loadMaterial(mod, lvl) {
@@ -123,21 +129,21 @@ function loadMaterial(mod, lvl) {
     if (!contentEl) return;
 
     if (!mat) {
-        contentEl.innerHTML = `<p class="text-slate-400">Materi belum tersedia...</p>`;
+        contentEl.innerHTML = `<p class="text-slate-400 text-sm">Materi untuk level ini belum tersedia di JSON.</p>`;
         return;
     }
 
     document.getElementById("mat-title").innerText = mat.title;
     document.getElementById("mat-module").innerText = `${mat.module} - Level ${mat.level}`;
 
-    let htmlContent = `<div class="space-y-6">`;
+    let htmlContent = `<div class="space-y-4">`;
     if (mat.sections) {
         mat.sections.forEach(sec => {
-            htmlContent += `<div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60"><h4 class="text-md font-bold text-amber-400 mb-3">${sec.heading}</h4><ul class="space-y-2 pl-2">`;
-            sec.points.forEach(pt => htmlContent += `<li class="text-sm text-slate-300 flex items-start gap-2.5"><span>${pt}</span></li>`);
+            htmlContent += `<div class="bg-slate-950 p-4 rounded-xl border border-slate-800"><h4 class="text-md font-bold text-amber-400 mb-2">${sec.heading}</h4><ul class="space-y-1 pl-2">`;
+            sec.points.forEach(pt => htmlContent += `<li class="text-sm text-slate-300 flex items-start gap-2.5"><i class="fa-solid fa-angle-right text-sky-400 mt-1 shrink-0 text-xs"></i><span>${pt}</span></li>`);
             htmlContent += `</ul></div>`;
         });
-    } else htmlContent += `<p class="text-slate-300 text-sm">${mat.content || ''}</p>`;
+    }
     contentEl.innerHTML = htmlContent + `</div>`;
 }
 
@@ -159,10 +165,10 @@ function shuffleArray(array) {
     return shuffled;
 }
 
+// Logika Tampilan & Mekanisme Kuis
 function initGameMechanic() {
     lives = 3; 
-    document.getElementById("lives-count").innerText = lives; 
-    document.getElementById("game-score").innerText = score;
+    updateProfileUI();
     
     const workspace = document.getElementById("game-workspace");
     const questionData = QUESTION_BANK[`${currentModule}_${currentLevel}`];
@@ -176,21 +182,26 @@ function initGameMechanic() {
     clearInterval(gameTimerInterval); 
     startTimer();
 
-    let timerHtml = `<div class="mb-4 flex items-center justify-between bg-slate-900/80 p-3 rounded-lg"><span class="text-slate-300 text-xs">Sisa Waktu:</span><span id="timer-display" class="text-sky-400 font-mono font-bold text-lg">${timeLeft}s</span></div>`;
+    let timerHtml = `<div class="mb-4 flex items-center justify-between bg-slate-950 p-3 rounded-lg border border-slate-800"><span class="text-slate-400 text-xs font-bold">WAKTU:</span><span id="timer-display" class="text-sky-400 font-mono font-bold text-xl">${timeLeft}s</span></div>`;
     
-    if (questionData.type === "quiz" || questionData.type === "matching") {
+    if (questionData.type === "quiz") {
         let optionsHtml = shuffleArray(questionData.options).map((opt, idx) => `
-            <button onclick="handleAnswer(${opt.correct})" class="w-full p-3.5 bg-slate-800 hover:bg-sky-600 border border-slate-700 rounded-xl text-left text-sm text-slate-200 transition">
-                <span class="mr-2 font-bold bg-slate-700 px-2 py-1 rounded">${String.fromCharCode(65 + idx)}</span> ${opt.text}
+            <button onclick="handleAnswer(${opt.correct})" class="w-full p-4 bg-slate-800 hover:bg-sky-600 border border-slate-700 rounded-xl text-left text-sm text-slate-200 transition-all font-medium">
+                <span class="mr-3 font-bold bg-slate-950 px-2.5 py-1 rounded text-sky-400">${String.fromCharCode(65 + idx)}</span> ${opt.text}
             </button>
         `).join('');
-        workspace.innerHTML = timerHtml + `<p class="font-bold mb-4 text-white">${questionData.question}</p><div class="space-y-2">${optionsHtml}</div>`;
+        workspace.innerHTML = timerHtml + `<p class="font-bold text-lg mb-5 text-white leading-relaxed">${questionData.question}</p><div class="space-y-3">${optionsHtml}</div>`;
     } else if (questionData.type === "simulator") {
+        window.checkSimulatorAnswer = function() {
+            const userInput = document.getElementById("sim-input").value.trim().toLowerCase();
+            const isCorrect = questionData.targetAnswers.some(ans => ans.toLowerCase() === userInput);
+            handleAnswer(isCorrect);
+        };
         workspace.innerHTML = timerHtml + `
-            <p class="font-bold mb-2 text-white">${questionData.question}</p>
-            <p class="text-xs text-amber-400 mb-4">Petunjuk: ${questionData.hint}</p>
-            <input type="text" id="sim-input" placeholder="Ketik jawaban..." class="w-full p-3 bg-slate-950 border border-slate-700 text-sky-400 font-mono text-sm mb-3">
-            <button onclick="checkSimulatorAnswer()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold">Submit</button>
+            <p class="font-bold text-lg mb-2 text-white leading-relaxed">${questionData.question}</p>
+            <p class="text-xs text-amber-400 mb-5 bg-amber-500/10 inline-block px-3 py-1 rounded-full"><i class="fa-solid fa-lightbulb"></i> Petunjuk: ${questionData.hint}</p>
+            <input type="text" id="sim-input" placeholder="Ketik jawaban di sini..." class="w-full p-4 bg-slate-950 border border-sky-500/50 rounded-xl text-sky-400 font-mono text-base mb-4 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+            <button onclick="checkSimulatorAnswer()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg">Kirim Jawaban</button>
         `;
     }
 }
@@ -207,27 +218,24 @@ function startTimer() {
 function handleAnswer(isCorrect, isTimeout = false) {
     clearInterval(gameTimerInterval);
     if (isCorrect) {
-        score += (50 + Math.floor(timeLeft * 0.5));
-        saveProgress(); // Ini akan memicu sinkronisasi database
-        alert("🎉 Jawaban Benar!");
+        // Hitung skor berdasarkan sisa waktu
+        const points = 50 + Math.floor(timeLeft * 1.5);
+        score += points;
+        saveProgress();
+        updateProfileUI();
+        alert(`🎉 Jawaban Benar! (+${points} Poin)`);
         completeCurrentLevel();
     } else {
         lives--; 
-        document.getElementById("lives-count").innerText = lives;
+        updateProfileUI();
         if (lives <= 0) { 
-            alert("❌ Nyawa habis! Kembali ke materi."); 
+            alert("❌ Nyawa habis! Kamu harus membaca materi kembali."); 
             switchTab('material'); 
         } else { 
             alert(isTimeout ? "⏰ Waktu Habis!" : "❌ Salah! Coba lagi."); 
             initGameMechanic(); 
         }
     }
-}
-
-function checkSimulatorAnswer() {
-    const userInput = document.getElementById("sim-input").value.trim().toLowerCase();
-    const q = QUESTION_BANK[`${currentModule}_${currentLevel}`];
-    handleAnswer(q.targetAnswers.some(ans => ans.toLowerCase() === userInput));
 }
 
 function completeCurrentLevel() {
@@ -238,11 +246,8 @@ function completeCurrentLevel() {
     if (idx < LEVEL_SEQUENCE.length - 1) {
         selectLevel(...LEVEL_SEQUENCE[idx + 1].split("_"));
     } else {
-        alert("🏆 TAMAT! Kamu menyelesaikan semua materi.");
-        // Panggil fungsi modal leaderboard yang ada di leaderboard.js
-        if (typeof window.showLeaderboardModal === 'function') {
-            window.showLeaderboardModal();
-        }
+        alert("🏆 LUAR BIASA! Kamu menyelesaikan semua modul saat ini!");
+        switchTab('material');
     }
 }
 
@@ -252,15 +257,12 @@ function checkAllLevelsCompleted() {
     const done = LEVEL_SEQUENCE.every(k => userProgress[k]);
     btn.disabled = !done;
     
-    // Delegasikan logika cetak ke certificate.js
     if (done) {
+        btn.classList.remove("cursor-not-allowed", "opacity-50", "bg-amber-600/50");
+        btn.classList.add("bg-amber-500", "text-black", "shadow-lg", "animate-bounce");
         btn.onclick = () => {
             if (typeof window.generateCertificate === 'function') window.generateCertificate(userName, userClass, score);
+            else alert("Sertifikat sedang diproses (Pastikan certificate.js aktif)!");
         };
     }
-}
-
-function updateProfileUI() { 
-    if(document.getElementById("player-name")) document.getElementById("player-name").innerText = userName; 
-    if(document.getElementById("player-class")) document.getElementById("player-class").innerText = "Kelas: " + userClass;
 }
