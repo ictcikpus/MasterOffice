@@ -3,40 +3,720 @@
     "id": 1,
     "module": "MS Word",
     "level": 1,
-    "question": "Aplikasi Microsoft Office yang khusus digunakan untuk mengolah kata dan dokumen adalah...",
-    "options": ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Access"],
+    "question": "Perangkat lunak dari Microsoft Office yang dirancang khusus untuk mengolah kata dan pembuatan dokumen adalah...",
+    "options": ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Publisher"],
     "answer": 0
   },
   {
     "id": 2,
     "module": "MS Word",
-    "level": 2,
-    "question": "Fitur pada MS Word yang digunakan untuk membuat surat masal dengan daftar penerima berbeda adalah...",
-    "options": ["Table of Contents", "Mail Merge", "Track Changes", "Page Break"],
+    "level": 1,
+    "question": "Kombinasi tombol keyboard untuk menyimpan (Save) dokumen yang sedang aktif adalah...",
+    "options": ["Ctrl + P", "Ctrl + S", "Ctrl + O", "Ctrl + N"],
     "answer": 1
   },
   {
     "id": 3,
-    "module": "MS Excel",
+    "module": "MS Word",
     "level": 1,
-    "question": "Setiap penulisan rumus atau formula pada Microsoft Excel harus diawali dengan simbol...",
-    "options": ["+", "@", "=", "#"],
-    "answer": 2
+    "question": "Pilihan perataan teks 'Justify' digunakan untuk mengatur paragraf menjadi...",
+    "options": ["Rata Kiri", "Rata Tengah", "Rata Kanan", "Rata Kiri dan Kanan"],
+    "answer": 3
   },
   {
     "id": 4,
-    "module": "MS Excel",
-    "level": 2,
-    "question": "Fungsi Excel yang digunakan untuk membaca data dari tabel secara vertikal adalah...",
-    "options": ["HLOOKUP", "VLOOKUP", "INDEX", "MATCH"],
+    "module": "MS Word",
+    "level": 1,
+    "question": "Shortcut keyboard yang digunakan untuk menyalin (Copy) teks atau objek yang dipilih adalah...",
+    "options": ["Ctrl + X", "Ctrl + C", "Ctrl + V", "Ctrl + Z"],
     "answer": 1
   },
   {
     "id": 5,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Untuk menempelkan (Paste) hasil salinan teks, kombinasi tombol yang digunakan adalah...",
+    "options": ["Ctrl + V", "Ctrl + P", "Ctrl + A", "Ctrl + Y"],
+    "answer": 0
+  },
+  {
+    "id": 6,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Ikon berhuruf 'B' tebal (Bold) pada tab Home berfungsi untuk...",
+    "options": ["Mencetak miring teks", "Menebalkan teks", "Memberi garis bawah teks", "Mengubah warna teks"],
+    "answer": 1
+  },
+  {
+    "id": 7,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Fitur yang digunakan untuk membuat teks menjadi miring (Italic) adalah shortcut...",
+    "options": ["Ctrl + B", "Ctrl + U", "Ctrl + I", "Ctrl + K"],
+    "answer": 2
+  },
+  {
+    "id": 8,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Untuk memilih seluruh isi teks dalam suatu dokumen (Select All), tombol shortcut yang ditekan adalah...",
+    "options": ["Ctrl + S", "Ctrl + A", "Ctrl + Shift + A", "Ctrl + F"],
+    "answer": 1
+  },
+  {
+    "id": 9,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Pengaturan posisi kertas berdiri tegak pada MS Word disebut...",
+    "options": ["Landscape", "Portrait", "Margin", "Columns"],
+    "answer": 1
+  },
+  {
+    "id": 10,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Tab Ribbon tempat ditemukannya perintah untuk menyisipkan Tabel, Gambar, dan Shapes adalah...",
+    "options": ["Home", "Insert", "Page Layout", "References"],
+    "answer": 1
+  },
+  {
+    "id": 11,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Fitur pada MS Word yang digunakan untuk membuat surat massal dengan data penerima berbeda secara otomatis adalah...",
+    "options": ["Table of Contents", "Mail Merge", "Track Changes", "Cross-reference"],
+    "answer": 1
+  },
+  {
+    "id": 12,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Jarak antara tepi kertas dengan batas penulisan dokumen dinamakan...",
+    "options": ["Orientation", "Margin", "Indentation", "Spacing"],
+    "answer": 1
+  },
+  {
+    "id": 13,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Fitur yang berfungsi untuk membuat Daftar Isi otomatis pada dokumen MS Word adalah...",
+    "options": ["Mail Merge", "Table of Contents", "Bibliography", "Index"],
+    "answer": 1
+  },
+  {
+    "id": 14,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Kombinasi tombol keyboard untuk mengubah huruf kecil menjadi huruf kapital (Change Case) secara cepat adalah...",
+    "options": ["Shift + F3", "Ctrl + F3", "Alt + F3", "Ctrl + Shift + C"],
+    "answer": 0
+  },
+  {
+    "id": 15,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Catatan kaki yang terletak di bagian paling bawah halaman dokumen disebut...",
+    "options": ["Header", "Footer", "Footnote", "Endnote"],
+    "answer": 2
+  },
+  {
+    "id": 16,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Fitur untuk menyisipkan teks atau gambar transparan di latar belakang halaman sebagai tanda air disebut...",
+    "options": ["Page Color", "Watermark", "Page Border", "Background Fill"],
+    "answer": 1
+  },
+  {
+    "id": 17,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Garis pembatas halaman atau bingkai pada Microsoft Word diatur melalui fitur...",
+    "options": ["Page Color", "Page Borders", "Margins", "Paragraph Border"],
+    "answer": 1
+  },
+  {
+    "id": 18,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Fitur yang digunakan untuk mencari kata dalam dokumen kemudian menggantinya secara masal dinamakan...",
+    "options": ["Find & Replace", "Track Changes", "Spell Check", "Word Count"],
+    "answer": 0
+  },
+  {
+    "id": 19,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Shortcut keyboard untuk memanggil fungsi Find & Replace secara langsung adalah...",
+    "options": ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"],
+    "answer": 1
+  },
+  {
+    "id": 20,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Huruf pertama berukuran besar yang mencakup beberapa baris dalam sebuah paragraf dinamakan...",
+    "options": ["WordArt", "Drop Cap", "Subscript", "Superscript"],
+    "answer": 1
+  },
+  {
+    "id": 21,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Fitur yang berfungsi memantau dan merekam seluruh revisi atau perubahan yang dilakukan pada dokumen adalah...",
+    "options": ["Compare", "Track Changes", "Restrict Editing", "Protect Document"],
+    "answer": 1
+  },
+  {
+    "id": 22,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Untuk memisahkan nomor halaman dengan format berbeda (misal: Romawi dan Angka) dalam satu dokumen digunakan...",
+    "options": ["Page Break", "Section Break", "Line Break", "Column Break"],
+    "answer": 1
+  },
+  {
+    "id": 23,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Shortcut untuk menyisipkan pemisah halaman (Page Break) secara instan adalah...",
+    "options": ["Shift + Enter", "Ctrl + Enter", "Alt + Enter", "Ctrl + Shift + Enter"],
+    "answer": 1
+  },
+  {
+    "id": 24,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Pengaturan format angka berpangkat ke atas seperti $X^2$ menggunakan fitur...",
+    "options": ["Subscript", "Superscript", "Strikethrough", "Small Caps"],
+    "answer": 1
+  },
+  {
+    "id": 25,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Pengaturan format angka seperti $H_2O$ menggunakan fitur...",
+    "options": ["Subscript", "Superscript", "Text Effects", "Change Case"],
+    "answer": 0
+  },
+  {
+    "id": 26,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Fitur penggabungan dua dokumen Word untuk melihat perbedaan revisi antar file dinamakan...",
+    "options": ["Combine", "Compare", "Track Changes", "Source Control"],
+    "answer": 1
+  },
+  {
+    "id": 27,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Style bawaan Word yang wajib diterapkan pada judul bab agar dapat terbaca otomatis oleh Table of Contents adalah...",
+    "options": ["Title Style", "Heading 1", "Subtitle", "Normal"],
+    "answer": 1
+  },
+  {
+    "id": 28,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Untuk mengunci dokumen agar tidak dapat diubah oleh orang lain tanpa kata sandi digunakan fitur...",
+    "options": ["Track Changes", "Restrict Editing", "Document Inspector", "Encrypt with Password"],
+    "answer": 1
+  },
+  {
+    "id": 29,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Fungsi dari fitur 'Cross-reference' pada lembar kerja Microsoft Word adalah...",
+    "options": ["Menghubungkan teks ke alamat web", "Merujuk ke bagian/elemen tertentu dalam dokumen yang sama", "Membuat kutipan otomatis", "Mengirim dokumen via email"],
+    "answer": 1
+  },
+  {
+    "id": 30,
+    "module": "MS Word",
+    "level": 3,
+    "question": "Shortcut keyboard untuk menyisipkan catatan kaki (Footnote) pada lokasi kuror saat ini adalah...",
+    "options": ["Alt + Ctrl + F", "Alt + Shift + F", "Ctrl + Shift + F", "Alt + F"],
+    "answer": 0
+  },
+  {
+    "id": 31,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Aplikasi Microsoft Office yang khusus dirancang untuk mengolah data berupa angka dan lembar kerja (Spreadsheet) adalah...",
+    "options": ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Access"],
+    "answer": 1
+  },
+  {
+    "id": 32,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Setiap penulisan rumus atau fungsi kalkulasi pada Microsoft Excel HARUS selalu diawali dengan tanda...",
+    "options": ["+", "@", "=", "#"],
+    "answer": 2
+  },
+  {
+    "id": 33,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Pertemuan antara kolom (Column) dan baris (Row) pada Microsoft Excel dinamakan...",
+    "options": ["Worksheet", "Workbook", "Cell", "Range"],
+    "answer": 2
+  },
+  {
+    "id": 34,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Kumpulan dari beberapa Cell yang dipilih pada lembar kerja Excel dinamakan...",
+    "options": ["Column", "Row", "Range", "Grid"],
+    "answer": 2
+  },
+  {
+    "id": 35,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Rumus dasar Excel yang digunakan untuk menjumlahkan sekumpulan data angka adalah...",
+    "options": ["AVERAGE", "COUNT", "SUM", "MAX"],
+    "answer": 2
+  },
+  {
+    "id": 36,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Rumus Excel yang digunakan untuk menghitung nilai rata-rata dari sekelompok data adalah...",
+    "options": ["SUM", "AVERAGE", "MIN", "COUNTA"],
+    "answer": 1
+  },
+  {
+    "id": 37,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Fungsi Excel untuk mencari angka terbesar / tertinggi dalam rentang sel adalah...",
+    "options": ["MIN", "MAX", "HIGH", "LARGE"],
+    "answer": 1
+  },
+  {
+    "id": 38,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Fungsi Excel untuk mencari angka terkecil / terendah dalam rentang sel adalah...",
+    "options": ["MIN", "MAX", "LOW", "SMALL"],
+    "answer": 0
+  },
+  {
+    "id": 39,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Ekstensi standar untuk file lembar kerja Microsoft Excel versi modern adalah...",
+    "options": [".docx", ".xlsx", ".pptx", ".pdf"],
+    "answer": 1
+  },
+  {
+    "id": 40,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Fungsi gabungan 'Merge & Center' pada tab Home Excel berfungsi untuk...",
+    "options": ["Menggabungkan beberapa sel dan meratakan teks di tengah", "Menghapus sel yang kosong", "Membuat garis tabel", "Mengurutkan data dari A ke Z"],
+    "answer": 0
+  },
+  {
+    "id": 41,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi logika pada Excel yang digunakan untuk menguji kondisi BENAR atau SALAH adalah...",
+    "options": ["VLOOKUP", "IF", "COUNTIF", "CONCATENATE"],
+    "answer": 1
+  },
+  {
+    "id": 42,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel yang digunakan untuk menghitung banyaknya sel yang hanya berisi data angka adalah...",
+    "options": ["COUNT", "COUNTA", "COUNTBLANK", "COUNTIF"],
+    "answer": 0
+  },
+  {
+    "id": 43,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel yang digunakan untuk menghitung banyaknya sel yang tidak kosong (angka maupun teks) adalah...",
+    "options": ["COUNT", "COUNTA", "COUNTBLANK", "SUMIF"],
+    "answer": 1
+  },
+  {
+    "id": 44,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel untuk membaca data dari suatu tabel acuan secara vertikal berdasarkan kata kunci adalah...",
+    "options": ["HLOOKUP", "VLOOKUP", "INDEX", "MATCH"],
+    "answer": 1
+  },
+  {
+    "id": 45,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel untuk membaca data dari suatu tabel acuan secara horizontal adalah...",
+    "options": ["VLOOKUP", "HLOOKUP", "LOOKUP", "XLOOKUP"],
+    "answer": 1
+  },
+  {
+    "id": 46,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Simbol absolut yang digunakan untuk mengunci posisi baris atau kolom agar tidak bergeser saat rumus disalin adalah...",
+    "options": ["%", "&", "$", "#"],
+    "answer": 2
+  },
+  {
+    "id": 47,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Tombol shortcut cepat untuk menambahkan simbol absolut ($) pada referensi sel di formula bar adalah...",
+    "options": ["F2", "F4", "F8", "F9"],
+    "answer": 1
+  },
+  {
+    "id": 48,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel `=LEFT(\"OFFICE\", 3)` akan menghasilkan keluaran...",
+    "options": ["OFF", "ICE", "FIC", "OFFICE"],
+    "answer": 0
+  },
+  {
+    "id": 49,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fitur Excel yang digunakan untuk memberi warna sel secara otomatis berdasarkan aturan atau kriteria tertentu dinamakan...",
+    "options": ["AutoFormat", "Conditional Formatting", "Cell Styles", "Data Validation"],
+    "answer": 1
+  },
+  {
+    "id": 50,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi `=COUNTIF(A1:A10, \">50\")` digunakan untuk...",
+    "options": ["Menjumlahkan sel berdefinisi > 50", "Menghitung banyaknya sel pada rentang A1:A10 yang bernilai lebih dari 50", "Mencari rata-rata angka > 50", "Menampilkan angka 50 dalam sel"],
+    "answer": 1
+  },
+  {
+    "id": 51,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fitur interaktif Excel yang digunakan untuk merangkum, menganalisis, serta mengeksplorasi data besar dinamakan...",
+    "options": ["PivotTable", "Data Validation", "Consolidate", "What-If Analysis"],
+    "answer": 0
+  },
+  {
+    "id": 52,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fungsi `=SUMIF(A1:A10, \"Lulus\", B1:B10)` berfungsi untuk...",
+    "options": ["Menghitung sel berisi teks Lulus", "Menjumlahkan nilai pada B1:B10 jika sel di A1:A10 berstatus Lulus", "Mencari nilai rata-rata siswa lulus", "Menampilkan data siswa yang lulus"],
+    "answer": 1
+  },
+  {
+    "id": 53,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fitur yang digunakan untuk membatasi jenis data atau rentang angka yang boleh diinputkan ke dalam suatu sel dinamakan...",
+    "options": ["Conditional Formatting", "Data Validation", "Protect Sheet", "Goal Seek"],
+    "answer": 1
+  },
+  {
+    "id": 54,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fungsi kombinasi pengganti VLOOKUP yang fleksibel untuk mencari data di sebelah kiri maupun kanan tabel adalah...",
+    "options": ["INDEX & MATCH", "SUMIF & COUNTIF", "IF & AND", "CONCATENATE"],
+    "answer": 0
+  },
+  {
+    "id": 55,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Pesan error `#DIV/0!` pada sel Microsoft Excel menandakan bahwa...",
+    "options": ["Nama fungsi salah ketik", "Nilai sel tidak ditemukan", "Terjadi pembagian angka dengan nilai nol (0)", "Lebar kolom tidak mencukupi"],
+    "answer": 2
+  },
+  {
+    "id": 56,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Pesan error `####` pada sel Microsoft Excel umumnya terjadi karena...",
+    "options": ["Rumus salah ketik", "Ukuran lebar kolom terlalu sempit untuk menampilkan angka", "Sel terkunci oleh password", "Data terhapus"],
+    "answer": 1
+  },
+  {
+    "id": 57,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Shortcut keyboard untuk menyisipkan penjumlahan otomatis (`=SUM()`) secara cepat adalah...",
+    "options": ["Alt + =", "Ctrl + =", "Shift + =", "Ctrl + Shift + S"],
+    "answer": 0
+  },
+  {
+    "id": 58,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fitur 'Freeze Panes' pada lembar kerja Excel berguna untuk...",
+    "options": ["Mengunci sel dari perubahan", "Menjaga baris/kolom tertentu tetap terlihat saat lembar kerja digulir", "Menghapus sel kosong", "Membekukan formula"],
+    "answer": 1
+  },
+  {
+    "id": 59,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fungsi `=CONCATENATE(A1, \" \", B1)` atau operator `&` berfungsi untuk...",
+    "options": ["Menjumlahkan angka A1 dan B1", "Menggabungkan dua atau lebih string teks menjadi satu", "Mencari kata di A1 dan B1", "Memisahkan kata"],
+    "answer": 1
+  },
+  {
+    "id": 60,
+    "module": "MS Excel",
+    "level": 3,
+    "question": "Fitur yang digunakan untuk mencari input tertentu agar mencapai target hasil rumus yang diinginkan adalah...",
+    "options": ["Data Validation", "Goal Seek", "Scenario Manager", "PivotChart"],
+    "answer": 1
+  },
+  {
+    "id": 61,
     "module": "MS PowerPoint",
     "level": 1,
-    "question": "Tombol shortcut pada keyboard untuk memulai Slide Show dari slide pertama adalah...",
+    "question": "Aplikasi Microsoft Office yang digunakan khusus untuk membuat media presentasi interaktif adalah...",
+    "options": ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Publisher"],
+    "answer": 2
+  },
+  {
+    "id": 62,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Lembar kerja tunggal berupa halaman dalam aplikasi Microsoft PowerPoint dinamakan...",
+    "options": ["Page", "Sheet", "Slide", "Document"],
+    "answer": 2
+  },
+  {
+    "id": 63,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Tombol keyboard yang digunakan untuk memulai peragaan tayangan (Slide Show) dari slide pertama adalah...",
     "options": ["F1", "F5", "Shift + F5", "Esc"],
     "answer": 1
+  },
+  {
+    "id": 64,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Tombol keyboard yang digunakan untuk menghentikan peragaan Slide Show adalah...",
+    "options": ["Space", "Enter", "Esc", "Backspace"],
+    "answer": 2
+  },
+  {
+    "id": 65,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Shortcut keyboard untuk menambah slide baru (New Slide) adalah...",
+    "options": ["Ctrl + N", "Ctrl + M", "Ctrl + S", "Ctrl + D"],
+    "answer": 1
+  },
+  {
+    "id": 66,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Shortcut keyboard untuk menduplikasi (Duplicate) slide yang sedang terpilih adalah...",
+    "options": ["Ctrl + C", "Ctrl + D", "Ctrl + J", "Ctrl + Shift + D"],
+    "answer": 1
+  },
+  {
+    "id": 67,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Efek visual saat berpindah dari satu slide ke slide berikutnya dinamakan...",
+    "options": ["Animation", "Transition", "Custom Show", "Trigger"],
+    "answer": 1
+  },
+  {
+    "id": 68,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Efek gerak khusus pada objek tertentu (seperti teks atau gambar) dalam satu slide dinamakan...",
+    "options": ["Transition", "Animation", "Design", "Layout"],
+    "answer": 1
+  },
+  {
+    "id": 69,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Ekstensi standar untuk file presentasi Microsoft PowerPoint versi modern adalah...",
+    "options": [".docx", ".xlsx", ".pptx", ".pdf"],
+    "answer": 2
+  },
+  {
+    "id": 70,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Tata letak susunan elemen teks dan objek pada slide dipengagurui melalui menu...",
+    "options": ["Slide Layout", "Slide Master", "Slide Sorter", "Design Ideas"],
+    "answer": 0
+  },
+  {
+    "id": 71,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Shortcut keyboard untuk memulai peragaan Slide Show LANGSUNG dari slide yang sedang aktif adalah...",
+    "options": ["F5", "Shift + F5", "Ctrl + F5", "Alt + F5"],
+    "answer": 1
+  },
+  {
+    "id": 72,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Tampilan kisi-kisi kecil yang menampilkan seluruh slide untuk memudahkan mengatur urutan slide dinamakan...",
+    "options": ["Normal View", "Slide Sorter View", "Reading View", "Notes Page"],
+    "answer": 1
+  },
+  {
+    "id": 73,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Fitur induk slide yang digunakan untuk mengatur tema, tata letak, dan font secara serentak ke seluruh slide adalah...",
+    "options": ["Slide Master", "Template Manager", "Design Theme", "Global Layout"],
+    "answer": 0
+  },
+  {
+    "id": 74,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Fitur yang digunakan untuk membuat tautan interaktif dari slide ke slide lain atau dokumen external adalah...",
+    "options": ["Action Button", "Hyperlink (Ctrl+K)", "Bookmark", "Cross-reference"],
+    "answer": 1
+  },
+  {
+    "id": 75,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Ikon visual berbentuk grafik diagram interaktif untuk menyajikan informasi struktural dinamakan...",
+    "options": ["WordArt", "SmartArt", "Shapes", "Chart"],
+    "answer": 1
+  },
+  {
+    "id": 76,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Kategori animasi yang digunakan saat objek PERTAMA KALI MUNCUL di layar adalah...",
+    "options": ["Entrance", "Emphasis", "Exit", "Motion Paths"],
+    "answer": 0
+  },
+  {
+    "id": 77,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Kategori animasi yang digunakan untuk MENGELUARKAN objek dari layar adalah...",
+    "options": ["Entrance", "Emphasis", "Exit", "Motion Paths"],
+    "answer": 2
+  },
+  {
+    "id": 78,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Fitur yang memungkinkan presenter melihat catatan rahasia dan slide berikutnya saat laptop terhubung ke proyektor dinamakan...",
+    "options": ["Presenter View", "Dual Screen", "Reading View", "Slide Show Mode"],
+    "answer": 0
+  },
+  {
+    "id": 79,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Saat Slide Show berjalan, menekan tombol 'B' pada keyboard akan berfungsi untuk...",
+    "options": ["Mengubah layar menjadi Hitam (Black)", "Mengubah layar menjadi Putih (White)", "Menebalkan teks", "Kembali ke slide pertama"],
+    "answer": 0
+  },
+  {
+    "id": 80,
+    "module": "MS PowerPoint",
+    "level": 2,
+    "question": "Saat Slide Show berjalan, menekan tombol 'W' pada keyboard akan berfungsi untuk...",
+    "options": ["Mengubah layar menjadi Hitam", "Mengubah layar menjadi Putih (White)", "Menutup aplikasi", "Menampilkan penanda tulisan"],
+    "answer": 1
+  },
+  {
+    "id": 81,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur pada animasi PowerPoint yang memicu jalannya animasi berdasarkan klik pada objek tertentu dinamakan...",
+    "options": ["Trigger", "Animation Pane", "Motion Path", "Delay"],
+    "answer": 0
+  },
+  {
+    "id": 82,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Panel samping yang menampilkan urutan, durasi, dan pengaturan seluruh animasi dalam slide dinamakan...",
+    "options": ["Selection Pane", "Animation Pane", "Format Shape", "Slide Master"],
+    "answer": 1
+  },
+  {
+    "id": 83,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Format ekspor PowerPoint yang langsung menjalankan tayangan slide otomatis tanpa membuka antarmuka editor adalah...",
+    "options": [".pptx", ".ppsx", ".pdf", ".potx"],
+    "answer": 1
+  },
+  {
+    "id": 84,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur 'Record Slide Show' pada PowerPoint memungkinkan pengguna untuk...",
+    "options": ["Merekam narasi suara, kamera, dan penunjuk laser langsung dalam slide", "Mengunduh file dari internet", "Membuat animasi 3D", "Menghapus latar belakang foto"],
+    "answer": 0
+  },
+  {
+    "id": 85,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur 'Morph' pada menu Transition berfungsi untuk...",
+    "options": ["Menghapus slide", "Membuat pergerakan transformasi objek yang mulus antar dua slide serupa", "Mengubah warna font", "Menambahkan lagu latar"],
+    "answer": 1
+  },
+  {
+    "id": 86,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur yang digunakan untuk merekam aktivitas layar komputer langsung ke dalam slide PowerPoint adalah...",
+    "options": ["Screen Recording", "Screenshot", "Media Export", "CamStudio"],
+    "answer": 0
+  },
+  {
+    "id": 87,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Untuk menyimpan file presentasi menjadi format file video bergerak digunakan format...",
+    "options": [".mp4", ".docx", ".xlsx", ".txt"],
+    "answer": 0
+  },
+  {
+    "id": 88,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur 'Custom Slide Show' digunakan untuk...",
+    "options": ["Memilih dan menampilkan urutan slide tertentu saja sesuai kebutuhan audiens", "Mengubah warna tema", "Mengunci file", "Membuat grafik baru"],
+    "answer": 0
+  },
+  {
+    "id": 89,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Alat pembantu pada PowerPoint yang digunakan untuk menyelaraskan (Align) beberapa objek agar rapi simetris dinamakan...",
+    "options": ["Align & Distribute", "Group Objects", "Merge Shapes", "Gridlines"],
+    "answer": 0
+  },
+  {
+    "id": 90,
+    "module": "MS PowerPoint",
+    "level": 3,
+    "question": "Fitur 'Merge Shapes' (seperti Union, Combine, Fragment) berfungsi untuk...",
+    "options": ["Menggabungkan atau memotong bentuk bentuk vektor menjadi bentuk baru", "Menggabungkan dokumen Word", "Memotong gambar foto", "Mengecilkan ukuran file"],
+    "answer": 0
   }
 ]
