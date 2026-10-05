@@ -1,13 +1,9 @@
 /**
- * GAME ENGINE - EDP (OFFICE MASTER) v4.0
- * Terintegrasi dengan struktur folder terpisah:
- * - Membaca data JSON dinamis (materials.json & questions.json)
- * - Mendelegasikan tugas ke leaderboard.js & certificate.js
+ * GAME ENGINE - EDP (OFFICE MASTER)
+ * - Murni Logika Game (Tanpa Konfigurasi Firebase)
+ * - Terintegrasi dengan materials.json & questions.json
  */
 
-// ==========================================
-// 1. CONSTANTS & GLOBAL STATE
-// ==========================================
 const LEVEL_SEQUENCE = [
     "word_1", "word_2", "word_3",
     "excel_1", "excel_2", "excel_3",
@@ -20,7 +16,6 @@ const MODULE_CONFIG = [
     { id: "ppt", name: "Microsoft PPT", icon: "fa-file-powerpoint text-amber-500" }
 ];
 
-// Data akan diisi dari JSON saat inisialisasi
 let QUESTION_BANK = {}; 
 let materialsData = []; 
 
@@ -40,20 +35,16 @@ let userClass = localStorage.getItem("student_class") || "Kelas Umum";
 let gameTimerInterval;
 let timeLeft = 0;
 
-// ==========================================
-// 2. INITIALIZATION & DATA FETCHING
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Cek Profil
     if (!localStorage.getItem("student_name")) {
         userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
-        userClass = prompt("Masukkan Kelas (Contoh: X-RPL 1):") || "Kelas Umum";
+        userClass = prompt("Masukkan Kelas:") || "Kelas Umum";
         localStorage.setItem("student_name", userName);
         localStorage.setItem("student_class", userClass);
     }
     updateProfileUI();
 
-    // 2. Fetch Data secara Paralel (Materi & Soal)
+    // Membaca file JSON dari folder data/
     Promise.all([
         fetch('data/materials.json').then(res => res.json()),
         fetch('data/questions.json').then(res => res.json())
@@ -66,16 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMaterial(currentModule, currentLevel);
         checkAllLevelsCompleted();
     })
-    .catch(err => {
-        console.error("Gagal memuat data JSON:", err);
-        const workspace = document.getElementById("game-workspace");
-        if (workspace) workspace.innerHTML = "<p class='text-red-500'>Gagal memuat data soal/materi. Pastikan server lokal berjalan.</p>";
-    });
+    .catch(err => console.error("Gagal memuat data JSON:", err));
 });
 
-// ==========================================
-// 3. LOGIKA UNLOCKING & NAVIGATION
-// ==========================================
 function isLevelUnlocked(levelId) {
     const index = LEVEL_SEQUENCE.indexOf(levelId);
     if (index === 0) return true;
@@ -86,9 +70,13 @@ function saveProgress() {
     localStorage.setItem("office_progress", JSON.stringify(userProgress));
     localStorage.setItem("student_score", score.toString());
     
-    // Panggil fungsi global dari leaderboard.js (jika ada) untuk sync ke Firebase
-    if (typeof window.syncScoreToFirebase === 'function') {
-        window.syncScoreToFirebase(userName, userClass, score);
+    // ==========================================
+    // DELEGASI KE LEADERBOARD.JS
+    // ==========================================
+    // Fungsi ini harus Anda buat di dalam js/leaderboard.js
+    // game.js tidak peduli bagaimana leaderboard.js mengirimnya ke Firebase
+    if (typeof window.syncScoreToDatabase === 'function') {
+        window.syncScoreToDatabase(userName, userClass, score);
     }
     
     renderLevelTree();
@@ -128,9 +116,6 @@ function selectLevel(mod, lvl) {
     renderLevelTree(); loadMaterial(mod, lvl); switchTab('material');
 }
 
-// ==========================================
-// 4. MATERI & TABS
-// ==========================================
 function loadMaterial(mod, lvl) {
     const key = `${mod}_${lvl}`;
     const mat = materialsData.find(m => m.id === key);
@@ -148,8 +133,8 @@ function loadMaterial(mod, lvl) {
     let htmlContent = `<div class="space-y-6">`;
     if (mat.sections) {
         mat.sections.forEach(sec => {
-            htmlContent += `<div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60"><h4 class="text-md font-bold text-amber-400 mb-3"><i class="fa-solid fa-bookmark text-sky-400"></i> ${sec.heading}</h4><ul class="space-y-2 pl-2">`;
-            sec.points.forEach(pt => htmlContent += `<li class="text-sm text-slate-300 flex items-start gap-2.5"><i class="fa-solid fa-circle-check text-emerald-400 mt-1 shrink-0"></i><span>${pt}</span></li>`);
+            htmlContent += `<div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60"><h4 class="text-md font-bold text-amber-400 mb-3">${sec.heading}</h4><ul class="space-y-2 pl-2">`;
+            sec.points.forEach(pt => htmlContent += `<li class="text-sm text-slate-300 flex items-start gap-2.5"><span>${pt}</span></li>`);
             htmlContent += `</ul></div>`;
         });
     } else htmlContent += `<p class="text-slate-300 text-sm">${mat.content || ''}</p>`;
@@ -162,11 +147,9 @@ function switchTab(tab) {
     clearInterval(gameTimerInterval);
     if (tab === 'game') initGameMechanic();
 }
+
 function startChallengeFromMaterial() { switchTab('game'); }
 
-// ==========================================
-// 5. GAME MECHANIC & TIMER
-// ==========================================
 function shuffleArray(array) {
     let shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -225,7 +208,7 @@ function handleAnswer(isCorrect, isTimeout = false) {
     clearInterval(gameTimerInterval);
     if (isCorrect) {
         score += (50 + Math.floor(timeLeft * 0.5));
-        saveProgress();
+        saveProgress(); // Ini akan memicu sinkronisasi database
         alert("🎉 Jawaban Benar!");
         completeCurrentLevel();
     } else {
@@ -256,7 +239,7 @@ function completeCurrentLevel() {
         selectLevel(...LEVEL_SEQUENCE[idx + 1].split("_"));
     } else {
         alert("🏆 TAMAT! Kamu menyelesaikan semua materi.");
-        // Panggil fungsi modal leaderboard jika file leaderboard.js sudah di-load
+        // Panggil fungsi modal leaderboard yang ada di leaderboard.js
         if (typeof window.showLeaderboardModal === 'function') {
             window.showLeaderboardModal();
         }
@@ -269,27 +252,15 @@ function checkAllLevelsCompleted() {
     const done = LEVEL_SEQUENCE.every(k => userProgress[k]);
     btn.disabled = !done;
     
-    // Sambungkan ke fungsi di certificate.js
+    // Delegasikan logika cetak ke certificate.js
     if (done) {
         btn.onclick = () => {
             if (typeof window.generateCertificate === 'function') window.generateCertificate(userName, userClass, score);
-            else alert("Sertifikat dicetak!");
         };
     }
 }
 
-// ==========================================
-// 6. UTILITIES
-// ==========================================
 function updateProfileUI() { 
     if(document.getElementById("player-name")) document.getElementById("player-name").innerText = userName; 
     if(document.getElementById("player-class")) document.getElementById("player-class").innerText = "Kelas: " + userClass;
-}
-
-function resetProgress() {
-    if (confirm("⚠️ Yakin ingin mengulang progress?")) {
-        localStorage.removeItem("office_progress");
-        localStorage.removeItem("student_score");
-        location.reload();
-    }
 }
