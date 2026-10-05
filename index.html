@@ -1,4 +1,4 @@
-<!DOCTYPE1 html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -26,9 +26,9 @@
 
     <main class="max-w-6xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Kolom 1 & 2: Area Permainan & Skor Saya -->
+        <!-- Kolom 1 & 2: Area Permainan & Poin Saya -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Card Profil & Skor Siswa -->
+            <!-- Card Poin Siswa -->
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-sky-400">
                     <i class="fa-solid fa-trophy"></i>
@@ -40,10 +40,10 @@
                 </div>
             </div>
 
-            <!-- Card Area Game (Simulasi Game) -->
+            <!-- Card Simulator Game -->
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center space-y-4">
                 <h3 class="text-lg font-bold text-slate-200">Kuis & Tantangan Interaktif</h3>
-                <p class="text-slate-400 text-sm">Klik tombol di bawah untuk menyelesakan soal/tantangan dan dapatkan poin!</p>
+                <p class="text-slate-400 text-sm">Klik tombol di bawah untuk mencoba menambah poin secara real-time!</p>
                 
                 <div class="py-8 bg-slate-900/50 rounded-xl border border-slate-700/50 flex flex-col items-center justify-center gap-4">
                     <button onclick="addPoints(10)" class="w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-slate-900 font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2">
@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <!-- Kolom 3: Leaderboard 10 Besar -->
+        <!-- Kolom 3: Leaderboard Top 10 -->
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl h-fit">
             <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
                 <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
@@ -67,7 +67,6 @@
 
             <!-- List Top 10 -->
             <div id="leaderboard-list" class="space-y-3">
-                <!-- Item Leaderboard (Diisi secara dinamis oleh JavaScript) -->
                 <div class="text-center text-slate-500 py-6">Memuat peringkat...</div>
             </div>
         </div>
@@ -79,22 +78,23 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        // 1. Konfigurasi Firebase Realtime Database
+        // Konfigurasi Kredensial Firebase Proyek Anda
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAUBlFUM_PwZBeiWL6k8xSgieUppjBWAbs",
+            authDomain: "master-6ed14.firebaseapp.com",
+            databaseURL: "https://master-6ed14-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "master-6ed14",
+            storageBucket: "master-6ed14.firebasestorage.app",
+            messagingSenderId: "198736537876",
+            appId: "1:198736537876:web:dd0dc17a7736abaf21fa01",
+            measurementId: "G-D652JVJNCY"
         };
 
         // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 2. Simulasi Identitas Siswa
+        // Identitas Perangkat / Siswa
         let userId = localStorage.getItem("student_id");
         let userName = localStorage.getItem("student_name");
 
@@ -110,19 +110,18 @@
         let currentScore = 0;
         const userRef = db.ref('leaderboard/' + userId);
 
-        // Listen perubahan poin siswa aktif secara Real-time
+        // Listen perubahan poin pribadi secara Real-time
         userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 currentScore = data.score || 0;
             } else {
-                // Set data awal jika belum ada
                 userRef.set({ name: userName, score: 0 });
             }
             document.getElementById("my-score").innerText = currentScore;
         });
 
-        // 3. Fungsi Menambah Poin saat Permainan Berjalan
+        // Menambah Poin saat tombol diklik
         function addPoints(amount) {
             currentScore += amount;
             userRef.update({
@@ -132,7 +131,7 @@
             });
         }
 
-        // 4. Listen Papan Peringkat 10 Besar (Top 10)
+        // Realtime Listener Papan Peringkat (Top 10)
         const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(10);
 
         leaderboardRef.on('value', (snapshot) => {
@@ -147,7 +146,7 @@
                 });
             });
 
-            // Urutkan dari poin tertinggi ke terendah
+            // Urutkan dari tertinggi ke terendah
             players.reverse();
 
             if (players.length === 0) {
@@ -159,7 +158,6 @@
                 const rank = index + 1;
                 const isCurrentUser = player.id === userId;
 
-                // Style khusus untuk Juara 1, 2, 3
                 let rankBadge = `<span class="w-6 text-center font-bold text-slate-400">${rank}</span>`;
                 if (rank === 1) rankBadge = `<span class="w-6 text-center text-amber-400 font-bold"><i class="fa-solid fa-trophy"></i></span>`;
                 if (rank === 2) rankBadge = `<span class="w-6 text-center text-slate-300 font-bold"><i class="fa-solid fa-medal"></i></span>`;
