@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "module": "MS Word",
+    "level": 1,
+    "question": "Aplikasi Microsoft Office yang khusus digunakan untuk mengolah kata dan dokumen adalah...",
+    "options": ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Access"],
+    "answer": 0
+  },
+  {
+    "id": 2,
+    "module": "MS Word",
+    "level": 2,
+    "question": "Fitur pada MS Word yang digunakan untuk membuat surat masal dengan daftar penerima berbeda adalah...",
+    "options": ["Table of Contents", "Mail Merge", "Track Changes", "Page Break"],
+    "answer": 1
+  },
+  {
+    "id": 3,
+    "module": "MS Excel",
+    "level": 1,
+    "question": "Setiap penulisan rumus atau formula pada Microsoft Excel harus diawali dengan simbol...",
+    "options": ["+", "@", "=", "#"],
+    "answer": 2
+  },
+  {
+    "id": 4,
+    "module": "MS Excel",
+    "level": 2,
+    "question": "Fungsi Excel yang digunakan untuk membaca data dari tabel secara vertikal adalah...",
+    "options": ["HLOOKUP", "VLOOKUP", "INDEX", "MATCH"],
+    "answer": 1
+  },
+  {
+    "id": 5,
+    "module": "MS PowerPoint",
+    "level": 1,
+    "question": "Tombol shortcut pada keyboard untuk memulai Slide Show dari slide pertama adalah...",
+    "options": ["F1", "F5", "Shift + F5", "Esc"],
+    "answer": 1
+  }
+]
