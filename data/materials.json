@@ -1,0 +1,23 @@
+[
+  {
+    "id": "word_1",
+    "module": "MS Word",
+    "level": 1,
+    "title": "Pengenalan UI & Format Dasar",
+    "content": "Microsoft Word adalah aplikasi pengolah kata. Shortcut penting: Ctrl+S (Simpan), Ctrl+C (Salin), Ctrl+V (Tempel), Ctrl+B (Cetak Tebal), Ctrl+I (Cetak Miring), Ctrl+U (Garis Bawah). Orientasi kertas terbagi dua: Portrait (tegak) dan Landscape (mendatar)."
+  },
+  {
+    "id": "excel_2",
+    "module": "MS Excel",
+    "level": 2,
+    "title": "Fungsi Logika & Lookup",
+    "content": "Gunakan VLOOKUP untuk membaca data dari tabel vertikal dan HLOOKUP untuk tabel horizontal. Simbol absolut ($) digunakan untuk mengunci sel agar tidak bergeser saat formula disalin. Shortcut kunci sel adalah tombol F4."
+  },
+  {
+    "id": "ppt_3",
+    "module": "MS PowerPoint",
+    "level": 3,
+    "title": "Animasi Lanjut & Presenter View",
+    "content": "Trigger digunakan untuk memicu animasi berdasarkan klik objek tertentu. Format .ppsx (PowerPoint Show) langsung menjalankan slide tanpa membuka editor. Fitur Morph memberikan transisi transformasi objek secara mulus antar slide."
+  }
+]
