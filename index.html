@@ -3,35 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petualangan Belajar Office</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <title>Office Mastery: Training Simulator</title>
+    <!-- Google Fonts: Montserrat untuk tampilan modern & profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk Icon Profesional -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS Internal -->
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="game-container">
-        <header>
-            <h1 class="bounce-in">🎮 Petualangan Office! 🚀</h1>
-            <p>Pilih pulau materi di bawah ini sebelum melawan monster ujian!</p>
+
+    <div class="simulator-container">
+        <!-- Header Utama -->
+        <header class="top-nav">
+            <div class="logo">
+                <i class="fa-solid fa-server"></i> OFFICE MASTERY <span>v2.0</span>
+            </div>
+            <div class="status">
+                <span class="badge">SYSTEM READY</span>
+            </div>
         </header>
 
-        <!-- Peta Menu Utama -->
-        <div id="main-menu" class="menu-grid">
-            <!-- Tombol digenerate dari JavaScript -->
+        <!-- Dashboard Level Selection -->
+        <div id="dashboard" class="view-section active">
+            <div class="section-header">
+                <h2>PILIH LEVEL MATERI</h2>
+                <p>Pelajari modul di bawah ini sebelum mengakses sistem ujian (Kuis).</p>
+            </div>
+            <div id="level-grid" class="grid-container">
+                <!-- Di-generate otomatis oleh JavaScript -->
+            </div>
         </div>
 
-        <!-- Area Bacaan Materi -->
-        <div id="content-area" class="hidden">
-            <button id="btn-back" class="btn-action btn-back" onmouseenter="playSound('hover')" onclick="goBack()">🔙 Kembali ke Peta</button>
+        <!-- Area Bacaan/Materi -->
+        <div id="reader" class="view-section">
+            <div class="reader-header">
+                <button id="btn-back" class="btn btn-outline" onmouseenter="playSound('hover')" onclick="goBack()">
+                    <i class="fa-solid fa-arrow-left"></i> KEMBALI KE DASHBOARD
+                </button>
+                <div class="level-indicator" id="level-indicator">LEVEL X</div>
+            </div>
             
-            <div id="materi-display" class="materi-card">
-                <h2 id="materi-title">Judul</h2>
-                <div id="materi-text" class="materi-content"></div>
-                <button id="btn-finish" class="btn-action pulse" onmouseenter="playSound('hover')" onclick="finishReading()">🌟 Aku Siap Kuis!</button>
+            <div class="content-panel" id="materi-panel">
+                <div class="materi-title-area">
+                    <i id="materi-icon" class="fa-brands fa-microsoft fa-3x"></i>
+                    <h2 id="materi-title">Judul Materi</h2>
+                </div>
+                <div class="materi-body" id="materi-text">
+                    <!-- Konten dari JSON -->
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button id="btn-finish" class="btn btn-primary glow-effect" onmouseenter="playSound('hover')" onclick="finishReading()">
+                    <i class="fa-solid fa-check-circle"></i> MATERI SELESAI & MULAI KUIS
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Canvas Confetti untuk selebrasi profesional -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
