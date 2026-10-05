@@ -3,45 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Mastery: Training Simulator</title>
-    <!-- Google Fonts: Montserrat untuk tampilan modern & profesional -->
+    <title>Office Mastery: Professional Certification</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome untuk Icon Profesional -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS Internal -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="simulator-container">
-        <!-- Header Utama -->
         <header class="top-nav">
             <div class="logo">
-                <i class="fa-solid fa-server"></i> OFFICE MASTERY <span>v2.0</span>
+                <i class="fa-solid fa-server"></i> OFFICE MASTERY <span>PRO</span>
             </div>
             <div class="status">
-                <span class="badge">SYSTEM READY</span>
+                <span class="badge" id="user-status">PILIH MODUL</span>
             </div>
         </header>
 
-        <!-- Dashboard Level Selection -->
+        <!-- 1. Dashboard Utama (Pilih Modul) -->
         <div id="dashboard" class="view-section active">
             <div class="section-header">
-                <h2>PILIH LEVEL MATERI</h2>
-                <p>Pelajari modul di bawah ini sebelum mengakses sistem ujian (Kuis).</p>
+                <h2>DATABASE PELATIHAN</h2>
+                <p>Pilih modul aplikasi perkantoran untuk memulai sertifikasi.</p>
             </div>
-            <div id="level-grid" class="grid-container">
-                <!-- Di-generate otomatis oleh JavaScript -->
-            </div>
+            <div id="module-grid" class="grid-container"></div>
         </div>
 
-        <!-- Area Bacaan/Materi -->
+        <!-- 2. Menu Level (Pilih Level 1, 2, 3) -->
+        <div id="level-selection" class="view-section">
+            <div class="reader-header">
+                <button class="btn btn-outline" onclick="showDashboard()">
+                    <i class="fa-solid fa-arrow-left"></i> KEMBALI
+                </button>
+                <div class="level-indicator" id="module-title-display">MODUL</div>
+            </div>
+            <div class="section-header">
+                <h2>PILIH LEVEL KESULITAN</h2>
+                <p>Selesaikan dari level dasar hingga standar industri.</p>
+            </div>
+            <div id="level-grid" class="grid-container"></div>
+        </div>
+
+        <!-- 3. Area Materi -->
         <div id="reader" class="view-section">
             <div class="reader-header">
-                <button id="btn-back" class="btn btn-outline" onmouseenter="playSound('hover')" onclick="goBack()">
-                    <i class="fa-solid fa-arrow-left"></i> KEMBALI KE DASHBOARD
+                <button class="btn btn-outline" onclick="goBackToLevels()">
+                    <i class="fa-solid fa-arrow-left"></i> KEMBALI KE LEVEL
                 </button>
-                <div class="level-indicator" id="level-indicator">LEVEL X</div>
+                <div class="level-indicator" id="level-badge">LEVEL X</div>
             </div>
             
             <div class="content-panel" id="materi-panel">
@@ -49,20 +58,40 @@
                     <i id="materi-icon" class="fa-brands fa-microsoft fa-3x"></i>
                     <h2 id="materi-title">Judul Materi</h2>
                 </div>
-                <div class="materi-body" id="materi-text">
-                    <!-- Konten dari JSON -->
-                </div>
+                <div class="materi-body" id="materi-text"></div>
             </div>
 
             <div class="action-footer">
-                <button id="btn-finish" class="btn btn-primary glow-effect" onmouseenter="playSound('hover')" onclick="finishReading()">
-                    <i class="fa-solid fa-check-circle"></i> MATERI SELESAI & MULAI KUIS
+                <button class="btn btn-primary glow-effect" onclick="startQuiz()">
+                    <i class="fa-solid fa-brain"></i> MATERI SELESAI, MULAI UJIAN!
                 </button>
             </div>
         </div>
+
+        <!-- 4. Area Kuis -->
+        <div id="quiz-area" class="view-section">
+            <div class="quiz-header">
+                <div class="quiz-progress">Pertanyaan <span id="current-q-num">1</span> dari <span id="total-q-num">5</span></div>
+                <div class="score-display">Skor Sementara: <span id="live-score">0</span></div>
+            </div>
+            <div class="quiz-panel">
+                <h3 id="question-text">Pertanyaan akan muncul di sini?</h3>
+                <div id="options-container" class="options-grid"></div>
+            </div>
+        </div>
+
+        <!-- 5. Layar Hasil Kuis -->
+        <div id="result-area" class="view-section" style="text-align: center;">
+            <i class="fa-solid fa-trophy fa-5x" style="color: #ffd700; margin-bottom: 20px;"></i>
+            <h2 style="font-size: 2.5rem; margin-bottom: 10px;">UJIAN SELESAI!</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">Skor Akhir Anda:</p>
+            <div id="final-score" style="font-size: 4rem; font-weight: 800; color: #38bdf8; margin-bottom: 40px;">100</div>
+            <button class="btn btn-primary" onclick="goBackToLevels()" style="margin: 0 auto;">
+                <i class="fa-solid fa-check"></i> KEMBALI KE MENU UTAMA
+            </button>
+        </div>
     </div>
 
-    <!-- Canvas Confetti untuk selebrasi profesional -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
