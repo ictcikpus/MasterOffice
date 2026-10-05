@@ -1,53 +1,204 @@
 {
-    "word_1": {
-        "type": "quiz",
-        "time": 30,
-        "question": "Fitur manakah di Microsoft Word yang digunakan untuk membuat daftar isi secara otomatis?",
-        "options": [
-            { "text": "Heading Styles (Style Judul)", "correct": true },
-            { "text": "Page Layout", "correct": false },
-            { "text": "Insert Table", "correct": false }
-        ]
-    },
-    "word_2": {
-        "type": "simulator",
-        "time": 45,
-        "question": "Ketik shortcut keyboard yang digunakan untuk melakukan 'Select All' pada dokumen teks.",
-        "targetAnswers": ["ctrl+a", "ctrl + a"],
-        "hint": "Gunakan kombinasi tombol Ctrl"
-    },
-    "word_3": {
-        "type": "quiz",
-        "time": 30,
-        "question": "Untuk menyimpan dokumen baru dengan nama file yang berbeda, kita menggunakan perintah...",
-        "options": [
-            { "text": "Save As", "correct": true },
-            { "text": "Save", "correct": false },
-            { "text": "Export", "correct": false }
-        ]
-    },
-    "excel_1": {
-        "type": "simulator",
-        "time": 45,
-        "question": "Tuliskan rumus fungsi Excel untuk menjumlahkan data dari sel A1 sampai A5.",
-        "targetAnswers": ["=sum(a1:a5)"],
-        "hint": "Gunakan fungsi SUM"
-    },
-    "excel_2": {
-        "type": "quiz",
-        "time": 30,
-        "question": "Fungsi apa yang digunakan untuk mencari nilai rata-rata dari sekumpulan data di Excel?",
-        "options": [
-            { "text": "AVERAGE", "correct": true },
-            { "text": "MEDIAN", "correct": false },
-            { "text": "SUM", "correct": false }
-        ]
-    },
-    "excel_3": {
-        "type": "simulator",
-        "time": 45,
-        "question": "Tuliskan rumus Excel untuk mencari nilai tertinggi dari sel B1 sampai B10.",
-        "targetAnswers": ["=max(b1:b10)", "=max(b1 : b10)"],
-        "hint": "Gunakan fungsi MAX"
-    }
+    "word_1": [
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Fitur manakah di Microsoft Word yang digunakan untuk membuat daftar isi secara otomatis?",
+            "options": [
+                { "text": "Heading Styles", "correct": true },
+                { "text": "Page Break", "correct": false },
+                { "text": "Insert Table", "correct": false },
+                { "text": "Margins", "correct": false }
+            ]
+        },
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Untuk mengatur jarak antar baris kalimat (line spacing), kita menggunakan menu di tab...",
+            "options": [
+                { "text": "Home (Paragraph)", "correct": true },
+                { "text": "Insert (Header)", "correct": false },
+                { "text": "Layout (Page Setup)", "correct": false },
+                { "text": "View (Zoom)", "correct": false }
+            ]
+        },
+        {
+            "type": "simulator",
+            "time": 40,
+            "question": "Ketik shortcut keyboard untuk membuat teks menjadi tebal (Bold).",
+            "targetAnswers": ["ctrl+b", "ctrl + b"],
+            "hint": "Gunakan tombol Ctrl dan huruf B"
+        }
+    ],
+    "word_2": [
+        {
+            "type": "simulator",
+            "time": 40,
+            "question": "Ketik shortcut keyboard yang digunakan untuk melakukan 'Select All' (Pilih Semua Teks).",
+            "targetAnswers": ["ctrl+a", "ctrl + a"],
+            "hint": "Gunakan kombinasi tombol Ctrl + A"
+        },
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Fitur untuk mengganti kata tertentu di seluruh dokumen secara cepat adalah...",
+            "options": [
+                { "text": "Find and Replace", "correct": true },
+                { "text": "Word Count", "correct": false },
+                { "text": "Spell Check", "correct": false },
+                { "text": "Track Changes", "correct": false }
+            ]
+        },
+        {
+            "type": "simulator",
+            "time": 40,
+            "question": "Ketik shortcut untuk membuka menu Find & Replace di Ms Word.",
+            "targetAnswers": ["ctrl+h", "ctrl + h"],
+            "hint": "Gunakan kombinasi tombol Ctrl + H"
+        }
+    ],
+    "word_3": [
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Fitur Mail Merge pada Microsoft Word sangat berguna untuk membuat...",
+            "options": [
+                { "text": "Surat massal dengan data penerima berbeda", "correct": true },
+                { "text": "Tabel perhitungan angka otomatis", "correct": false },
+                { "text": "Presentasi slide animasi", "correct": false },
+                { "text": "Grafik lingkaran 3D", "correct": false }
+            ]
+        },
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Untuk menyisipkan nomor halaman di bagian bawah dokumen, menu yang dipilih adalah...",
+            "options": [
+                { "text": "Insert -> Page Number -> Bottom of Page", "correct": true },
+                { "text": "Home -> Paragraph -> Numbering", "correct": false },
+                { "text": "Layout -> Breaks -> Page", "correct": false },
+                { "text": "Review -> Word Count", "correct": false }
+            ]
+        }
+    ],
+    "excel_1": [
+        {
+            "type": "simulator",
+            "time": 45,
+            "question": "Tuliskan rumus fungsi Excel untuk menjumlahkan data dari sel A1 sampai A10.",
+            "targetAnswers": ["=sum(a1:a10)", "=sum(a1 : a10)"],
+            "hint": "Gunakan fungsi SUM dengan titik dua"
+        },
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Setiap penulisan rumus atau formula di Microsoft Excel WAJIB diawali dengan karakter...",
+            "options": [
+                { "text": "Sama dengan ( = )", "correct": true },
+                { "text": "Tanda Tambah ( + )", "correct": false },
+                { "text": "Tanda Seru ( ! )", "correct": false },
+                { "text": "Tanda Pagar ( # )", "correct": false }
+            ]
+        },
+        {
+            "type": "simulator",
+            "time": 45,
+            "question": "Tuliskan rumus Excel untuk menghitung rata-rata dari sel B2 sampai B8.",
+            "targetAnswers": ["=average(b2:b8)", "=average(b2 : b8)"],
+            "hint": "Gunakan fungsi AVERAGE"
+        }
+    ],
+    "excel_2": [
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Fungsi logika Excel yang digunakan untuk mengecek kondisi Benar (True) atau Salah (False) adalah...",
+            "options": [
+                { "text": "IF", "correct": true },
+                { "text": "VLOOKUP", "correct": false },
+                { "text": "COUNTIF", "correct": false },
+                { "text": "SUMIF", "correct": false }
+            ]
+        },
+        {
+            "type": "simulator",
+            "time": 45,
+            "question": "Tuliskan rumus Excel untuk mencari nilai tertinggi dari rentang C1 sampai C20.",
+            "targetAnswers": ["=max(c1:c20)", "=max(c1 : c20)"],
+            "hint": "Gunakan fungsi MAX"
+        },
+        {
+            "type": "simulator",
+            "time": 45,
+            "question": "Tuliskan rumus Excel untuk mencari nilai terendah dari rentang D1 sampai D15.",
+            "targetAnswers": ["=min(d1:d15)", "=min(d1 : d15)"],
+            "hint": "Gunakan fungsi MIN"
+        }
+    ],
+    "excel_3": [
+        {
+            "type": "quiz",
+            "time": 35,
+            "question": "Fungsi Excel yang digunakan untuk menghitung JUMLAH SEL yang berisi data angka adalah...",
+            "options": [
+                { "text": "COUNT", "correct": true },
+                { "text": "COUNTA", "correct": false },
+                { "text": "COUNTBLANK", "correct": false },
+                { "text": "SUM", "correct": false }
+            ]
+        },
+        {
+            "type": "quiz",
+            "time": 35,
+            "question": "Fungsi Excel yang digunakan untuk mengambil data secara vertikal dari tabel referensi adalah...",
+            "options": [
+                { "text": "VLOOKUP", "correct": true },
+                { "text": "HLOOKUP", "correct": false },
+                { "text": "INDEX", "correct": false },
+                { "text": "MATCH", "correct": false }
+            ]
+        }
+    ],
+    "ppt_1": [
+        {
+            "type": "simulator",
+            "time": 30,
+            "question": "Ketik shortcut keyboard di PowerPoint untuk memulai slide show dari halaman awal.",
+            "targetAnswers": ["f5"],
+            "hint": "Tombol fungsi di baris paling atas keyboard (F...)"
+        },
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Fitur di PowerPoint yang digunakan untuk memberikan efek gerak saat berpindah dari satu slide ke slide lain adalah...",
+            "options": [
+                { "text": "Transition", "correct": true },
+                { "text": "Animation", "correct": false },
+                { "text": "Slide Master", "correct": false },
+                { "text": "Design Idea", "correct": false }
+            ]
+        }
+    ],
+    "ppt_2": [
+        {
+            "type": "quiz",
+            "time": 30,
+            "question": "Efek animasi yang digunakan untuk mengatur cara objek (teks/gambar) MASUK ke dalam slide adalah...",
+            "options": [
+                { "text": "Entrance Effects", "correct": true },
+                { "text": "Exit Effects", "correct": false },
+                { "text": "Emphasis Effects", "correct": false },
+                { "text": "Motion Paths", "correct": false }
+            ]
+        }
+    ],
+    "ppt_3": [
+        {
+            "type": "simulator",
+            "time": 35,
+            "question": "Ketik shortcut keyboard PowerPoint untuk menambah slide baru (New Slide).",
+            "targetAnswers": ["ctrl+m", "ctrl + m"],
+            "hint": "Kombinasi Ctrl dan huruf M"
+        }
+    ]
 }
