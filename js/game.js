@@ -78,15 +78,55 @@ function selectLevel(mod, lvl) {
 
 function loadMaterial(mod, lvl) {
     const key = `${mod}_${lvl}`;
-    const mat = materialsData.find(m => m.id === key) || {
-        title: `Materi ${mod.toUpperCase()} Level ${lvl}`,
-        module: mod.toUpperCase(),
-        content: "Materi untuk level ini mencakup pemahaman konsep mendasar dan praktik langsung."
-    };
+    const mat = materialsData.find(m => m.id === key);
 
-    document.getElementById("mat-title").innerText = mat.title;
-    document.getElementById("mat-module").innerText = `${mod.toUpperCase()} - Level ${lvl}`;
-    document.getElementById("mat-content").innerText = mat.content;
+    const titleEl = document.getElementById("mat-title");
+    const moduleEl = document.getElementById("mat-module");
+    const contentEl = document.getElementById("mat-content");
+
+    if (!mat) {
+        titleEl.innerText = `Materi ${mod.toUpperCase()} Level ${lvl}`;
+        moduleEl.innerText = `${mod.toUpperCase()} - Level ${lvl}`;
+        contentEl.innerHTML = `<p class="text-slate-400">Materi belum tersedia.</p>`;
+        return;
+    }
+
+    titleEl.innerText = mat.title;
+    moduleEl.innerText = `${mat.module} - Level ${mat.level}`;
+
+    // Format Render HTML untuk Struktur Sections & Points
+    let htmlContent = `<div class="space-y-6">`;
+
+    if (mat.sections && mat.sections.length > 0) {
+        mat.sections.forEach(sec => {
+            htmlContent += `
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
+                    <h4 class="text-md font-bold text-amber-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-bookmark text-xs text-sky-400"></i> ${sec.heading}
+                    </h4>
+                    <ul class="space-y-2 pl-2">
+            `;
+            
+            sec.points.forEach(pt => {
+                htmlContent += `
+                    <li class="text-xs sm:text-sm text-slate-300 flex items-start gap-2.5 leading-relaxed">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-xs mt-1 shrink-0"></i>
+                        <span>${pt}</span>
+                    </li>
+                `;
+            });
+
+            htmlContent += `
+                    </ul>
+                </div>
+            `;
+        });
+    } else {
+        htmlContent += `<p class="text-slate-300 leading-relaxed text-sm">${mat.content}</p>`;
+    }
+
+    htmlContent += `</div>`;
+    contentEl.innerHTML = htmlContent;
 }
 
 function switchTab(tab) {
