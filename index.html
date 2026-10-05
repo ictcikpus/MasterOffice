@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Edukasi & Leaderboard Live</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,72 +13,88 @@
 
     <!-- Header / Navbar -->
     <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 mb-8 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="text-xl md:text-2xl font-bold text-amber-400 flex items-center gap-2">
                 <i class="fa-solid fa-gamepad"></i> Game Edukasi Siswa
             </h1>
             <div id="user-badge" class="bg-slate-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-user text-sky-400"></i>
-                <span id="player-name">Siswa</span>
+                <span id="player-name">Memuat Siswa...</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Kolom 1 & 2: Area Permainan & Poin Saya -->
+        <!-- KOLOM KIRI (2 Kolom): Poin & Area Game Utama -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Card Poin Siswa -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-sky-400">
-                    <i class="fa-solid fa-trophy"></i>
+            
+            <!-- Box Informasi Poin Siswa -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden flex justify-between items-center">
+                <div>
+                    <h2 class="text-slate-400 text-xs md:text-sm font-medium uppercase tracking-wider mb-1">Poin Kamu Saat Ini</h2>
+                    <div class="flex items-baseline gap-2">
+                        <span id="my-score" class="text-4xl md:text-5xl font-extrabold text-sky-400 tracking-tight">0</span>
+                        <span class="text-slate-400 font-semibold">Poin</span>
+                    </div>
                 </div>
-                <h2 class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Poin Kamu Saat Ini</h2>
-                <div class="flex items-baseline gap-2">
-                    <span id="my-score" class="text-5xl font-extrabold text-sky-400 tracking-tight">0</span>
-                    <span class="text-slate-400 font-semibold">Poin</span>
+                <div class="text-sky-400/20 text-6xl">
+                    <i class="fa-solid fa-trophy"></i>
                 </div>
             </div>
 
-            <!-- Card Simulator Game -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl text-center space-y-4">
-                <h3 class="text-lg font-bold text-slate-200">Kuis & Tantangan Interaktif</h3>
-                <p class="text-slate-400 text-sm">Klik tombol di bawah untuk mencoba menambah poin secara real-time!</p>
+            <!-- CARD GAME ASLI ANDA -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-play text-emerald-400"></i> Area Permainan
+                </h3>
                 
-                <div class="py-8 bg-slate-900/50 rounded-xl border border-slate-700/50 flex flex-col items-center justify-center gap-4">
-                    <button onclick="addPoints(10)" class="w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-slate-900 font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-check"></i> Jawab Benar (+10 Poin)
-                    </button>
-                    <button onclick="addPoints(50)" class="w-full max-w-xs bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-slate-900 font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Bonus Kombinasi (+50 Poin)
-                    </button>
+                <!-- ======================================================== -->
+                <!-- TEMPAT GAME ASLI ANDA DIMASUKKAN DI SINI                -->
+                <!-- ======================================================== -->
+                <div id="game-container" class="bg-slate-900 rounded-xl p-4 min-h-[350px] flex flex-col items-center justify-center border border-slate-700 text-center">
+                    
+                    <p class="text-slate-400 mb-4">Tekan tombol di bawah untuk mencoba penambahan poin real-time:</p>
+                    
+                    <!-- Contoh tombol penambah poin dari game Anda -->
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="addPoints(10)" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all">
+                            +10 Poin (Jawab Benar)
+                        </button>
+                        <button onclick="addPoints(50)" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all">
+                            +50 Poin (Bonus)
+                        </button>
+                    </div>
+
                 </div>
+                <!-- ======================================================== -->
+
             </div>
         </div>
 
-        <!-- Kolom 3: Leaderboard Top 10 -->
+        <!-- KOLOM KANAN (1 Kolom): Rangking Top 10 Terbaik -->
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl h-fit">
             <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
                 <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
                     <i class="fa-solid fa-crown text-amber-400"></i> Top 10 Poin Tertinggi
                 </h2>
-                <span class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full font-medium">Live Sync</span>
+                <span class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full font-semibold animate-pulse">Live Sync</span>
             </div>
 
-            <!-- List Top 10 -->
+            <!-- List Top 10 Rangking -->
             <div id="leaderboard-list" class="space-y-3">
-                <div class="text-center text-slate-500 py-6">Memuat peringkat...</div>
+                <div class="text-center text-slate-500 py-6">Memuat data peringkat...</div>
             </div>
         </div>
 
     </main>
 
-    <!-- Firebase SDK (v9 Modul kompatibilitas) -->
+    <!-- Firebase SDK (v9 Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        // Konfigurasi Kredensial Firebase Proyek Anda
+        // Config Firebase Anda
         const firebaseConfig = {
             apiKey: "AIzaSyAUBlFUM_PwZBeiWL6k8xSgieUppjBWAbs",
             authDomain: "master-6ed14.firebaseapp.com",
@@ -94,11 +110,11 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Identitas Perangkat / Siswa
+        // Data Identitas Siswa
         let userId = localStorage.getItem("student_id");
         let userName = localStorage.getItem("student_name");
 
-        if (!userId) {
+        if (!userId || !userName) {
             userId = "user_" + Math.random().toString(36).substr(2, 9);
             userName = prompt("Masukkan Nama Lengkap Anda:") || "Siswa " + Math.floor(Math.random() * 100);
             localStorage.setItem("student_id", userId);
@@ -110,7 +126,7 @@
         let currentScore = 0;
         const userRef = db.ref('leaderboard/' + userId);
 
-        // Listen perubahan poin pribadi secara Real-time
+        // Listen Poin Pribadi Siswa
         userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -121,7 +137,7 @@
             document.getElementById("my-score").innerText = currentScore;
         });
 
-        // Menambah Poin saat tombol diklik
+        // Fungsi Penambah Poin (Panggil fungsi ini saat siswa menang di game Anda)
         function addPoints(amount) {
             currentScore += amount;
             userRef.update({
@@ -131,7 +147,7 @@
             });
         }
 
-        // Realtime Listener Papan Peringkat (Top 10)
+        // Realtime Listener Top 10
         const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(10);
 
         leaderboardRef.on('value', (snapshot) => {
@@ -146,7 +162,7 @@
                 });
             });
 
-            // Urutkan dari tertinggi ke terendah
+            // Urutkan dari poin terbesar ke terkecil
             players.reverse();
 
             if (players.length === 0) {
@@ -165,17 +181,20 @@
 
                 const itemHTML = `
                     <div class="flex items-center justify-between p-3 rounded-xl transition-all ${isCurrentUser ? 'bg-sky-500/20 border border-sky-500/50' : 'bg-slate-700/50'}">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 overflow-hidden">
                             ${rankBadge}
-                            <span class="font-medium text-sm text-slate-200 ${isCurrentUser ? 'font-bold text-sky-400' : ''}">
+                            <span class="font-medium text-sm text-slate-200 truncate ${isCurrentUser ? 'font-bold text-sky-400' : ''}">
                                 ${player.name} ${isCurrentUser ? '(Kamu)' : ''}
                             </span>
                         </div>
-                        <span class="font-extrabold text-amber-400 text-sm">${player.score} <span class="text-xs text-slate-400 font-normal">pt</span></span>
+                        <span class="font-extrabold text-amber-400 text-sm whitespace-nowrap ml-2">${player.score} <span class="text-xs text-slate-400 font-normal">pt</span></span>
                     </div>
                 `;
                 listElement.innerHTML += itemHTML;
             });
+        }, (error) => {
+            console.error("Gagal mengambil data leaderboard:", error);
+            document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat peringkat. Pastikan Rules Firebase sudah di-publish.</p>`;
         });
     </script>
 </body>
