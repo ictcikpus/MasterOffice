@@ -3,87 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Edukasi & Leaderboard Live</title>
-    <!-- Tailwind CSS -->
+    <title>Game Edukasi Interaktif & Leaderboard Live</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-white min-h-screen font-sans">
+<body class="bg-slate-900 text-white min-h-screen font-sans selection:bg-sky-500 selection:text-white">
 
     <!-- Header / Navbar -->
-    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 mb-8 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-bold text-amber-400 flex items-center gap-2">
-                <i class="fa-solid fa-gamepad"></i> Game Edukasi Siswa
-            </h1>
-            <div id="user-badge" class="bg-slate-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-                <i class="fa-solid fa-user text-sky-400"></i>
-                <span id="player-name">Memuat Siswa...</span>
+    <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700 py-4 px-6 mb-8 sticky top-0 z-50 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-500/20 p-2.5 rounded-xl border border-amber-500/30 text-amber-400">
+                    <i class="fa-solid fa-gamepad text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white tracking-wide">Game Edukasi Interaktif</h1>
+                    <p class="text-xs text-slate-400">Tantangan Kuis & Live Leaderboard Multi-Device</p>
+                </div>
+            </div>
+
+            <!-- Profil Siswa -->
+            <div class="flex items-center gap-3 bg-slate-700/60 border border-slate-600/50 px-4 py-2 rounded-xl">
+                <i class="fa-solid fa-user-graduate text-sky-400 text-lg"></i>
+                <div>
+                    <span id="player-name" class="font-semibold text-sm text-sky-300 block">Memuat Siswa...</span>
+                    <button onclick="changeStudentName()" class="text-[10px] text-slate-400 hover:text-amber-400 underline transition-colors">
+                        Ganti Nama Siswa
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- KOLOM KIRI (2 Kolom): Poin & Area Game Utama -->
+        <!-- KOLOM UTAMA: Skor & Game Interaktif -->
         <div class="lg:col-span-2 space-y-6">
             
-            <!-- Box Informasi Poin Siswa -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden flex justify-between items-center">
-                <div>
-                    <h2 class="text-slate-400 text-xs md:text-sm font-medium uppercase tracking-wider mb-1">Poin Kamu Saat Ini</h2>
+            <!-- Card Informasi Skor Siswa -->
+            <div class="bg-gradient-to-r from-slate-800 to-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl relative overflow-hidden flex justify-between items-center">
+                <div class="z-10">
+                    <h2 class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Poin Kamu Saat Ini</h2>
                     <div class="flex items-baseline gap-2">
-                        <span id="my-score" class="text-4xl md:text-5xl font-extrabold text-sky-400 tracking-tight">0</span>
-                        <span class="text-slate-400 font-semibold">Poin</span>
+                        <span id="my-score" class="text-5xl font-extrabold text-sky-400 tracking-tight drop-shadow">0</span>
+                        <span class="text-slate-400 font-medium">Poin</span>
                     </div>
                 </div>
-                <div class="text-sky-400/20 text-6xl">
+                <div class="text-sky-400/10 text-8xl absolute -right-4 -bottom-4 pointer-events-none">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
             </div>
 
-            <!-- CARD GAME ASLI ANDA -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-6 shadow-xl">
-                <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-play text-emerald-400"></i> Area Permainan
-                </h3>
+            <!-- Card Permainan Interaktif (Kuis Matematika Cepat) -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+                    <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-emerald-400"></i> Tantangan Matematika Cepat
+                    </h3>
+                    <span id="streak-badge" class="hidden text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1 rounded-full font-semibold">
+                        🔥 Streak <span id="streak-count">0</span>x
+                    </span>
+                </div>
                 
-                <!-- ======================================================== -->
-                <!-- TEMPAT GAME ASLI ANDA DIMASUKKAN DI SINI                -->
-                <!-- ======================================================== -->
-                <div id="game-container" class="bg-slate-900 rounded-xl p-4 min-h-[350px] flex flex-col items-center justify-center border border-slate-700 text-center">
-                    
-                    <p class="text-slate-400 mb-4">Tekan tombol di bawah untuk mencoba penambahan poin real-time:</p>
-                    
-                    <!-- Contoh tombol penambah poin dari game Anda -->
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <button onclick="addPoints(10)" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all">
-                            +10 Poin (Jawab Benar)
-                        </button>
-                        <button onclick="addPoints(50)" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all">
-                            +50 Poin (Bonus)
-                        </button>
+                <!-- Area Soal & Pilihan Jawab -->
+                <div id="game-container" class="bg-slate-900 rounded-xl p-6 border border-slate-700/60 text-center space-y-6">
+                    <div>
+                        <span class="text-xs uppercase text-slate-400 font-semibold tracking-wider">Selesaikan Soal Ini</span>
+                        <div id="question-text" class="text-4xl font-black text-amber-400 mt-2 tracking-wide">
+                            Memuat soal...
+                        </div>
                     </div>
 
-                </div>
-                <!-- ======================================================== -->
+                    <!-- Feedback Jawaban -->
+                    <div id="feedback" class="min-h-[24px] text-sm font-semibold transition-all"></div>
 
+                    <!-- Tombol Pilihan Jawaban -->
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+                        <!-- Pilihan dibuat otomatis oleh JS -->
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- KOLOM KANAN (1 Kolom): Rangking Top 10 Terbaik -->
+        <!-- KOLOM KANAN: Papan Peringkat Top 10 -->
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl h-fit">
             <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
-                <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-crown text-amber-400"></i> Top 10 Poin Tertinggi
-                </h2>
-                <span class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded-full font-semibold animate-pulse">Live Sync</span>
+                <div>
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-amber-400"></i> Top 10 Poin Tertinggi
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Peringkat siswa secara real-time</p>
+                </div>
+                <span class="flex items-center gap-1.5 text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live
+                </span>
             </div>
 
-            <!-- List Top 10 Rangking -->
-            <div id="leaderboard-list" class="space-y-3">
-                <div class="text-center text-slate-500 py-6">Memuat data peringkat...</div>
+            <!-- Daftar Top 10 -->
+            <div id="leaderboard-list" class="space-y-2.5">
+                <div class="text-center text-slate-500 py-8">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-sky-400"></i>
+                    <p class="text-sm">Memuat data peringkat...</p>
+                </div>
             </div>
         </div>
 
@@ -94,7 +117,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        // Config Firebase Anda
+        // 1. KREDENSIAL FIREBASE LENGKAP
         const firebaseConfig = {
             apiKey: "AIzaSyAUBlFUM_PwZBeiWL6k8xSgieUppjBWAbs",
             authDomain: "master-6ed14.firebaseapp.com",
@@ -106,27 +129,43 @@
             measurementId: "G-D652JVJNCY"
         };
 
-        // Inisialisasi Firebase
+        // Inisialisasi Firebase Realtime Database
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Data Identitas Siswa
+        // 2. MANAJEMEN IDENTITAS SISWA
         let userId = localStorage.getItem("student_id");
         let userName = localStorage.getItem("student_name");
 
-        if (!userId || !userName) {
-            userId = "user_" + Math.random().toString(36).substr(2, 9);
-            userName = prompt("Masukkan Nama Lengkap Anda:") || "Siswa " + Math.floor(Math.random() * 100);
-            localStorage.setItem("student_id", userId);
-            localStorage.setItem("student_name", userName);
+        function initUser() {
+            if (!userId) {
+                userId = "user_" + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem("student_id", userId);
+            }
+            if (!userName) {
+                userName = prompt("Masukkan Nama Lengkap Anda:") || "Siswa " + Math.floor(1000 + Math.random() * 9000);
+                localStorage.setItem("student_name", userName);
+            }
+            document.getElementById("player-name").innerText = userName;
         }
 
-        document.getElementById("player-name").innerText = userName;
+        function changeStudentName() {
+            const newName = prompt("Masukkan nama baru Anda:", userName);
+            if (newName && newName.trim() !== "") {
+                userName = newName.trim();
+                localStorage.setItem("student_name", userName);
+                document.getElementById("player-name").innerText = userName;
+                userRef.update({ name: userName });
+            }
+        }
 
+        initUser();
+
+        // 3. EVENT LISTENERS REAL-TIME POIN PRIBADI
         let currentScore = 0;
+        let streakCount = 0;
         const userRef = db.ref('leaderboard/' + userId);
 
-        // Listen Poin Pribadi Siswa
         userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -137,9 +176,9 @@
             document.getElementById("my-score").innerText = currentScore;
         });
 
-        // Fungsi Penambah Poin (Panggil fungsi ini saat siswa menang di game Anda)
-        function addPoints(amount) {
-            currentScore += amount;
+        // Update skor ke Firebase
+        function updateScoreInFirebase(addedPoints) {
+            currentScore += addedPoints;
             userRef.update({
                 name: userName,
                 score: currentScore,
@@ -147,7 +186,89 @@
             });
         }
 
-        // Realtime Listener Top 10
+        // 4. LOGIKA GAME INTERAKTIF (KUIS MATEMATIKA)
+        let currentAnswer = 0;
+
+        function generateQuestion() {
+            const ops = ['+', '-', '×'];
+            const op = ops[Math.floor(Math.random() * ops.length)];
+            let num1, num2;
+
+            if (op === '+') {
+                num1 = Math.floor(Math.random() * 50) + 1;
+                num2 = Math.floor(Math.random() * 50) + 1;
+                currentAnswer = num1 + num2;
+            } else if (op === '-') {
+                num1 = Math.floor(Math.random() * 50) + 20;
+                num2 = Math.floor(Math.random() * num1);
+                currentAnswer = num1 - num2;
+            } else {
+                num1 = Math.floor(Math.random() * 12) + 2;
+                num2 = Math.floor(Math.random() * 10) + 2;
+                currentAnswer = num1 * num2;
+            }
+
+            document.getElementById("question-text").innerText = `${num1} ${op} ${num2} = ?`;
+
+            // Buat Pilihan Jawaban Acak
+            let choices = [currentAnswer];
+            while (choices.length < 4) {
+                let wrong = currentAnswer + (Math.floor(Math.random() * 10) + 1) * (Math.random() < 0.5 ? 1 : -1);
+                if (wrong >= 0 && !choices.includes(wrong)) choices.push(wrong);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            // Render Tombol Jawaban
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+            choices.forEach(val => {
+                const btn = document.createElement("button");
+                btn.className = "w-full bg-slate-800 hover:bg-sky-600 active:scale-95 border border-slate-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md text-lg";
+                btn.innerText = val;
+                btn.onclick = () => checkAnswer(val);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const feedbackEl = document.getElementById("feedback");
+            const streakBadge = document.getElementById("streak-badge");
+            const streakCountEl = document.getElementById("streak-count");
+
+            if (selected === currentAnswer) {
+                streakCount++;
+                let pointsGained = 10;
+                if (streakCount >= 3) pointsGained += 5; // Bonus streak
+
+                feedbackEl.className = "min-h-[24px] text-sm font-semibold text-emerald-400 animate-bounce";
+                feedbackEl.innerText = `✨ Benar! +${pointsGained} Poin`;
+
+                updateScoreInFirebase(pointsGained);
+            } else {
+                streakCount = 0;
+                feedbackEl.className = "min-h-[24px] text-sm font-semibold text-rose-400";
+                feedbackEl.innerText = `❌ Kurang tepat! Jawaban benar: ${currentAnswer}`;
+            }
+
+            // Update UI Streak
+            if (streakCount > 1) {
+                streakBadge.classList.remove("hidden");
+                streakCountEl.innerText = streakCount;
+            } else {
+                streakBadge.classList.add("hidden");
+            }
+
+            // Lanjut ke soal berikutnya
+            setTimeout(() => {
+                feedbackEl.innerText = "";
+                generateQuestion();
+            }, 1000);
+        }
+
+        // Jalankan game saat halaman dimuat
+        generateQuestion();
+
+        // 5. REAL-TIME LISTENER TOP 10 LEADERBOARD
         const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(10);
 
         leaderboardRef.on('value', (snapshot) => {
@@ -162,11 +283,11 @@
                 });
             });
 
-            // Urutkan dari poin terbesar ke terkecil
+            // Urutkan dari poin tertinggi ke terendah
             players.reverse();
 
             if (players.length === 0) {
-                listElement.innerHTML = `<p class="text-center text-slate-500 py-4">Belum ada data skor.</p>`;
+                listElement.innerHTML = `<p class="text-center text-slate-500 py-6 text-sm">Belum ada data skor siswa.</p>`;
                 return;
             }
 
@@ -174,27 +295,30 @@
                 const rank = index + 1;
                 const isCurrentUser = player.id === userId;
 
-                let rankBadge = `<span class="w-6 text-center font-bold text-slate-400">${rank}</span>`;
-                if (rank === 1) rankBadge = `<span class="w-6 text-center text-amber-400 font-bold"><i class="fa-solid fa-trophy"></i></span>`;
-                if (rank === 2) rankBadge = `<span class="w-6 text-center text-slate-300 font-bold"><i class="fa-solid fa-medal"></i></span>`;
-                if (rank === 3) rankBadge = `<span class="w-6 text-center text-amber-600 font-bold"><i class="fa-solid fa-award"></i></span>`;
+                // Tampilan Peringkat 1, 2, 3 dengan Medali
+                let rankBadge = `<span class="w-7 h-7 flex items-center justify-center font-bold text-sm text-slate-400 bg-slate-800 rounded-lg">${rank}</span>`;
+                if (rank === 1) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-amber-300 bg-amber-500/20 border border-amber-500/40 rounded-lg text-sm font-bold shadow"><i class="fa-solid fa-trophy"></i></span>`;
+                if (rank === 2) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-slate-200 bg-slate-300/20 border border-slate-300/40 rounded-lg text-sm font-bold"><i class="fa-solid fa-medal"></i></span>`;
+                if (rank === 3) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-amber-600 bg-amber-700/20 border border-amber-700/40 rounded-lg text-sm font-bold"><i class="fa-solid fa-award"></i></span>`;
 
                 const itemHTML = `
-                    <div class="flex items-center justify-between p-3 rounded-xl transition-all ${isCurrentUser ? 'bg-sky-500/20 border border-sky-500/50' : 'bg-slate-700/50'}">
+                    <div class="flex items-center justify-between p-3 rounded-xl transition-all ${isCurrentUser ? 'bg-sky-500/20 border border-sky-500/50 shadow-md' : 'bg-slate-900/60 border border-slate-700/50 hover:bg-slate-700/40'}">
                         <div class="flex items-center gap-3 overflow-hidden">
                             ${rankBadge}
-                            <span class="font-medium text-sm text-slate-200 truncate ${isCurrentUser ? 'font-bold text-sky-400' : ''}">
-                                ${player.name} ${isCurrentUser ? '(Kamu)' : ''}
+                            <span class="font-medium text-sm text-slate-200 truncate ${isCurrentUser ? 'font-bold text-sky-300' : ''}">
+                                ${player.name} ${isCurrentUser ? '<span class="text-xs text-sky-400 font-normal">(Kamu)</span>' : ''}
                             </span>
                         </div>
-                        <span class="font-extrabold text-amber-400 text-sm whitespace-nowrap ml-2">${player.score} <span class="text-xs text-slate-400 font-normal">pt</span></span>
+                        <span class="font-extrabold text-amber-400 text-sm whitespace-nowrap ml-2">
+                            ${player.score} <span class="text-[10px] text-slate-400 font-normal">pt</span>
+                        </span>
                     </div>
                 `;
                 listElement.innerHTML += itemHTML;
             });
         }, (error) => {
-            console.error("Gagal mengambil data leaderboard:", error);
-            document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat peringkat. Pastikan Rules Firebase sudah di-publish.</p>`;
+            console.error("Kesalahan Leaderboard:", error);
+            document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat papan peringkat. Pastikan Rules Firebase sudah di-Publish.</p>`;
         });
     </script>
 </body>
