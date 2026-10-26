@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64">
 
-    <!-- ================= MODAL SETUP PROFIL (SISWA) ================= -->
+    <!-- MODAL SETUP PROFIL (SISWA) -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
             <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <!-- ================= SIDEBAR (DESKTOP) ================= -->
+    <!-- SIDEBAR (DESKTOP) -->
     <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50">
         <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-lg">E</div>
@@ -95,32 +95,24 @@
         </div>
     </aside>
 
-    <!-- ================= HEADER (MOBILE) ================= -->
+    <!-- HEADER (MOBILE) -->
     <header class="md:hidden bg-white h-16 flex items-center justify-between px-4 border-b border-slate-200 sticky top-0 z-40">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg">E</div>
             <h1 class="font-bold text-lg text-slate-800">EduMaster</h1>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="toggleFullscreen()" class="text-slate-400 hover:text-slate-800 transition p-2">
-                <i class="fa-solid fa-expand text-lg" id="fs-icon-mobile"></i>
-            </button>
+            <button onclick="toggleFullscreen()" class="text-slate-400 hover:text-slate-800 transition p-2"><i class="fa-solid fa-expand text-lg" id="fs-icon-mobile"></i></button>
             <span id="mobile-player-name" class="text-sm font-semibold text-emerald-600">Siswa</span>
-            <button onclick="openLoginModal()" id="btn-login-guru-mobile" class="text-slate-400 hover:text-slate-800 transition p-2">
-                <i class="fa-solid fa-lock text-lg"></i>
-            </button>
-            <button onclick="logoutGuru()" id="btn-logout-guru-mobile" class="hidden text-rose-500 hover:text-rose-700 transition p-2">
-                <i class="fa-solid fa-power-off text-lg"></i>
-            </button>
+            <button onclick="openLoginModal()" id="btn-login-guru-mobile" class="text-slate-400 hover:text-slate-800 transition p-2"><i class="fa-solid fa-lock text-lg"></i></button>
+            <button onclick="logoutGuru()" id="btn-logout-guru-mobile" class="hidden text-rose-500 hover:text-rose-700 transition p-2"><i class="fa-solid fa-power-off text-lg"></i></button>
         </div>
     </header>
 
-    <!-- ================= MAIN CONTENT AREA ================= -->
+    <!-- MAIN CONTENT AREA -->
     <main class="p-4 md:p-8 max-w-5xl mx-auto w-full">
         
-        <!-- ========================================== -->
-        <!-- KONTEN SISWA -->
-        <!-- ========================================== -->
+        <!-- VIEW 1: HOME -->
         <div id="view-home" class="view hidden">
             <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
                 <div class="relative z-10">
@@ -145,21 +137,32 @@
             </div>
         </div>
 
+        <!-- VIEW 2: MATERI -->
         <div id="view-materi" class="view hidden">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">Materi Belajar</h2>
-            <div id="materi-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Dirender oleh main.js -->
-            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">Modul Pembelajaran</h2>
+            <div id="materi-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- View Materi Detail -->
+        <!-- VIEW 2B: DETAIL MATERI (SLIDE) -->
         <div id="view-materi-detail" class="view hidden">
-            <button onclick="navigate('materi')" class="mb-4 text-sm font-bold text-emerald-600 hover:text-emerald-700"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Daftar Materi</button>
-            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm" id="materi-detail-content">
-                <!-- Dirender oleh main.js -->
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="navigate('materi')" class="text-sm font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg transition"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
+                <div class="text-sm font-bold text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-200">Halaman <span id="slide-current">1</span> / <span id="slide-total">5</span></div>
+            </div>
+            
+            <!-- Kotak Materi -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm min-h-[400px] flex flex-col relative overflow-hidden">
+                <div id="slide-content" class="flex-grow"></div>
+                
+                <!-- Navigasi Slide -->
+                <div class="mt-8 flex justify-between items-center border-t border-slate-100 pt-4">
+                    <button id="btn-prev-slide" onclick="changeSlide(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-bold transition disabled:opacity-50"><i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya</button>
+                    <button id="btn-next-slide" onclick="changeSlide(1)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition shadow-md">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                </div>
             </div>
         </div>
 
+        <!-- VIEW 3: SHORTCUT TRAINER -->
         <div id="view-shortcut" class="view hidden">
             <!-- (Kode Virtual Keyboard sebelumnya, biarkan sama) -->
             <div class="max-w-2xl mx-auto">
@@ -175,7 +178,6 @@
                         <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
                     </div>
                     <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none">
-                        <!-- Keyboard -->
                         <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd></div>
                         <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd></div>
                         <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd></div>
@@ -185,13 +187,13 @@
             </div>
         </div>
 
+        <!-- VIEW 4: TUGAS SISWA -->
         <div id="view-tugas" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Tugas Praktik</h2>
-            <div id="siswa-tugas-list" class="space-y-4">
-                <!-- Dirender oleh main.js -->
-            </div>
+            <div id="siswa-tugas-list" class="space-y-4"></div>
         </div>
 
+        <!-- VIEW 5: ABSENSI -->
         <div id="view-absen" class="view hidden">
             <div class="max-w-md mx-auto">
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
@@ -219,7 +221,7 @@
                 </div>
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-file-pen"></i></div>
-                    <h3 class="text-3xl font-bold text-slate-800">3</h3>
+                    <h3 class="text-3xl font-bold text-slate-800" id="stat-tugas">0</h3>
                     <p class="text-sm text-slate-500">Tugas Aktif</p>
                 </div>
             </div>
@@ -228,10 +230,10 @@
         <div id="view-guru-tugas" class="view hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-slate-800">Kelola Tugas</h2>
-                <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
+                <button onclick="openBuatTugasModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <p class="text-slate-500 text-center py-8">Fitur pembuatan tugas akan diintegrasikan dengan Firebase Firestore/Database.</p>
+            <div id="guru-tugas-list" class="space-y-4">
+                <!-- List tugas untuk dihapus/diedit -->
             </div>
         </div>
 
@@ -258,12 +260,7 @@
                     <table class="w-full text-left border-collapse" id="teacher-attendance-table">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
-                                <th class="p-3 border-b border-slate-200 text-center">No</th>
-                                <th class="p-3 border-b border-slate-200">Nama</th>
-                                <th class="p-3 border-b border-slate-200">Kelas</th>
-                                <th class="p-3 border-b border-slate-200">Hari/Tanggal</th>
-                                <th class="p-3 border-b border-slate-200">Jam</th>
-                                <th class="p-3 border-b border-slate-200 text-center">Aksi</th>
+                                <th class="p-3 border-b border-slate-200 text-center">No</th><th class="p-3 border-b border-slate-200">Nama</th><th class="p-3 border-b border-slate-200">Kelas</th><th class="p-3 border-b border-slate-200">Hari/Tanggal</th><th class="p-3 border-b border-slate-200">Jam</th><th class="p-3 border-b border-slate-200 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="teacher-attendance-list" class="text-sm">
@@ -277,7 +274,6 @@
     </main>
 
     <!-- BOTTOM NAV (MOBILE) -->
-    <!-- Hanya muncul untuk siswa -->
     <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
         <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span></button>
         <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-book-open text-lg mb-1"></i><span class="text-[10px] font-semibold">Materi</span></button>
@@ -286,7 +282,6 @@
         <button onclick="navigate('absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-fingerprint text-lg mb-1"></i><span class="text-[10px] font-semibold">Absen</span></button>
     </nav>
 
-    <!-- BOTTOM NAV GURU (MOBILE) -->
     <nav id="bottom-nav-guru" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
         <button onclick="navigate('guru-dashboard')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-amber-600"><i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-semibold">Dashboard</span></button>
         <button onclick="navigate('guru-tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span></button>
@@ -294,19 +289,60 @@
     </nav>
 
     <!-- MODAL LOGIN GURU -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl transform scale-100 transition-transform">
+    <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
+                <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl"><i class="fa-solid fa-shield-halved"></i></div>
                 <h2 class="text-xl font-bold text-slate-800">Login Guru</h2>
             </div>
             <div class="space-y-4">
-                <input type="password" id="teacher-pass" placeholder="Masukkan Password..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-center tracking-widest">
+                <input type="password" id="teacher-pass" placeholder="Password..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-center tracking-widest">
                 <div class="flex gap-2">
                     <button onclick="closeLoginModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold transition">Batal</button>
                     <button onclick="loginGuru()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-bold transition shadow-lg">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BUAT TUGAS (GURU) -->
+    <div id="modal-buat-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Buat Tugas Baru</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Judul Tugas</label>
+                    <input type="text" id="tugas-title" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Contoh: Praktik Word Dasar">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Instruksi Tugas</label>
+                    <textarea id="tugas-desc" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Jelaskan detail tugas..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tenggat Waktu</label>
+                    <input type="date" id="tugas-deadline" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="closeBuatTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
+                    <button onclick="simpanTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">Simpan Tugas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KUMPUL TUGAS (SISWA) -->
+    <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
+            <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Link Google Drive (PDF/Foto)</label>
+                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="https://drive.google.com/...">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
+                    <button onclick="kirimTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">Kirim</button>
                 </div>
             </div>
         </div>
@@ -319,5 +355,6 @@
     <script src="js/auth.js"></script>
     <script src="js/attendance.js"></script>
     <script src="js/leaderboard.js"></script>
+    <script src="js/tasks.js"></script>
 </body>
 </html>
