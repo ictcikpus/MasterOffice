@@ -18,30 +18,69 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         allTasks.reverse();
         
-        // Tugas Perdana (Jika database kosong)
+        // SUNTIKKAN 3 TUGAS PERDANA (Jika database kosong)
         if (allTasks.length === 0) {
+            // Tugas 1: Word / Docs
             db.ref('tasks').push({
-                title: 'Artikel TIK: Dampak Teknologi Informasi bagi Pelajar',
+                title: 'Tugas 1: Artikel TIK (Word / Google Docs)',
                 desc: `
-                    <p class="mb-3 font-medium text-slate-700">Tugas ini dirancang untuk melatih keterampilan Anda dalam menggunakan <b>Google Docs</b> secara profesional. Ikuti langkah-langkah berikut dengan teliti:</p>
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda membuat dokumen formal dan memformat teks.</p>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <h4 class="font-bold text-slate-800 mb-2">Langkah Pengerjaan:</h4>
+                        <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. Word atau Google Docs):</h4>
                         <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
-                            <li>Buka <a href="https://docs.google.com" target="_blank" class="text-sky-600 underline font-bold">docs.google.com</a> dan login dengan akun Google Anda.</li>
-                            <li>Klik <b>Blank</b> untuk membuat dokumen baru.</li>
-                            <li>Ketik judul: <b>"Dampak Positif dan Negatif Teknologi Informasi bagi Pelajar"</b>. Gunakan format <i>Heading 1</i> untuk judul ini.</li>
+                            <li>Buat dokumen baru. Beri judul: <b>"Dampak Teknologi Informasi bagi Pelajar"</b>.</li>
+                            <li>Gunakan format <b>Heading 1</b> untuk judul tersebut.</li>
                             <li>Tulis artikel minimal <b>3 paragraf</b> (setiap paragraf 4-5 baris).</li>
-                            <li>Sisipkan 1 gambar yang relevan melalui menu <b>Insert > Image > Search the web</b>.</li>
-                            <li>Gunakan <i>Bold</i> untuk kata kunci penting, dan <i>Italic</i> untuk istilah asing.</li>
-                            <li>Ubah pengaturan halaman menjadi <i>Landscape</i> (File > Page setup > Landscape).</li>
-                            <li>Klik tombol <b>Share</b> (Bagikan) di pojok kanan atas.</li>
-                            <li>Di bagian <i>General access</i>, ubah menjadi <b>"Anyone with the link"</b> (Siapa saja yang memiliki link).</li>
-                            <li>Copy link tersebut dan tempelkan pada formulir pengumpulan tugas di bawah.</li>
+                            <li>Sisipkan 1 gambar yang relevan melalui menu Insert > Image.</li>
+                            <li>Gunakan <b>Bold</b> untuk kata kunci penting, dan <i>Italic</i> untuk istilah asing.</li>
+                            <li>Atur halaman menjadi <i>Landscape</i>.</li>
+                            <li>Jika menggunakan Google Docs, klik <b>Share</b> dan ubah ke <b>"Anyone with the link"</b>, lalu salin link-nya. Jika Ms. Word, simpan sebagai PDF lalu unggah.</li>
                         </ol>
                     </div>
-                    <p class="text-xs text-amber-600 font-bold mt-3"><i class="fa-solid fa-circle-info"></i> Anda bisa mengumpulkan dalam bentuk Link Google Docs ATAU Export ke PDF lalu diunggah.</p>
                 `,
-                deadline: '2026-12-31',
+                deadline: '2026-10-31',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            // Tugas 2: Excel / Sheets
+            db.ref('tasks').push({
+                title: 'Tugas 2: Laporan Nilai (Excel / Google Sheets)',
+                desc: `
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda mengolah angka dan menggunakan rumus dasar.</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. Excel atau Google Sheets):</h4>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
+                            <li>Buat tabel dengan kolom: <b>No, Nama Siswa, Nilai Tugas, Nilai Ujian, Nilai Akhir</b>.</li>
+                            <li>Isi data fiktif untuk 5 siswa.</li>
+                            <li>Pada kolom <b>Nilai Akhir</b>, gunakan rumus untuk mencari rata-rata: <code>=(Nilai Tugas + Nilai Ujian) / 2</code> (Gunakan referensi sel, bukan angka manual).</li>
+                            <li>Gunakan fungsi <b>MAX</b> untuk mencari nilai tertinggi dan <b>MIN</b> untuk nilai terendah di bagian bawah tabel.</li>
+                            <li>Beri warna latar (Fill Color) pada judul kolom agar terlihat menarik.</li>
+                            <li>Simpan sebagai PDF dan unggah, ATAU bagikan link Google Sheets Anda (Anyone with the link).</li>
+                        </ol>
+                    </div>
+                `,
+                deadline: '2026-11-15',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            // Tugas 3: PPT / Slides
+            db.ref('tasks').push({
+                title: 'Tugas 3: Presentasi Profil Sekolah (PPT / Google Slides)',
+                desc: `
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda membuat materi presentasi visual yang menarik.</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. PowerPoint atau Google Slides):</h4>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
+                            <li>Buat presentasi minimal <b>4 slide</b> tentang profil sekolah Anda (Sejarah, Visi Misi, Jurusan, Fasilitas).</li>
+                            <li>Slide 1: Judul dan Nama Anda.</li>
+                            <li>Slide 2-4: Materi dengan poin-poin (jangan terlalu banyak teks).</li>
+                            <li>Tambahkan <b>Gambar</b> yang relevan di setiap slide.</li>
+                            <li>Gunakan fitur <b>Transisi (Transition)</b> antar slide (misal: Fade atau Push).</li>
+                            <li>Jika menggunakan Google Slides, bagikan link (Anyone with the link). Jika PPT, simpan sebagai PDF lalu unggah.</li>
+                        </ol>
+                    </div>
+                `,
+                deadline: '2026-11-30',
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             return; 
@@ -139,9 +178,8 @@ function lihatPengumpulan(taskId, title) {
                 if (submissions[taskId]) {
                     found = true;
                     const sub = submissions[taskId];
-                    // Cek apakah link dari Google Docs atau upload Drive
-                    const isDocs = sub.link.includes('docs.google.com');
-                    const icon = isDocs ? 'fa-file-word' : 'fa-file-pdf';
+                    const isDocs = sub.link.includes('docs.google.com') || sub.link.includes('spreadsheets') || sub.link.includes('presentation');
+                    const icon = isDocs ? 'fa-brands fa-google-drive text-blue-600' : 'fa-file-pdf text-rose-600';
                     const color = isDocs ? 'text-blue-600 bg-blue-100' : 'text-rose-600 bg-rose-100';
 
                     container.innerHTML += `
@@ -151,7 +189,7 @@ function lihatPengumpulan(taskId, title) {
                                 <p class="text-xs text-slate-500">${className}</p>
                             </div>
                             <a href="${sub.link}" target="_blank" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${color} hover:opacity-80">
-                                <i class="fa-solid ${icon} text-lg"></i> Buka File Tugas
+                                <i class="${icon} text-lg"></i> Buka File Tugas
                             </a>
                         </div>
                     `;
@@ -189,7 +227,7 @@ function renderSiswaTugas() {
         container.innerHTML = '';
         allTasks.forEach(t => {
             const isSubmitted = mySubmissions[t.id];
-            let statusHtml = isSubmitted 
+            let statusHtml = isSubmited 
                 ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
                 : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
@@ -210,8 +248,8 @@ function renderSiswaTugas() {
 function openKumpulTugasModal(taskId, title) {
     currentSelectedTaskId = taskId;
     document.getElementById('kumpul-tugas-title').innerText = "Tugas: " + title;
-    document.getElementById('link-tugas').value = ""; // Reset link
-    document.getElementById('file-tugas').value = ""; // Reset file
+    document.getElementById('link-tugas').value = "";
+    document.getElementById('file-tugas').value = "";
     document.getElementById('modal-kumpul-tugas').classList.remove('hidden');
 }
 
@@ -219,14 +257,13 @@ function closeKumpulTugasModal() {
     document.getElementById('modal-kumpul-tugas').classList.add('hidden');
 }
 
-// FUNGSI UTAMA: Memproses pengumpulan (Link atau File)
 async function prosesKumpulTugas() {
     const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
     const file = fileInput.files[0];
 
     if (!linkInput && !file) {
-        return alert("Silakan masukkan Link Google Docs ATAU unggah file PDF Anda.");
+        return alert("Silakan masukkan Link Google Docs/Sheets/Slides ATAU unggah file PDF Anda.");
     }
 
     if (linkInput && !linkInput.includes('http')) {
@@ -239,10 +276,8 @@ async function prosesKumpulTugas() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...';
 
     if (linkInput) {
-        // Jika siswa mengisi link
         saveSubmissionToFirebase(linkInput);
     } else if (file) {
-        // Jika siswa upload file (via Apps Script)
         if (file.size > 5 * 1024 * 1024) {
             alert("❌ Ukuran file maksimal 5MB.");
             btn.disabled = false;
