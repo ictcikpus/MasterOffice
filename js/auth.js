@@ -6,13 +6,17 @@
 const TEACHER_PASSWORD = "guru123";
 
 function openLoginModal() {
-    document.getElementById('login-modal').classList.remove('hidden');
-    document.getElementById('teacher-pass').value = "";
-    document.getElementById('teacher-pass').focus();
+    const modal = document.getElementById('login-modal');
+    if(modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('teacher-pass').value = "";
+        document.getElementById('teacher-pass').focus();
+    }
 }
 
 function closeLoginModal() {
-    document.getElementById('login-modal').classList.add('hidden');
+    const modal = document.getElementById('login-modal');
+    if(modal) modal.classList.add('hidden');
 }
 
 function loginGuru() {
@@ -34,17 +38,37 @@ function logoutGuru() {
 document.addEventListener('DOMContentLoaded', () => {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
+    // Ambil elemen-elemen tombol
+    const navGuru = document.getElementById('nav-btn-guru');
+    const btnLoginDesktop = document.getElementById('btn-login-guru');
+    const btnLogoutDesktop = document.getElementById('btn-logout-guru');
+    const btnLoginMobile = document.getElementById('btn-login-guru-mobile');
+    const btnLogoutMobile = document.getElementById('btn-logout-guru-mobile');
+    const bottomNav = document.querySelector('body > nav'); // Menu bawah HP
+    
     if (isTeacher) {
-        // Tampilan untuk Guru
-        document.getElementById('nav-btn-dashboard').classList.remove('hidden');
-        document.getElementById('nav-btn-attendance').classList.add('hidden'); // Guru tidak perlu form absen siswa
-        document.getElementById('btn-login-guru').classList.add('hidden');
-        document.getElementById('btn-logout-guru').classList.remove('hidden');
+        // --- TAMPILAN UNTUK GURU ---
+        if(navGuru) navGuru.classList.remove('hidden'); // Munculkan menu Dashboard Guru di Sidebar
+        
+        if(btnLoginDesktop) btnLoginDesktop.classList.add('hidden');
+        if(btnLogoutDesktop) btnLogoutDesktop.classList.remove('hidden');
+        
+        if(btnLoginMobile) btnLoginMobile.classList.add('hidden');
+        if(btnLogoutMobile) btnLogoutMobile.classList.remove('hidden');
+        
+        // Sembunyikan menu navigasi bawah (karena guru hanya butuh dashboard)
+        if(bottomNav) bottomNav.classList.add('hidden');
+        
     } else {
-        // Tampilan untuk Siswa
-        document.getElementById('nav-btn-dashboard').classList.add('hidden');
-        document.getElementById('nav-btn-attendance').classList.remove('hidden');
-        document.getElementById('btn-login-guru').classList.remove('hidden');
-        document.getElementById('btn-logout-guru').classList.add('hidden');
+        // --- TAMPILAN UNTUK SISWA ---
+        if(navGuru) navGuru.classList.add('hidden');
+        
+        if(btnLoginDesktop) btnLoginDesktop.classList.remove('hidden');
+        if(btnLogoutDesktop) btnLogoutDesktop.classList.add('hidden');
+        
+        if(btnLoginMobile) btnLoginMobile.classList.remove('hidden');
+        if(btnLogoutMobile) btnLogoutMobile.classList.add('hidden');
+        
+        if(bottomNav) bottomNav.classList.remove('hidden');
     }
 });
