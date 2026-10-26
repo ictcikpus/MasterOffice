@@ -2,27 +2,75 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Tambahan viewport-fit=cover agar pas di layar HP modern (poni/notch) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EduMaster - LMS Interaktif</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     
-    <!-- Libraries Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64">
 
-       <!-- ================= SIDEBAR (DESKTOP) ================= -->
+    <!-- ================= MODAL SETUP PROFIL (MUNCUL PERTAMA KALI) ================= -->
+    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800 mb-1">Selamat Datang!</h2>
+            <p class="text-sm text-slate-500 mb-6">Lengkapi profil Anda untuk memulai pembelajaran.</p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap</label>
+                    <input type="text" id="setup-name" placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Kelas</label>
+                    <select id="setup-class" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="" disabled selected>Pilih Kelas</option>
+                        <optgroup label="TEI"><option>X TEI 1</option><option>X TEI 2</option><option>X TEI 3</option><option>X TEI 4</option></optgroup>
+                        <optgroup label="TKR"><option>X TKR 1</option><option>X TKR 2</option><option>X TKR 3</option><option>X TKR 4</option></optgroup>
+                        <optgroup label="TP"><option>X TP 1</option><option>X TP 2</option><option>X TP 3</option><option>X TP 4</option></optgroup>
+                    </select>
+                </div>
+                <button onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
+                    Simpan & Mulai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SIDEBAR (DESKTOP) ================= -->
     <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50">
-        <!-- ... (Kode logo EduMaster biarkan sama) ... -->
-        
-        <!-- Tambahkan Tombol Fullscreen di paling bawah sidebar -->
+        <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-lg">E</div>
+            <h1 class="font-bold text-xl tracking-tight text-slate-800">EduMaster</h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <!-- Menu Desktop yang tadi hilang -->
+            <button onclick="navigate('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-emerald-600 bg-emerald-50">
+                <i class="fa-solid fa-house w-5 text-center"></i> Dashboard
+            </button>
+            <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-book-open w-5 text-center"></i> Materi Belajar
+            </button>
+            <button onclick="navigate('shortcut')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-keyboard w-5 text-center"></i> Latihan Shortcut
+            </button>
+            <button onclick="navigate('tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-file-pen w-5 text-center"></i> Tugas
+            </button>
+            <button onclick="navigate('absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-clipboard-user w-5 text-center"></i> Absensi
+            </button>
+            <button onclick="navigate('guru')" id="nav-btn-guru" class="hidden nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600 hover:bg-amber-50">
+                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i> Dashboard Guru
+            </button>
+        </nav>
         <div class="p-4 border-t border-slate-100 space-y-2">
             <button onclick="toggleFullscreen()" class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm">
                 <i class="fa-solid fa-expand" id="fs-icon-desktop"></i> <span id="fs-text-desktop">Layar Penuh</span>
@@ -43,7 +91,6 @@
             <h1 class="font-bold text-lg text-slate-800">EduMaster</h1>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Tombol Fullscreen Mobile -->
             <button onclick="toggleFullscreen()" class="text-slate-400 hover:text-slate-800 transition p-2">
                 <i class="fa-solid fa-expand text-lg" id="fs-icon-mobile"></i>
             </button>
@@ -118,6 +165,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Word -->
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <div class="h-2 w-full bg-blue-500"></div>
                     <div class="p-5">
@@ -125,9 +173,13 @@
                             <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-word"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Microsoft Word</h3>
                         </div>
-                        <div id="word-levels" class="space-y-2"></div>
+                        <div class="space-y-2">
+                            <button onclick="alert('Materi Word 1 segera hadir!')" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition text-sm font-medium text-slate-700">1. Pengenalan & Dasar</button>
+                            <button onclick="alert('Materi Word 2 segera hadir!')" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition text-sm font-medium text-slate-700">2. Formatting & Layout</button>
+                        </div>
                     </div>
                 </div>
+                <!-- Excel -->
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <div class="h-2 w-full bg-emerald-500"></div>
                     <div class="p-5">
@@ -135,9 +187,12 @@
                             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-excel"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Microsoft Excel</h3>
                         </div>
-                        <div id="excel-levels" class="space-y-2"></div>
+                        <div class="space-y-2">
+                            <button onclick="alert('Materi Excel 1 segera hadir!')" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 transition text-sm font-medium text-slate-700">1. Rumus Dasar</button>
+                        </div>
                     </div>
                 </div>
+                <!-- PPT -->
                 <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <div class="h-2 w-full bg-orange-500"></div>
                     <div class="p-5">
@@ -145,7 +200,9 @@
                             <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-powerpoint"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Microsoft PowerPoint</h3>
                         </div>
-                        <div id="ppt-levels" class="space-y-2"></div>
+                        <div class="space-y-2">
+                            <button onclick="alert('Materi PPT 1 segera hadir!')" class="w-full text-left p-3 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-100 transition text-sm font-medium text-slate-700">1. Slide & Animasi</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -214,7 +271,7 @@
             </div>
         </div>
 
-               <!-- VIEW 5: ABSENSI -->
+        <!-- VIEW 5: ABSENSI -->
         <div id="view-absen" class="view hidden">
             <div class="max-w-md mx-auto">
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
@@ -225,7 +282,7 @@
                     <p class="text-sm text-center text-slate-500 mb-6">Ambil swafoto (selfie) sebagai bukti kehadiran Anda hari ini.</p>
                     
                     <div id="attendance-form-container">
-                        <!-- Konten akan dirender oleh JS -->
+                        <!-- Diisi via attendance.js -->
                     </div>
                 </div>
             </div>
@@ -233,6 +290,7 @@
 
         <!-- VIEW 6: DASHBOARD GURU -->
         <div id="view-guru" class="view hidden">
+            <!-- Diisi via attendance.js (Tabel) -->
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-chalkboard-user text-amber-500 mr-2"></i> Rekap Kehadiran</h2>
@@ -317,7 +375,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     
-    <!-- PENTING: PANGGIL FILE JS DARI SINI, JANGAN TULIS KODENYA DI SINI -->
+    <!-- PENTING: URUTAN SCRIPT HARUS BENAR -->
     <script src="js/firebase-config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
