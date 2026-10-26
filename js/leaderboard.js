@@ -2,19 +2,14 @@
 // LEADERBOARD LOGIC (Firebase Realtime Database)
 // ==========================================
 
-// Buat atau ambil User ID unik untuk pemain dari localStorage
 let userId = localStorage.getItem("office_player_id");
 if (!userId) {
-    // Generate ID acak sederhana jika belum ada
     userId = "player_" + Math.random().toString(36).substr(2, 9);
     localStorage.setItem("office_player_id", userId);
 }
 
-// Fungsi ini akan dipanggil oleh game.js setiap kali pemain mendapat skor
 window.syncScoreToDatabase = function(name, className, newScore) {
-    if (newScore === 0) return; // Jangan simpan jika skor masih 0
-
-    // Menyimpan/mengupdate data ke Firebase berdasarkan userId
+    if (newScore === 0) return; 
     db.ref('leaderboard/' + userId).set({
         name: name,
         class: className,
@@ -25,8 +20,7 @@ window.syncScoreToDatabase = function(name, className, newScore) {
     });
 };
 
-// Listener Realtime untuk menampilkan Top 10
-const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(10);
+const leaderboardRef = db.ref('leaderboard').orderByChild('score').limitToLast(5); // Cukup 5 untuk home
 
 leaderboardRef.on('value', (snapshot) => {
     const listElement = document.getElementById("leaderboard-list");
@@ -42,11 +36,10 @@ leaderboardRef.on('value', (snapshot) => {
         });
     });
 
-    // Urutkan dari poin tertinggi ke terendah (karena limitToLast mengurutkan sebaliknya)
-    players.reverse();
+    players.reverse(); // Urutkan tertinggi ke terendah
 
     if (players.length === 0) {
-        listElement.innerHTML = `<p class="text-center text-slate-500 py-6 text-sm">Belum ada data skor siswa.</p>`;
+        listElement.innerHTML = `<p class="text-center text-slate-400 py-6 text-sm italic">Belum ada data nilai. Jadilah yang pertama!</p>`;
         return;
     }
 
@@ -54,20 +47,23 @@ leaderboardRef.on('value', (snapshot) => {
         const rank = index + 1;
         const isCurrentUser = player.id === userId;
 
-        let rankBadge = `<span class="w-7 h-7 flex items-center justify-center font-bold text-sm text-slate-400 bg-slate-800 rounded-lg">${rank}</span>`;
-        if (rank === 1) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-amber-300 bg-amber-500/20 border border-amber-500/40 rounded-lg text-sm font-bold shadow"><i class="fa-solid fa-trophy"></i></span>`;
-        if (rank === 2) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-slate-200 bg-slate-300/20 border border-slate-300/40 rounded-lg text-sm font-bold"><i class="fa-solid fa-medal"></i></span>`;
-        if (rank === 3) rankBadge = `<span class="w-7 h-7 flex items-center justify-center text-amber-600 bg-amber-700/20 border border-amber-700/40 rounded-lg text-sm font-bold"><i class="fa-solid fa-award"></i></span>`;
+        // Desain khusus Light Mode (Putih & Terang)
+        let rankBadge = `<span class="w-8 h-8 flex items-center justify-center font-bold text-sm text-slate-500 bg-slate-100 rounded-lg">${rank}</span>`;
+        
+        // Juara 1, 2, 3 pakai warna emas, silver, perunggu
+        if (rank === 1) rankBadge = `<span class="w-8 h-8 flex items-center justify-center text-amber-600 bg-amber-100 rounded-lg text-sm font-bold shadow-sm"><i class="fa-solid fa-crown"></i></span>`;
+        if (rank === 2) rankBadge = `<span class="w-8 h-8 flex items-center justify-center text-slate-500 bg-slate-200 rounded-lg text-sm font-bold"><i class="fa-solid fa-medal"></i></span>`;
+        if (rank === 3) rankBadge = `<span class="w-8 h-8 flex items-center justify-center text-orange-600 bg-orange-100 rounded-lg text-sm font-bold"><i class="fa-solid fa-award"></i></span>`;
 
         const itemHTML = `
-            <div class="flex items-center justify-between p-3 rounded-xl transition-all ${isCurrentUser ? 'bg-sky-500/20 border border-sky-500/50 shadow-md' : 'bg-slate-900/60 border border-slate-700/50 hover:bg-slate-700/40'}">
+            <div class="flex items-center justify-between p-3 rounded-xl transition-all ${isCurrentUser ? 'bg-emerald-50 border border-emerald-200' : 'bg-white border border-slate-100 hover:bg-slate-50'}">
                 <div class="flex items-center gap-3 overflow-hidden">
                     ${rankBadge}
-                    <span class="font-medium text-sm text-slate-200 truncate ${isCurrentUser ? 'font-bold text-sky-300' : ''}">
-                        ${player.name} ${isCurrentUser ? '<span class="text-xs text-sky-400 font-normal ml-1">(Kamu)</span>' : ''}
+                    <span class="font-semibold text-sm text-slate-700 truncate ${isCurrentUser ? 'text-emerald-700' : ''}">
+                        ${player.name} ${isCurrentUser ? '<span class="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full ml-1">Kamu</span>' : ''}
                     </span>
                 </div>
-                <span class="font-extrabold text-amber-400 text-sm whitespace-nowrap ml-2">
+                <span class="font-extrabold text-emerald-600 text-sm whitespace-nowrap ml-2">
                     ${player.score} <span class="text-[10px] text-slate-400 font-normal">pt</span>
                 </span>
             </div>
@@ -76,5 +72,6 @@ leaderboardRef.on('value', (snapshot) => {
     });
 }, (error) => {
     console.error("Kesalahan Leaderboard:", error);
-    document.getElementById("leaderboard-list").innerHTML = `<p class="text-center text-rose-400 text-xs py-4">Gagal memuat papan peringkat.</p>`;
+    const el = document.getElementById("leaderboard-list");
+    if(el) el.innerHTML = `<p class="text-center text-rose-500 text-xs py-4">Gagal memuat peringkat.</p>`;
 });
