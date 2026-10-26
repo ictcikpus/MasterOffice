@@ -9,8 +9,6 @@ let currentSlideIndex = 0;
 
 function navigate(viewId) {
     if (typeof stopCamera === 'function') stopCamera();
-    
-    // Pastikan Navbar kembali muncul jika user pindah menu
     document.body.classList.remove('hide-nav'); 
 
     document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
@@ -32,6 +30,11 @@ function navigate(viewId) {
     
     if (viewId === 'profil' && typeof renderProfile === 'function') {
         renderProfile();
+    }
+    
+    // TAMBAHKAN BARIS INI UNTUK MERENDER TABEL GURU
+    if (viewId === 'guru-tugas' && typeof renderRekapTugasGuru === 'function') {
+        renderRekapTugasGuru();
     }
 
     window.scrollTo(0, 0);
