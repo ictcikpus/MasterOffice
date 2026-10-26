@@ -92,13 +92,13 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
+               <!-- ========================================== -->
         <!-- PANEL 2: ABSENSI (HIDDEN BY DEFAULT) -->
         <!-- ========================================== -->
         <div id="panel-main-attendance" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Form Absensi -->
-                <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 h-fit">
+                <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 h-fit" id="attendance-form-container">
                     <h2 class="text-xl font-bold text-emerald-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-user-check"></i> Form Kehadiran</h2>
                     <form id="attendance-form" class="space-y-4">
                         <div>
@@ -136,10 +136,10 @@
                 </div>
 
                 <!-- Tabel Rekap Absensi -->
-                <div class="md:col-span-2 bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
+                <div id="table-container" class="md:col-span-2 bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 border-b border-slate-700 pb-4">
                         <h2 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-table-list"></i> Rekap Kehadiran</h2>
-                        <div class="flex gap-2">
+                        <div id="export-buttons" class="flex gap-2">
                             <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
                                 <i class="fa-solid fa-file-excel"></i> Export XLS
                             </button>
@@ -150,7 +150,7 @@
                     </div>
                     
                     <!-- Filter -->
-                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div id="filter-section" class="flex flex-col md:flex-row gap-4 mb-4">
                         <div class="flex-1">
                             <label class="block text-xs text-slate-400 mb-1">Filter Kelas</label>
                             <select id="filter-class" onchange="renderAttendanceTable()" class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-white">
@@ -185,11 +185,11 @@
                                     <th class="p-3 border-b border-slate-700">Kelas</th>
                                     <th class="p-3 border-b border-slate-700">Hari / Tanggal</th>
                                     <th class="p-3 border-b border-slate-700">Jam</th>
+                                    <th id="action-header" class="p-3 border-b border-slate-700 hidden text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="attendance-list" class="text-sm">
-                                <!-- Data dirender via JS -->
-                                <tr><td colspan="5" class="text-center p-4 text-slate-500">Memuat data...</td></tr>
+                                <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data dari server...</td></tr>
                             </tbody>
                         </table>
                     </div>
