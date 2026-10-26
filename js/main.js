@@ -24,6 +24,12 @@ function navigate(viewId) {
         if (isTeacher) activeNav.classList.add('text-amber-600', 'bg-amber-50');
         else activeNav.classList.add('text-emerald-600', 'bg-emerald-50');
     }
+    
+    // Jika membuka Profil, render ulang datanya
+    if (viewId === 'profil' && typeof renderProfile === 'function') {
+        renderProfile();
+    }
+
     window.scrollTo(0, 0);
 }
 
@@ -113,6 +119,9 @@ function checkSlideQuiz(selected, correct) {
     if (selected === correct) {
         buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
         feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar!</span>';
+        
+        // Efek Confetti
+        if(typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
     } else {
         buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
         buttons[correct].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
@@ -127,7 +136,7 @@ function changeSlide(direction) {
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
-        alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Jangan lupa kerjakan kuis di Arena Latihan untuk menambah skor!");
+        alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Jangan lupa kerjakan kuis di Arena Latihan!");
         navigate('materi');
         return;
     }
@@ -148,13 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.getElementById('dashboard-player-name').innerText = name;
             document.getElementById('mobile-player-name').innerText = name.split(' ')[0];
-            
-            var score = parseInt(localStorage.getItem("student_score")) || 0;
-            document.getElementById('dash-score').innerText = score;
-            
-            var progress = JSON.parse(localStorage.getItem("office_progress")) || {};
-            var levelsDone = Object.values(progress).filter(function(v) { return v === true; }).length;
-            document.getElementById('dash-levels').innerText = levelsDone + "/6";
             
             renderMateri();
         }
