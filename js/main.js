@@ -1,6 +1,50 @@
 // ==========================================
 // MAIN APP LOGIC & SHORTCUT TRAINER
 // ==========================================
+// ==========================================
+// FITUR FULLSCREEN
+// ==========================================
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        // Jika belum fullscreen, minta fullscreen
+        document.documentElement.requestFullscreen().catch(err => {
+            alert(`Gagal mengaktifkan layar penuh: ${err.message}`);
+        });
+    } else {
+        // Jika sudah fullscreen, keluar
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+// Memantau perubahan status layar penuh (misal user nekan tombol ESC)
+document.addEventListener('fullscreenchange', (event) => {
+    const isFullscreen = !!document.fullscreenElement;
+    
+    // Ubah Ikon Desktop
+    const iconDesktop = document.getElementById('fs-icon-desktop');
+    const textDesktop = document.getElementById('fs-text-desktop');
+    if (iconDesktop && textDesktop) {
+        if (isFullscreen) {
+            iconDesktop.className = 'fa-solid fa-compress';
+            textDesktop.innerText = 'Keluar Layar Penuh';
+        } else {
+            iconDesktop.className = 'fa-solid fa-expand';
+            textDesktop.innerText = 'Layar Penuh';
+        }
+    }
+
+    // Ubah Ikon Mobile
+    const iconMobile = document.getElementById('fs-icon-mobile');
+    if (iconMobile) {
+        if (isFullscreen) {
+            iconMobile.className = 'fa-solid fa-compress text-lg';
+        } else {
+            iconMobile.className = 'fa-solid fa-expand text-lg';
+        }
+    }
+});
 
 // 1. NAVIGASI SPA (Single Page Application)
 function navigate(viewId) {
