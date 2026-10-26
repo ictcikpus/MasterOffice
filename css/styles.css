@@ -110,3 +110,30 @@ body {
 }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* Safe area untuk HP layar penuh (iPhone/home indicator) */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Memastikan scroll berjalan mulus di HP */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    /* Mencegah text membesar sendiri saat HP diputar ke landscape */
+    -webkit-text-size-adjust: 100%; 
+}
+
+/* Sentuhan profesional saat tombol ditekan */
+button:active {
+    transform: scale(0.97);
+    transition: transform 0.1s;
+}
+
+/* Memastikan tabel tetap rapi di layar kecil */
+table {
+    min-width: 600px; /* Tabel akan muncul scroll horizontal jika layar < 600px */
+}
