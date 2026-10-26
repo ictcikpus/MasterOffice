@@ -4,6 +4,10 @@
 
 // 1. NAVIGASI SPA (Single Page Application)
 function navigate(viewId) {
+    if (typeof stopCamera === 'function') stopCamera();
+
+    // Sembunyikan semua view
+    var views = document.querySelectorAll('.view');
     // Sembunyikan semua view
     document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
     
