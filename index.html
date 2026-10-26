@@ -1,258 +1,165 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Master - Edu Game & LMS</title>
+// ==========================================
+// MAIN APP LOGIC & SHORTCUT TRAINER
+// ==========================================
+
+// 1. NAVIGASI SPA (Single Page Application)
+function navigate(viewId) {
+    // Sembunyikan semua view
+    document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
     
-    <!-- Tailwind CSS & FontAwesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    // Tampilkan view yang dipilih
+    const targetView = document.getElementById(`view-${viewId}`);
+    if (targetView) targetView.classList.remove('hidden');
+
+    // Reset Nav Style (Desktop)
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    // Note: Tombol aktif desktop tidak di-set secara dinamis di sini agar kodenya ringkas, 
+    // tapi Anda bisa menambahkannya jika perlu.
+
+    // Reset Bottom Nav Style (Mobile)
+    document.querySelectorAll('.bottom-nav-item').forEach(el => {
+        el.classList.remove('text-emerald-600');
+        el.classList.add('text-slate-400');
+    });
+    const activeMobileNav = document.querySelector(`.bottom-nav-item[onclick="navigate('${viewId}')"]`);
+    if (activeMobileNav) {
+        activeMobileNav.classList.remove('text-slate-400');
+        activeMobileNav.classList.add('text-emerald-600');
+    }
+
+    // Scroll ke atas saat pindah halaman
+    window.scrollTo(0, 0);
+}
+
+// 2. INISIALISASI PROFIL SISWA
+document.addEventListener('DOMContentLoaded', () => {
+    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
-    <!-- Libraries untuk Export PDF & Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen flex flex-col">
-
-    <!-- HEADER & NAVIGASI UTAMA -->
-    <header class="bg-slate-900 border-b border-slate-700/50 p-4 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-laptop-code text-sky-500 text-2xl"></i>
-                <h1 class="text-xl font-bold text-white tracking-wide">Office Master LMS</h1>
-            </div>
-            <nav class="flex flex-wrap justify-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchMainTab('learning')" id="nav-btn-learning" class="px-4 py-2 rounded-lg text-sm font-bold bg-sky-600 text-white transition-all">
-                    <i class="fa-solid fa-gamepad mr-1"></i> Belajar
-                </button>
-                <button onclick="switchMainTab('attendance')" id="nav-btn-attendance" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-clipboard-user mr-1"></i> Absensi
-                </button>
-                <!-- Tab Dashboard (Hanya untuk Guru) -->
-                <button onclick="switchMainTab('dashboard')" id="nav-btn-dashboard" class="hidden px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-chalkboard-user mr-1"></i> Dashboard Guru
-                </button>
-                <button onclick="switchMainTab('leaderboard')" id="nav-btn-leaderboard" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-ranking-star mr-1"></i> Peringkat
-                </button>
-            </nav>
-            <div class="flex items-center gap-2">
-                <button id="btn-login-guru" onclick="openLoginModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg">
-                    <i class="fa-solid fa-lock mr-1"></i> Login Guru
-                </button>
-                <button id="btn-logout-guru" onclick="logoutGuru()" class="hidden bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- MODAL LOGIN GURU -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <h2 class="text-xl font-bold text-white mb-4 text-center"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i> Login Guru</h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">Password Khusus Guru</label>
-                    <input type="password" id="teacher-pass" placeholder="Masukkan password..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500">
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="closeLoginModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg font-bold transition">Batal</button>
-                    <button onclick="loginGuru()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-2 rounded-lg font-bold transition">Masuk</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow p-4 w-full max-w-6xl mx-auto">
+    if (!isTeacher) {
+        // Cek Profil Siswa
+        let name = localStorage.getItem("student_name");
+        if (!name) {
+            name = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa";
+            let cls = prompt("Masukkan Kelas (Contoh: X TEI 1):") || "Umum";
+            localStorage.setItem("student_name", name);
+            localStorage.setItem("student_class", cls);
+        }
         
-        <!-- ========================================== -->
-        <!-- PANEL 1: BELAJAR (GAME) -->
-        <!-- ========================================== -->
-        <div id="panel-main-learning" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- SIDEBAR KIRI: Profil & Navigasi Level -->
-            <div class="space-y-4">
-                <!-- Profil Siswa -->
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                    <h3 id="player-name" class="font-bold text-sky-400">Memuat Nama...</h3>
-                    <p id="player-class" class="text-xs text-slate-400 mb-3">Kelas: -</p>
-                    <div class="flex gap-4 text-sm font-bold">
-                        <span class="text-amber-400"><i class="fa-solid fa-star"></i> Skor: <span id="game-score">0</span></span>
-                        <span class="text-rose-400"><i class="fa-solid fa-heart"></i> Nyawa: <span id="lives-count">3</span></span>
-                    </div>
-                </div>
+        // Update UI Profil
+        document.getElementById('dashboard-player-name').innerText = name;
+        document.getElementById('mobile-player-name').innerText = name.split(' ')[0]; // Nama depan saja
+        
+        // Ambil skor
+        let score = parseInt(localStorage.getItem("student_score")) || 0;
+        document.getElementById('dash-score').innerText = score;
+        
+        // Hitung level selesai
+        let progress = JSON.parse(localStorage.getItem("office_progress")) || {};
+        let levelsDone = Object.values(progress).filter(v => v === true).length;
+        document.getElementById('dash-levels').innerText = `${levelsDone}/9`;
+        document.getElementById('materi-progress-text').innerText = `${Math.round((levelsDone/9)*100)}% Selesai`;
+    } else {
+        // Tampilan Guru
+        document.getElementById('dashboard-player-name').innerText = "Guru";
+        document.getElementById('mobile-player-name').innerText = "Guru";
+        navigate('guru'); // Langsung ke dashboard guru
+    }
 
-                <!-- Peta Level -->
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                    <h3 class="font-bold text-slate-200 mb-3 border-b border-slate-700 pb-2">Pilih Materi</h3>
-                    <div id="level-tree" class="max-h-[400px] overflow-y-auto pr-2 custom-scroll"></div>
-                    <button id="btn-cert" disabled class="w-full mt-4 bg-amber-600/50 text-amber-200 py-2 rounded-lg text-sm font-bold cursor-not-allowed opacity-50 transition-all hover:bg-amber-500 hover:text-white">
-                        <i class="fa-solid fa-certificate"></i> Cetak Sertifikat
-                    </button>
-                </div>
-            </div>
+    // Mulai Game Shortcut
+    initShortcutGame();
+});
 
-            <!-- AREA KANAN: Konten Belajar -->
-            <div class="md:col-span-2 space-y-4">
-                <!-- PANEL MATERI -->
-                <div id="panel-material" class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
-                    <div class="border-b border-slate-700 pb-4 mb-4">
-                        <h2 id="mat-title" class="text-2xl font-bold text-sky-400">Pilih Level di Kiri</h2>
-                        <p id="mat-module" class="text-sm text-slate-400 mt-1">Silakan mulai dari Modul Word Level 1</p>
-                    </div>
-                    <div id="mat-content" class="mb-6">
-                        <!-- Konten materi dirender di sini -->
-                    </div>
-                    <button onclick="startChallengeFromMaterial()" class="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl font-bold transition">
-                        Mulai Tantangan Level Ini <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </button>
-                </div>
 
-                <!-- PANEL GAMEPLAY (Sembunyi secara default) -->
-                <div id="panel-game" class="hidden bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
-                    <h2 class="text-xl font-bold text-amber-400 mb-4 border-b border-slate-700 pb-2">Tantangan Aktif</h2>
-                    <div id="game-workspace">
-                        <!-- Timer, Soal, dan Jawaban dirender di sini -->
-                    </div>
-                </div>
-            </div>
-        </div>
+// 3. GAME SHORTCUT TRAINER (Virtual Keyboard)
+const shortcutData = [
+    { question: "Copy (Salin)", answer: ["Ctrl", "C"] },
+    { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
+    { question: "Cut (Potong)", answer: ["Ctrl", "X"] },
+    { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
+    { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] },
+    { question: "Save (Simpan)", answer: ["Ctrl", "S"] },
+    { question: "Select All (Pilih Semua)", answer: ["Ctrl", "A"] },
+    { question: "Bold (Tebal)", answer: ["Ctrl", "B"] },
+    { question: "Print (Cetak)", answer: ["Ctrl", "P"] },
+    { question: "Find (Cari)", answer: ["Ctrl", "F"] }
+];
 
-        <!-- ========================================== -->
-        <!-- PANEL 2: ABSENSI SISWA (HIDDEN BY DEFAULT) -->
-        <!-- ========================================== -->
-        <div id="panel-main-attendance" class="hidden space-y-6">
-            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-lg mx-auto shadow-xl">
-                <h2 class="text-xl font-bold text-emerald-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-user-check"></i> Form Kehadiran Siswa</h2>
-                <form id="attendance-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Nama Lengkap</label>
-                        <input type="text" id="att-name" required placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Pilih Kelas</label>
-                        <select id="att-class" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
-                            <option value="" disabled selected>-- Pilih Kelas --</option>
-                            <optgroup label="TEI">
-                                <option value="X TEI 1">X TEI 1</option>
-                                <option value="X TEI 2">X TEI 2</option>
-                                <option value="X TEI 3">X TEI 3</option>
-                                <option value="X TEI 4">X TEI 4</option>
-                            </optgroup>
-                            <optgroup label="TKR">
-                                <option value="X TKR 1">X TKR 1</option>
-                                <option value="X TKR 2">X TKR 2</option>
-                                <option value="X TKR 3">X TKR 3</option>
-                                <option value="X TKR 4">X TKR 4</option>
-                            </optgroup>
-                            <optgroup label="TP">
-                                <option value="X TP 1">X TP 1</option>
-                                <option value="X TP 2">X TP 2</option>
-                                <option value="X TP 3">X TP 3</option>
-                                <option value="X TP 4">X TP 4</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
-                        <i class="fa-solid fa-fingerprint mr-2"></i> Absen Sekarang
-                    </button>
-                </form>
-            </div>
-        </div>
+let currentShortcutIndex = 0;
+let shortcutScore = 0;
+let userKeysPressed = [];
+let shortcutTimer;
 
-        <!-- ========================================== -->
-        <!-- PANEL 3: DASHBOARD GURU (HIDDEN BY DEFAULT) -->
-        <!-- ========================================== -->
-        <div id="panel-main-dashboard" class="hidden space-y-6">
-            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 shadow-xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 border-b border-slate-700 pb-4">
-                    <h2 class="text-xl font-bold text-amber-400"><i class="fa-solid fa-table-list mr-2"></i> Rekap Kehadiran Siswa</h2>
-                    <div id="export-buttons" class="flex gap-2">
-                        <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
-                            <i class="fa-solid fa-file-excel"></i> Export XLS
-                        </button>
-                        <button onclick="exportToPDF()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
-                            <i class="fa-solid fa-file-pdf"></i> Export PDF
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Filter -->
-                <div id="filter-section" class="flex flex-col md:flex-row gap-4 mb-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1">Filter Kelas</label>
-                        <select id="filter-class" onchange="renderTeacherTable()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white">
-                            <option value="all">Semua Kelas</option>
-                            <option value="X TEI 1">X TEI 1</option>
-                            <option value="X TEI 2">X TEI 2</option>
-                            <option value="X TEI 3">X TEI 3</option>
-                            <option value="X TEI 4">X TEI 4</option>
-                            <option value="X TKR 1">X TKR 1</option>
-                            <option value="X TKR 2">X TKR 2</option>
-                            <option value="X TKR 3">X TKR 3</option>
-                            <option value="X TKR 4">X TKR 4</option>
-                            <option value="X TP 1">X TP 1</option>
-                            <option value="X TP 2">X TP 2</option>
-                            <option value="X TP 3">X TP 3</option>
-                            <option value="X TP 4">X TP 4</option>
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1">Filter Tanggal</label>
-                        <input type="date" id="filter-date" onchange="renderTeacherTable()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white">
-                    </div>
-                </div>
+function initShortcutGame() {
+    currentShortcutIndex = 0;
+    shortcutScore = 0;
+    document.getElementById('shortcut-score').innerText = shortcutScore;
+    loadShortcutQuestion();
+}
 
-                <!-- Tabel -->
-                <div class="overflow-x-auto" id="print-area">
-                    <table class="w-full text-left border-collapse" id="teacher-attendance-table">
-                        <thead>
-                            <tr class="bg-slate-800 text-slate-300 text-sm">
-                                <th class="p-3 border-b border-slate-700 w-12 text-center">No</th>
-                                <th class="p-3 border-b border-slate-700">Nama Siswa</th>
-                                <th class="p-3 border-b border-slate-700">Kelas</th>
-                                <th class="p-3 border-b border-slate-700">Hari / Tanggal</th>
-                                <th class="p-3 border-b border-slate-700">Jam</th>
-                                <th class="p-3 border-b border-slate-700 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teacher-attendance-list" class="text-sm">
-                            <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data dari server...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+function loadShortcutQuestion() {
+    if (currentShortcutIndex >= shortcutData.length) {
+        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
+        document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Akhir: ${shortcutScore}</span>`;
+        return;
+    }
 
-        <!-- ========================================== -->
-        <!-- PANEL 4: LEADERBOARD (HIDDEN BY DEFAULT) -->
-        <!-- ========================================== -->
-        <div id="panel-main-leaderboard" class="hidden">
-            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-3xl mx-auto shadow-xl">
-                <h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-4 text-center">
-                    <i class="fa-solid fa-trophy mr-2"></i> Peringkat Top 10 Siswa
-                </h3>
-                <div id="leaderboard-list" class="space-y-3">
-                    <p class="text-xs text-slate-500 text-center py-4">Memuat papan peringkat...</p>
-                </div>
-            </div>
-        </div>
+    const currentQ = shortcutData[currentShortcutIndex];
+    document.getElementById('shortcut-question').innerText = currentQ.question;
+    document.getElementById('shortcut-q-count').innerText = `${currentShortcutIndex + 1}/${shortcutData.length}`;
+    document.getElementById('shortcut-feedback').innerHTML = "";
+    userKeysPressed = [];
 
-    </main>
+    // Reset warna keyboard
+    document.querySelectorAll('.key').forEach(k => k.classList.remove('pressed', 'bg-emerald-500', 'bg-rose-500'));
+}
 
-    <!-- Pustaka Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
-    
-    <!-- Script Kustom -->
-    <script src="js/firebase-config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/leaderboard.js"></script>
-    <script src="js/certificate.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/attendance.js"></script>
-</body>
-</html>
+// Event Listener untuk Keyboard Virtual
+document.querySelectorAll('.key').forEach(key => {
+    key.addEventListener('click', (e) => {
+        const keyValue = e.target.getAttribute('data-key');
+        if (!keyValue || currentShortcutIndex >= shortcutData.length) return;
+
+        // Animasi tekan
+        e.target.classList.add('pressed');
+        setTimeout(() => e.target.classList.remove('pressed'), 150);
+
+        // Catat input user
+        userKeysPressed.push(keyValue);
+
+        // Cek Jawaban
+        const correctAnswer = shortcutData[currentShortcutIndex].answer;
+        
+        // Cek apakah input sejauh ini cocok dengan kunci jawaban
+        let isMatch = true;
+        for (let i = 0; i < userKeysPressed.length; i++) {
+            if (userKeysPressed[i] !== correctAnswer[i]) {
+                isMatch = false;
+                break;
+            }
+        }
+
+        if (!isMatch) {
+            // Salah
+            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah, coba lagi!</span>`;
+            setTimeout(() => {
+                userKeysPressed = [];
+                document.getElementById('shortcut-feedback').innerHTML = "";
+            }, 1000);
+        } else if (userKeysPressed.length === correctAnswer.length) {
+            // Benar Penuh
+            shortcutScore += 10;
+            document.getElementById('shortcut-score').innerText = shortcutScore;
+            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>`;
+            
+            currentShortcutIndex++;
+            setTimeout(loadShortcutQuestion, 1000);
+        } else {
+            // Baru separuh benar (misal baru tekan Ctrl)
+            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-amber-500">Lanjutkan...</span>`;
+        }
+    });
+});
+
+function resetShortcutGame() {
+    initShortcutGame();
+}
