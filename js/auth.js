@@ -1,74 +1,73 @@
-// ==========================================
-// AUTHENTICATION SYSTEM (Login Guru)
-// ==========================================
-
-// Password default Guru (Bisa Anda ubah di sini)
 const TEACHER_PASSWORD = "guru123";
 
 function openLoginModal() {
-    const modal = document.getElementById('login-modal');
-    if(modal) {
-        modal.classList.remove('hidden');
-        document.getElementById('teacher-pass').value = "";
-        document.getElementById('teacher-pass').focus();
-    }
+    document.getElementById('login-modal').classList.remove('hidden');
+    document.getElementById('teacher-pass').value = "";
+    document.getElementById('teacher-pass').focus();
 }
 
 function closeLoginModal() {
-    const modal = document.getElementById('login-modal');
-    if(modal) modal.classList.add('hidden');
+    document.getElementById('login-modal').classList.add('hidden');
 }
 
 function loginGuru() {
     const pass = document.getElementById('teacher-pass').value;
     if (pass === TEACHER_PASSWORD) {
         sessionStorage.setItem('is_teacher', 'true');
-        location.reload(); // Reload halaman untuk menerapkan mode guru
+        location.reload(); 
     } else {
-        alert("❌ Password salah! Silakan coba lagi.");
+        alert("❌ Password salah!");
     }
 }
 
 function logoutGuru() {
     sessionStorage.removeItem('is_teacher');
-    location.reload(); // Reload untuk kembali ke mode siswa
+    location.reload(); 
 }
 
-// Cek status login saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
-    // Ambil elemen-elemen tombol
-    const navGuru = document.getElementById('nav-btn-guru');
+    // Elemen Navigasi Siswa
+    const navSiswa = document.getElementById('nav-siswa');
+    const bottomNavSiswa = document.getElementById('bottom-nav-siswa');
     const btnLoginDesktop = document.getElementById('btn-login-guru');
-    const btnLogoutDesktop = document.getElementById('btn-logout-guru');
     const btnLoginMobile = document.getElementById('btn-login-guru-mobile');
-    const btnLogoutMobile = document.getElementById('btn-logout-guru-mobile');
-    const bottomNav = document.querySelector('body > nav'); // Menu bawah HP
+    const profileModal = document.getElementById('profile-modal');
     
+    // Elemen Navigasi Guru
+    const navGuru = document.getElementById('nav-guru');
+    const bottomNavGuru = document.getElementById('bottom-nav-guru');
+    const btnLogoutDesktop = document.getElementById('btn-logout-guru');
+    const btnLogoutMobile = document.getElementById('btn-logout-guru-mobile');
+
     if (isTeacher) {
-        // --- TAMPILAN UNTUK GURU ---
-        if(navGuru) navGuru.classList.remove('hidden'); // Munculkan menu Dashboard Guru di Sidebar
+        // TAMPILAN GURU
+        navGuru.classList.remove('hidden');
+        bottomNavGuru.classList.remove('hidden');
+        btnLogoutDesktop.classList.remove('hidden');
+        btnLogoutMobile.classList.remove('hidden');
         
-        if(btnLoginDesktop) btnLoginDesktop.classList.add('hidden');
-        if(btnLogoutDesktop) btnLogoutDesktop.classList.remove('hidden');
-        
-        if(btnLoginMobile) btnLoginMobile.classList.add('hidden');
-        if(btnLogoutMobile) btnLogoutMobile.classList.remove('hidden');
-        
-        // Sembunyikan menu navigasi bawah (karena guru hanya butuh dashboard)
-        if(bottomNav) bottomNav.classList.add('hidden');
-        
+        navSiswa.classList.add('hidden');
+        bottomNavSiswa.classList.add('hidden');
+        btnLoginDesktop.classList.add('hidden');
+        btnLoginMobile.classList.add('hidden');
+        profileModal.classList.add('hidden'); // Guru tidak butuh modal isi nama siswa
+
+        // Redirect ke dashboard guru pertama kali login
+        if(document.getElementById('view-home').classList.contains('view') && !document.querySelector('.view:not(.hidden)')) {
+            navigate('guru-dashboard');
+        }
     } else {
-        // --- TAMPILAN UNTUK SISWA ---
-        if(navGuru) navGuru.classList.add('hidden');
+        // TAMPILAN SISWA
+        navSiswa.classList.remove('hidden');
+        bottomNavSiswa.classList.remove('hidden');
+        btnLoginDesktop.classList.remove('hidden');
+        btnLoginMobile.classList.remove('hidden');
         
-        if(btnLoginDesktop) btnLoginDesktop.classList.remove('hidden');
-        if(btnLogoutDesktop) btnLogoutDesktop.classList.add('hidden');
-        
-        if(btnLoginMobile) btnLoginMobile.classList.remove('hidden');
-        if(btnLogoutMobile) btnLogoutMobile.classList.add('hidden');
-        
-        if(bottomNav) bottomNav.classList.remove('hidden');
+        navGuru.classList.add('hidden');
+        bottomNavGuru.classList.add('hidden');
+        btnLogoutDesktop.classList.add('hidden');
+        btnLogoutMobile.classList.add('hidden');
     }
 });
