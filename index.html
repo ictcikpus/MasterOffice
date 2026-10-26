@@ -57,8 +57,9 @@
             <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
                 <i class="fa-solid fa-book-open w-5 text-center"></i> Modul Belajar
             </button>
-            <button onclick="navigate('shortcut')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-keyboard w-5 text-center"></i> Latihan Shortcut
+            <!-- Mengganti menu Shortcut menjadi Arena Latihan -->
+            <button onclick="navigate('arena')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-gamepad w-5 text-center"></i> Arena Latihan
             </button>
             <button onclick="navigate('tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
                 <i class="fa-solid fa-file-pen w-5 text-center"></i> Tugas Saya
@@ -68,6 +69,7 @@
             </button>
         </nav>
 
+        <!-- NAVIGASI GURU -->
         <nav id="nav-guru" class="flex-1 p-4 space-y-2 overflow-y-auto hidden">
             <button onclick="navigate('guru-dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600 bg-amber-50">
                 <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard Guru
@@ -158,13 +160,37 @@
             </div>
         </div>
 
-        <!-- VIEW 3: SHORTCUT TRAINER -->
-        <div id="view-shortcut" class="view hidden">
-            <div class="max-w-2xl mx-auto">
+        <!-- VIEW 3: ARENA LATIHAN (GAME & KUIS) -->
+        <div id="view-arena" class="view hidden">
+            <!-- Menu Pilihan Game -->
+            <div id="arena-menu">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Card Shortcut Game -->
+                    <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-keyboard"></i></div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Game Shortcut</h3>
+                        <p class="text-sm text-slate-500 mb-4">Latih ingatanmu tentang kombinasi tombol keyboard (Ctrl+C, Ctrl+V, dll).</p>
+                        <span class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl text-sm font-bold">+10 Poin / Benar</span>
+                    </div>
+
+                    <!-- Card Kuis Materi -->
+                    <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-brain"></i></div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
+                        <p class="text-sm text-slate-500 mb-4">Uji pemahamanmu tentang materi Word, Excel, PPT, dan Google. Soal bervariasi!</p>
+                        <span class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl text-sm font-bold">+20 Poin / Benar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wadah Game Shortcut (Tersembunyi awal) -->
+            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
                     <h2 class="text-xl font-bold text-slate-800 mb-2">Latihan Shortcut</h2>
                     <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span></div>
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor Game</span><span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span></div>
                         <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="shortcut-q-count">1/6</span></div>
                     </div>
                     <div class="mb-8">
@@ -177,6 +203,21 @@
                         <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd></div>
                         <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd></div>
                         <div class="flex justify-center gap-1"><kbd class="key w-16" data-key="Ctrl">Ctrl</kbd><kbd class="key w-12" data-key="Alt">Alt</kbd><kbd class="key w-32" data-key="Space">Space</kbd><kbd class="key w-14" data-key="Shift">Shift</kbd><kbd class="key w-16" data-key="Enter">Enter</kbd></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wadah Kuis Materi (Tersembunyi awal) -->
+            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor Kuis</span><span class="text-xl font-bold text-emerald-600" id="quiz-score">0</span></div>
+                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
+                    </div>
+                    
+                    <div id="quiz-content">
+                        <!-- Soal dirender di sini -->
                     </div>
                 </div>
             </div>
@@ -263,7 +304,7 @@
     <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
         <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span></button>
         <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-book-open text-lg mb-1"></i><span class="text-[10px] font-semibold">Materi</span></button>
-        <button onclick="navigate('shortcut')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-keyboard text-lg mb-1"></i><span class="text-[10px] font-semibold">Shortcut</span></button>
+        <button onclick="navigate('arena')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-gamepad text-lg mb-1"></i><span class="text-[10px] font-semibold">Arena</span></button>
         <button onclick="navigate('tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-file-pen text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span></button>
         <button onclick="navigate('absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-fingerprint text-lg mb-1"></i><span class="text-[10px] font-semibold">Absen</span></button>
     </nav>
@@ -324,13 +365,11 @@
                 <button onclick="document.getElementById('modal-lihat-pengumpulan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <p class="text-sm text-slate-500 mb-4" id="lihat-pengumpulan-title">Judul Tugas</p>
-            <div class="overflow-y-auto flex-grow" id="daftar-pengumpulan">
-                <!-- List siswa dan link dirender di sini -->
-            </div>
+            <div class="overflow-y-auto flex-grow" id="daftar-pengumpulan"></div>
         </div>
     </div>
 
-    <!-- MODAL KUMPUL TUGAS (SISWA) - DIUBAH MENJADI UPLOAD FILE -->
+    <!-- MODAL KUMPUL TUGAS (SISWA) -->
     <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
@@ -339,7 +378,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Pilih File (PDF / Gambar)</label>
                     <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                    <p class="text-[10px] text-slate-400 mt-1">*Maksimal 5MB. File akan diunggah ke Google Drive Anda.</p>
+                    <p class="text-[10px] text-slate-400 mt-1">*Maksimal 5MB. File akan diunggah ke Google Drive.</p>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
@@ -358,5 +397,6 @@
     <script src="js/attendance.js"></script>
     <script src="js/leaderboard.js"></script>
     <script src="js/tasks.js"></script>
+    <script src="js/quiz_game.js"></script> <!-- SCRIPT KUIS BARU -->
 </body>
 </html>
