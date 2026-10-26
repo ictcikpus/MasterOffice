@@ -32,3 +32,13 @@ button {
     table { border: 1px solid #ccc; }
     th, td { border: 1px solid #ccc; padding: 8px; color: black; }
 }
+/* Tambahan untuk Print PDF */
+@media print {
+    body { background: white; color: black; }
+    header, nav, .flex.gap-2, #filter-section, #export-buttons, label { display: none !important; }
+    #panel-main-dashboard { display: block !important; margin: 0; padding: 0; }
+    #print-area { width: 100%; }
+    table { border: 1px solid #ccc; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; color: black; text-align: left; }
+    th { background-color: #f3f4f6; }
+}
