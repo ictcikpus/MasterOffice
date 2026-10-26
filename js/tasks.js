@@ -18,22 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         allTasks.reverse();
         
-        // Tugas Perdana (Jika database kosong)
+        // ==========================================
+        // SUNTIKKAN 3 TUGAS PERDANA (Jika database kosong)
+        // ==========================================
         if (allTasks.length === 0) {
+            
+            // --- TUGAS 1: WORD / GOOGLE DOCS ---
             db.ref('tasks').push({
-                title: 'Tugas 1: Artikel TIK (Word / Google Docs)',
+                title: 'Tugas 1: Surat Jalan Perusahaan (Word / Google Docs)',
                 desc: `
-                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda membuat dokumen formal dan memformat teks.</p>
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih Anda membuat dokumen administrasi bisnis yang formal menggunakan aplikasi pengolah kata.</p>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. Word atau Google Docs):</h4>
                         <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
-                            <li>Buat dokumen baru. Beri judul: <b>"Dampak Teknologi Informasi bagi Pelajar"</b>.</li>
-                            <li>Gunakan format <b>Heading 1</b> untuk judul tersebut.</li>
-                            <li>Tulis artikel minimal <b>3 paragraf</b> (setiap paragraf 4-5 baris).</li>
-                            <li>Sisipkan 1 gambar yang relevan melalui menu Insert > Image.</li>
-                            <li>Gunakan <b>Bold</b> untuk kata kunci penting, dan <i>Italic</i> untuk istilah asing.</li>
-                            <li>Atur halaman menjadi <i>Landscape</i>.</li>
-                            <li>Jika menggunakan Google Docs, klik <b>Share</b> dan ubah ke <b>"Anyone with the link"</b>, lalu salin link-nya. Jika Ms. Word, simpan sebagai PDF lalu unggah.</li>
+                            <li>Buat dokumen baru. Ketik Judul di tengah (Align Center): <b>"PT. MAJU BERSAMA SEJAHTERA"</b> dan sub-judul <b>"SURAT JALAN"</b>.</li>
+                            <li>Di bawahnya, buat format surat berisi: <b>No. Surat, Tanggal, Kepada (Tujuan), dan Alamat</b>.</li>
+                            <li>Buat sebuah <b>Tabel</b> dengan kolom: <i>No, Nama Barang, Kuantitas, dan Keterangan</i>. Isi dengan 3 barang fiktif (contoh: Kertas A4, Tinta Printer, Map Plastik).</li>
+                            <li>Di bagian paling bawah, buat area tanda tangan untuk "Pengirim" (kiri) dan "Penerima" (kanan).</li>
+                            <li>Gunakan font resmi (Arial/Times New Roman), ukuran 11 atau 12.</li>
+                            <li>Jika menggunakan Google Docs, klik <b>Share</b> ubah ke <b>"Anyone with the link"</b> lalu salin link. Jika Ms. Word, simpan sebagai PDF lalu unggah file-nya.</li>
                         </ol>
                     </div>
                 `,
@@ -41,18 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
+            // --- TUGAS 2: EXCEL / GOOGLE SHEETS ---
             db.ref('tasks').push({
-                title: 'Tugas 2: Laporan Nilai (Excel / Google Sheets)',
+                title: 'Tugas 2: Catatan Uang Kas Pribadi (Excel / Google Sheets)',
                 desc: `
-                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda mengolah angka dan menggunakan rumus dasar.</p>
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda dalam mengelola data keuangan dasar menggunakan rumus (Formula) dan format angka.</p>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. Excel atau Google Sheets):</h4>
                         <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
-                            <li>Buat tabel dengan kolom: <b>No, Nama Siswa, Nilai Tugas, Nilai Ujian, Nilai Akhir</b>.</li>
-                            <li>Isi data fiktif untuk 5 siswa.</li>
-                            <li>Pada kolom <b>Nilai Akhir</b>, gunakan rumus untuk mencari rata-rata: <code>=(Nilai Tugas + Nilai Ujian) / 2</code> (Gunakan referensi sel, bukan angka manual).</li>
-                            <li>Gunakan fungsi <b>MAX</b> untuk mencari nilai tertinggi dan <b>MIN</b> untuk nilai terendah di bagian bawah tabel.</li>
-                            <li>Beri warna latar (Fill Color) pada judul kolom agar terlihat menarik.</li>
+                            <li>Buat tabel dengan header berikut: <b>Tanggal, Keterangan, Pemasukan (Rp), Pengeluaran (Rp), Saldo (Rp)</b>.</li>
+                            <li>Isi minimal <b>5 baris data</b> fiktif (contoh: Uang Saku, Beli Makan, Beli Kuota, dll).</li>
+                            <li>Gunakan rumus matematika pada kolom <b>Saldo</b>. (Contoh baris pertama: <code>=C2-D2</code>, lalu baris kedua: <code>=E2+C3-D3</code>).</li>
+                            <li>Di bagian paling bawah tabel, gunakan fungsi <b>SUM</b> untuk menghitung <b>Total Pemasukan</b> dan <b>Total Pengeluaran</b>.</li>
+                            <li>Blok kolom angka (Pemasukan, Pengeluaran, Saldo), lalu ubah format angkanya menjadi <b>Mata Uang (Currency)</b> atau <b>Accounting</b> agar muncul format Rp.</li>
                             <li>Simpan sebagai PDF dan unggah, ATAU bagikan link Google Sheets Anda (Anyone with the link).</li>
                         </ol>
                     </div>
@@ -61,19 +65,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
+            // --- TUGAS 3: PPT / GOOGLE SLIDES ---
             db.ref('tasks').push({
-                title: 'Tugas 3: Presentasi Profil Sekolah (PPT / Google Slides)',
+                title: 'Tugas 3: Presentasi Peluncuran Produk (PPT / Google Slides)',
                 desc: `
-                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih kemampuan Anda membuat materi presentasi visual yang menarik.</p>
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini melatih Anda merancang materi presentasi visual yang komunikatif dan menarik untuk memperkenalkan sebuah produk.</p>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <h4 class="font-bold text-slate-800 mb-2">Instruksi (Pilih salah satu: Ms. PowerPoint atau Google Slides):</h4>
                         <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
-                            <li>Buat presentasi minimal <b>4 slide</b> tentang profil sekolah Anda (Sejarah, Visi Misi, Jurusan, Fasilitas).</li>
-                            <li>Slide 1: Judul dan Nama Anda.</li>
-                            <li>Slide 2-4: Materi dengan poin-poin (jangan terlalu banyak teks).</li>
-                            <li>Tambahkan <b>Gambar</b> yang relevan di setiap slide.</li>
-                            <li>Gunakan fitur <b>Transisi (Transition)</b> antar slide (misal: Fade atau Push).</li>
-                            <li>Jika menggunakan Google Slides, bagikan link (Anyone with the link). Jika PPT, simpan sebagai PDF lalu unggah.</li>
+                            <li>Buat presentasi minimal <b>4 slide</b>. Anda bebas memilih produk (bisa produk makanan, teknologi, atau jasa).</li>
+                            <li><b>Slide 1 (Judul):</b> Nama Produk, Tagline (Slogan), dan Nama Anda.</li>
+                            <li><b>Slide 2 (Fitur):</b> Keunggulan atau fitur utama dari produk tersebut (gunakan poin-poin, jangan paragraf panjang).</li>
+                            <li><b>Slide 3 (Harga & Promo):</b> Informasi harga dan penawaran khusus.</li>
+                            <li><b>Slide 4 (Penutup):</b> Ajakan membeli (Call to Action) dan kontak/informasi pemesanan.</li>
+                            <li>Tambahkan <b>Gambar</b> yang relevan di setiap slide dan gunakan <b>Transisi (Transition)</b> antar slide (misal efek Fade).</li>
+                            <li>Jika menggunakan Google Slides, bagikan link. Jika PPT, simpan sebagai PDF lalu unggah.</li>
                         </ol>
                     </div>
                 `,
@@ -115,7 +121,7 @@ function simpanTugas() {
 
     db.ref('tasks').push({
         title: title,
-        desc: desc, 
+        desc: desc, // Bisa berisi HTML
         deadline: deadline,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
@@ -201,7 +207,7 @@ function lihatPengumpulan(taskId, title) {
 }
 
 // ------------------------------------------
-// LOGIKA SISWA (PERBAIKAN BUG isSubmitted)
+// LOGIKA SISWA
 // ------------------------------------------
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -223,7 +229,7 @@ function renderSiswaTugas() {
 
         container.innerHTML = '';
         allTasks.forEach(t => {
-            const isSubmitted = mySubmissions[t.id]; // <-- FIX TYPO DI SINI
+            const isSubmitted = mySubmissions[t.id];
             let statusHtml = isSubmitted 
                 ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
                 : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
