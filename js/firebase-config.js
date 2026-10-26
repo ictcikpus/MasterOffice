@@ -1,4 +1,4 @@
-// Konfigurasi Firebase Proyek MasterMicrosoft Anda
+// Konfigurasi Firebase Proyek
 const firebaseConfig = {
   apiKey: "AIzaSyAUBlFUM_PwZBeiWL6k8xSgieUppjBWAbs",
   authDomain: "master-6ed14.firebaseapp.com",
@@ -10,7 +10,7 @@ const firebaseConfig = {
   measurementId: "G-D652JVJNCY"
 };
 
-// Inisialisasi Firebase (Gunakan if agar tidak dobel inisialisasi)
+// Inisialisasi Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
