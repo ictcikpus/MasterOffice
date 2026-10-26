@@ -1,165 +1,353 @@
-// ==========================================
-// MAIN APP LOGIC & SHORTCUT TRAINER
-// ==========================================
-
-// 1. NAVIGASI SPA (Single Page Application)
-function navigate(viewId) {
-    // Sembunyikan semua view
-    document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduMaster - LMS Interaktif</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
     
-    // Tampilkan view yang dipilih
-    const targetView = document.getElementById(`view-${viewId}`);
-    if (targetView) targetView.classList.remove('hidden');
+    <!-- Libraries Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64">
 
-    // Reset Nav Style (Desktop)
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    // Note: Tombol aktif desktop tidak di-set secara dinamis di sini agar kodenya ringkas, 
-    // tapi Anda bisa menambahkannya jika perlu.
+    <!-- ================= SIDEBAR (DESKTOP) ================= -->
+    <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50">
+        <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-lg">E</div>
+            <h1 class="font-bold text-xl tracking-tight text-slate-800">EduMaster</h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <button onclick="navigate('home')" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-house w-5 text-center"></i> Dashboard
+            </button>
+            <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-book-open w-5 text-center"></i> Materi Belajar
+            </button>
+            <button onclick="navigate('shortcut')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-keyboard w-5 text-center"></i> Latihan Shortcut
+            </button>
+            <button onclick="navigate('tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-file-pen w-5 text-center"></i> Tugas
+            </button>
+            <button onclick="navigate('absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-clipboard-user w-5 text-center"></i> Absensi
+            </button>
+            <!-- Tombol Dashboard Guru (Tersembunyi) -->
+            <button onclick="navigate('guru')" id="nav-btn-guru" class="hidden nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600">
+                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i> Dashboard Guru
+            </button>
+        </nav>
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="openLoginModal()" id="btn-login-guru" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
+                <i class="fa-solid fa-lock"></i> Login Guru
+            </button>
+            <button onclick="logoutGuru()" id="btn-logout-guru" class="hidden w-full flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
+                <i class="fa-solid fa-power-off"></i> Logout Guru
+            </button>
+        </div>
+    </aside>
 
-    // Reset Bottom Nav Style (Mobile)
-    document.querySelectorAll('.bottom-nav-item').forEach(el => {
-        el.classList.remove('text-emerald-600');
-        el.classList.add('text-slate-400');
-    });
-    const activeMobileNav = document.querySelector(`.bottom-nav-item[onclick="navigate('${viewId}')"]`);
-    if (activeMobileNav) {
-        activeMobileNav.classList.remove('text-slate-400');
-        activeMobileNav.classList.add('text-emerald-600');
-    }
+    <!-- ================= HEADER (MOBILE) ================= -->
+    <header class="md:hidden bg-white h-16 flex items-center justify-between px-4 border-b border-slate-200 sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg">E</div>
+            <h1 class="font-bold text-lg text-slate-800">EduMaster</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="mobile-player-name" class="text-sm font-semibold text-emerald-600">Siswa</span>
+        </div>
+    </header>
 
-    // Scroll ke atas saat pindah halaman
-    window.scrollTo(0, 0);
-}
-
-// 2. INISIALISASI PROFIL SISWA
-document.addEventListener('DOMContentLoaded', () => {
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    
-    if (!isTeacher) {
-        // Cek Profil Siswa
-        let name = localStorage.getItem("student_name");
-        if (!name) {
-            name = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa";
-            let cls = prompt("Masukkan Kelas (Contoh: X TEI 1):") || "Umum";
-            localStorage.setItem("student_name", name);
-            localStorage.setItem("student_class", cls);
-        }
+    <!-- ================= MAIN CONTENT AREA ================= -->
+    <main class="p-4 md:p-8 max-w-5xl mx-auto w-full">
         
-        // Update UI Profil
-        document.getElementById('dashboard-player-name').innerText = name;
-        document.getElementById('mobile-player-name').innerText = name.split(' ')[0]; // Nama depan saja
-        
-        // Ambil skor
-        let score = parseInt(localStorage.getItem("student_score")) || 0;
-        document.getElementById('dash-score').innerText = score;
-        
-        // Hitung level selesai
-        let progress = JSON.parse(localStorage.getItem("office_progress")) || {};
-        let levelsDone = Object.values(progress).filter(v => v === true).length;
-        document.getElementById('dash-levels').innerText = `${levelsDone}/9`;
-        document.getElementById('materi-progress-text').innerText = `${Math.round((levelsDone/9)*100)}% Selesai`;
-    } else {
-        // Tampilan Guru
-        document.getElementById('dashboard-player-name').innerText = "Guru";
-        document.getElementById('mobile-player-name').innerText = "Guru";
-        navigate('guru'); // Langsung ke dashboard guru
-    }
+        <!-- VIEW 1: HOME / DASHBOARD -->
+        <div id="view-home" class="view">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
+                <div class="relative z-10">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-2">Halo, <span id="dashboard-player-name">Siswa!</span> 👋</h2>
+                    <p class="text-emerald-100 text-sm md:text-base max-w-md">Siap tingkatkan skill Microsoft Office & Google Workspace kamu hari ini?</p>
+                    <div class="mt-6 flex gap-4">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-3 px-5 border border-white/30 text-center">
+                            <span class="block text-xs text-emerald-100 font-semibold">Total Skor</span>
+                            <span id="dash-score" class="text-2xl font-bold">0</span>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-3 px-5 border border-white/30 text-center">
+                            <span class="block text-xs text-emerald-100 font-semibold">Level Selesai</span>
+                            <span id="dash-levels" class="text-2xl font-bold">0/9</span>
+                        </div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-graduation-cap absolute -bottom-6 -right-4 text-8xl text-white/10 rotate-12"></i>
+            </div>
 
-    // Mulai Game Shortcut
-    initShortcutGame();
-});
+            <h3 class="font-bold text-slate-700 mb-3 md:hidden">Menu Cepat</h3>
+            <div class="grid grid-cols-2 gap-3 md:hidden mb-6">
+                <button onclick="navigate('materi')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-book"></i></div>
+                    <span class="text-xs font-semibold text-slate-700">Materi</span>
+                </button>
+                <button onclick="navigate('shortcut')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-keyboard"></i></div>
+                    <span class="text-xs font-semibold text-slate-700">Shortcut</span>
+                </button>
+                <button onclick="navigate('tugas')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-file-pen"></i></div>
+                    <span class="text-xs font-semibold text-slate-700">Tugas</span>
+                </button>
+                <button onclick="navigate('absen')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-2 hover:bg-slate-50 transition">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-clipboard-user"></i></div>
+                    <span class="text-xs font-semibold text-slate-700">Absensi</span>
+                </button>
+            </div>
 
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800"><i class="fa-solid fa-trophy text-amber-500 mr-2"></i> Papan Peringkat</h3>
+                </div>
+                <div id="leaderboard-list" class="space-y-3">
+                    <p class="text-xs text-slate-500 text-center py-4">Memuat data...</p>
+                </div>
+            </div>
+        </div>
 
-// 3. GAME SHORTCUT TRAINER (Virtual Keyboard)
-const shortcutData = [
-    { question: "Copy (Salin)", answer: ["Ctrl", "C"] },
-    { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
-    { question: "Cut (Potong)", answer: ["Ctrl", "X"] },
-    { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
-    { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] },
-    { question: "Save (Simpan)", answer: ["Ctrl", "S"] },
-    { question: "Select All (Pilih Semua)", answer: ["Ctrl", "A"] },
-    { question: "Bold (Tebal)", answer: ["Ctrl", "B"] },
-    { question: "Print (Cetak)", answer: ["Ctrl", "P"] },
-    { question: "Find (Cari)", answer: ["Ctrl", "F"] }
-];
-
-let currentShortcutIndex = 0;
-let shortcutScore = 0;
-let userKeysPressed = [];
-let shortcutTimer;
-
-function initShortcutGame() {
-    currentShortcutIndex = 0;
-    shortcutScore = 0;
-    document.getElementById('shortcut-score').innerText = shortcutScore;
-    loadShortcutQuestion();
-}
-
-function loadShortcutQuestion() {
-    if (currentShortcutIndex >= shortcutData.length) {
-        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
-        document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Akhir: ${shortcutScore}</span>`;
-        return;
-    }
-
-    const currentQ = shortcutData[currentShortcutIndex];
-    document.getElementById('shortcut-question').innerText = currentQ.question;
-    document.getElementById('shortcut-q-count').innerText = `${currentShortcutIndex + 1}/${shortcutData.length}`;
-    document.getElementById('shortcut-feedback').innerHTML = "";
-    userKeysPressed = [];
-
-    // Reset warna keyboard
-    document.querySelectorAll('.key').forEach(k => k.classList.remove('pressed', 'bg-emerald-500', 'bg-rose-500'));
-}
-
-// Event Listener untuk Keyboard Virtual
-document.querySelectorAll('.key').forEach(key => {
-    key.addEventListener('click', (e) => {
-        const keyValue = e.target.getAttribute('data-key');
-        if (!keyValue || currentShortcutIndex >= shortcutData.length) return;
-
-        // Animasi tekan
-        e.target.classList.add('pressed');
-        setTimeout(() => e.target.classList.remove('pressed'), 150);
-
-        // Catat input user
-        userKeysPressed.push(keyValue);
-
-        // Cek Jawaban
-        const correctAnswer = shortcutData[currentShortcutIndex].answer;
-        
-        // Cek apakah input sejauh ini cocok dengan kunci jawaban
-        let isMatch = true;
-        for (let i = 0; i < userKeysPressed.length; i++) {
-            if (userKeysPressed[i] !== correctAnswer[i]) {
-                isMatch = false;
-                break;
-            }
-        }
-
-        if (!isMatch) {
-            // Salah
-            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah, coba lagi!</span>`;
-            setTimeout(() => {
-                userKeysPressed = [];
-                document.getElementById('shortcut-feedback').innerHTML = "";
-            }, 1000);
-        } else if (userKeysPressed.length === correctAnswer.length) {
-            // Benar Penuh
-            shortcutScore += 10;
-            document.getElementById('shortcut-score').innerText = shortcutScore;
-            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>`;
+        <!-- VIEW 2: MATERI -->
+        <div id="view-materi" class="view hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Materi Belajar</h2>
+                <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm" id="materi-progress-text">0% Selesai</div>
+            </div>
             
-            currentShortcutIndex++;
-            setTimeout(loadShortcutQuestion, 1000);
-        } else {
-            // Baru separuh benar (misal baru tekan Ctrl)
-            document.getElementById('shortcut-feedback').innerHTML = `<span class="text-amber-500">Lanjutkan...</span>`;
-        }
-    });
-});
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-2 w-full bg-blue-500"></div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-word"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Microsoft Word</h3>
+                        </div>
+                        <div id="word-levels" class="space-y-2"></div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-2 w-full bg-emerald-500"></div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-excel"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Microsoft Excel</h3>
+                        </div>
+                        <div id="excel-levels" class="space-y-2"></div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-2 w-full bg-orange-500"></div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl"><i class="fa-solid fa-file-powerpoint"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Microsoft PowerPoint</h3>
+                        </div>
+                        <div id="ppt-levels" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function resetShortcutGame() {
-    initShortcutGame();
-}
+        <!-- VIEW 3: SHORTCUT TRAINER -->
+        <div id="view-shortcut" class="view hidden">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Latihan Shortcut</h2>
+                    <p class="text-sm text-slate-500 mb-6">Tekan tombol di keyboard virtual untuk menjawab!</p>
+                    
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Skor Latihan</span>
+                            <span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Soal</span>
+                            <span class="text-xl font-bold text-slate-700" id="shortcut-q-count">1/6</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <p class="text-xs font-bold text-emerald-500 mb-2 uppercase tracking-wide">Apa shortcut untuk:</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800" id="shortcut-question">Copy (Salin)</h3>
+                        <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
+                    </div>
+
+                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none">
+                        <div class="flex justify-center gap-1 mb-1">
+                            <kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd>
+                        </div>
+                        <div class="flex justify-center gap-1 mb-1">
+                            <kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd>
+                        </div>
+                        <div class="flex justify-center gap-1 mb-1">
+                            <kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd>
+                        </div>
+                        <div class="flex justify-center gap-1">
+                            <kbd class="key w-16" data-key="Ctrl">Ctrl</kbd>
+                            <kbd class="key w-12" data-key="Alt">Alt</kbd>
+                            <kbd class="key w-32" data-key="Space">Space</kbd>
+                            <kbd class="key w-14" data-key="Shift">Shift</kbd>
+                            <kbd class="key w-16" data-key="Enter">Enter</kbd>
+                        </div>
+                    </div>
+                    <button onclick="resetShortcutGame()" class="mt-6 text-slate-400 hover:text-slate-600 text-sm font-semibold transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Latihan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: TUGAS -->
+        <div id="view-tugas" class="view hidden">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Tugas Praktik</h2>
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm text-center py-12">
+                    <div class="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-file-pen text-3xl text-purple-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Belum Ada Tugas</h3>
+                    <p class="text-slate-500 text-sm max-w-sm mx-auto">Guru belum memberikan tugas praktik. Silakan pelajari materi terlebih dahulu.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 5: ABSENSI -->
+        <div id="view-absen" class="view hidden">
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-600 text-2xl">
+                        <i class="fa-solid fa-fingerprint"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-center text-slate-800 mb-1">Absensi Kehadiran</h2>
+                    <p class="text-sm text-center text-slate-500 mb-6">Silakan isi kehadiran Anda hari ini.</p>
+                    
+                    <div id="attendance-form-container">
+                        <form id="attendance-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Nama Lengkap</label>
+                                <input type="text" id="att-name" required placeholder="Ketik nama..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Kelas</label>
+                                <select id="att-class" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+                                    <option value="" disabled selected>Pilih Kelas</option>
+                                    <optgroup label="TEI"><option>X TEI 1</option><option>X TEI 2</option><option>X TEI 3</option><option>X TEI 4</option></optgroup>
+                                    <optgroup label="TKR"><option>X TKR 1</option><option>X TKR 2</option><option>X TKR 3</option><option>X TKR 4</option></optgroup>
+                                    <optgroup label="TP"><option>X TP 1</option><option>X TP 2</option><option>X TP 3</option><option>X TP 4</option></optgroup>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg mt-2">
+                                Kirim Kehadiran
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 6: DASHBOARD GURU -->
+        <div id="view-guru" class="view hidden">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-chalkboard-user text-amber-500 mr-2"></i> Rekap Kehadiran</h2>
+                    <div class="flex gap-2">
+                        <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> XLS</button>
+                        <button onclick="exportToPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-pdf mr-1"></i> PDF</button>
+                    </div>
+                </div>
+                
+                <div id="filter-section" class="flex flex-col md:flex-row gap-3 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <select id="filter-class" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                        <option value="all">Semua Kelas</option>
+                        <option value="X TEI 1">X TEI 1</option><option value="X TEI 2">X TEI 2</option><option value="X TEI 3">X TEI 3</option><option value="X TEI 4">X TEI 4</option>
+                        <option value="X TKR 1">X TKR 1</option><option value="X TKR 2">X TKR 2</option><option value="X TKR 3">X TKR 3</option><option value="X TKR 4">X TKR 4</option>
+                        <option value="X TP 1">X TP 1</option><option value="X TP 2">X TP 2</option><option value="X TP 3">X TP 3</option><option value="X TP 4">X TP 4</option>
+                    </select>
+                    <input type="date" id="filter-date" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                </div>
+
+                <div class="overflow-x-auto" id="print-area">
+                    <table class="w-full text-left border-collapse" id="teacher-attendance-table">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                                <th class="p-3 border-b border-slate-200 text-center">No</th>
+                                <th class="p-3 border-b border-slate-200">Nama</th>
+                                <th class="p-3 border-b border-slate-200">Kelas</th>
+                                <th class="p-3 border-b border-slate-200">Hari/Tanggal</th>
+                                <th class="p-3 border-b border-slate-200">Jam</th>
+                                <th class="p-3 border-b border-slate-200 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-attendance-list" class="text-sm">
+                            <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ================= BOTTOM NAV (MOBILE) ================= -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600">
+            <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span>
+        </button>
+        <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-book-open text-lg mb-1"></i><span class="text-[10px] font-semibold">Materi</span>
+        </button>
+        <button onclick="navigate('shortcut')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-keyboard text-lg mb-1"></i><span class="text-[10px] font-semibold">Shortcut</span>
+        </button>
+        <button onclick="navigate('tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-file-pen text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span>
+        </button>
+        <button onclick="navigate('absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-fingerprint text-lg mb-1"></i><span class="text-[10px] font-semibold">Absen</span>
+        </button>
+    </nav>
+
+    <!-- MODAL LOGIN GURU -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl transform scale-100 transition-transform">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Login Guru</h2>
+                <p class="text-sm text-slate-500 mt-1">Akses dashboard dan rekap nilai.</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="teacher-pass" placeholder="Masukkan Password..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-center tracking-widest">
+                <div class="flex gap-2">
+                    <button onclick="closeLoginModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold transition">Batal</button>
+                    <button onclick="loginGuru()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-bold transition shadow-lg">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pustaka Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
+    
+    <!-- PENTING: PANGGIL FILE JS DARI SINI, JANGAN TULIS KODENYA DI SINI -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/attendance.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/certificate.js"></script>
+</body>
+</html>
