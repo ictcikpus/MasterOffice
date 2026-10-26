@@ -229,35 +229,18 @@
             </div>
         </div>
 
-        <!-- VIEW 5: ABSENSI -->
+               <!-- VIEW 5: ABSENSI -->
         <div id="view-absen" class="view hidden">
             <div class="max-w-md mx-auto">
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
                     <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-600 text-2xl">
-                        <i class="fa-solid fa-fingerprint"></i>
+                        <i class="fa-solid fa-camera"></i>
                     </div>
                     <h2 class="text-xl font-bold text-center text-slate-800 mb-1">Absensi Kehadiran</h2>
-                    <p class="text-sm text-center text-slate-500 mb-6">Silakan isi kehadiran Anda hari ini.</p>
+                    <p class="text-sm text-center text-slate-500 mb-6">Ambil swafoto (selfie) sebagai bukti kehadiran Anda hari ini.</p>
                     
                     <div id="attendance-form-container">
-                        <form id="attendance-form" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Nama Lengkap</label>
-                                <input type="text" id="att-name" required placeholder="Ketik nama..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Kelas</label>
-                                <select id="att-class" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
-                                    <option value="" disabled selected>Pilih Kelas</option>
-                                    <optgroup label="TEI"><option>X TEI 1</option><option>X TEI 2</option><option>X TEI 3</option><option>X TEI 4</option></optgroup>
-                                    <optgroup label="TKR"><option>X TKR 1</option><option>X TKR 2</option><option>X TKR 3</option><option>X TKR 4</option></optgroup>
-                                    <optgroup label="TP"><option>X TP 1</option><option>X TP 2</option><option>X TP 3</option><option>X TP 4</option></optgroup>
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg mt-2">
-                                Kirim Kehadiran
-                            </button>
-                        </form>
+                        <!-- Konten akan dirender oleh JS -->
                     </div>
                 </div>
             </div>
