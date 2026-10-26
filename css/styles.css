@@ -42,3 +42,71 @@ button {
     th, td { border: 1px solid #ccc; padding: 8px; color: black; text-align: left; }
     th { background-color: #f3f4f6; }
 }
+body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Navigasi Sidebar Desktop */
+.nav-item {
+    color: #64748b; /* text-slate-500 */
+}
+.nav-item:hover {
+    background-color: #f8fafc; /* bg-slate-50 */
+    color: #0f172a; /* text-slate-900 */
+}
+.nav-item.active {
+    background-color: #ecfdf5; /* bg-emerald-50 */
+    color: #059669; /* text-emerald-600 */
+}
+
+/* Virtual Keyboard Styles */
+.key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    min-width: 40px;
+    background: linear-gradient(180deg, #475569 0%, #334155 100%);
+    color: #f8fafc;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 3px 0 #1e293b, inset 0 1px 0 rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+}
+
+.key:active, .key.pressed {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #1e293b;
+    background: #0ea5e9; /* Warna biru saat ditekan */
+}
+
+/* Animasi Feedback */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+.animate-shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+.animate-pop {
+    animation: pop 0.3s ease-in-out;
+}
+
+/* Sembunyikan scrollbar horizontal yang tidak perlu di HP */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
