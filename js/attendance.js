@@ -4,8 +4,8 @@
 
 let allAttendanceData = [];
 const todayStr = new Date().toISOString().split('T')[0]; 
-let videoStream = null; // Menyimpan stream kamera
-let selfieTaken = false; // Status apakah user sudah jepret foto
+let videoStream = null; 
+let selfieTaken = false; 
 
 document.addEventListener("DOMContentLoaded", () => {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Mematikan kamera saat pindah tab/menu
 function stopCamera() {
     if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -25,9 +24,6 @@ function stopCamera() {
     }
 }
 
-// ------------------------------------------
-// LOGIKA SISWA (KAMERA & ANTI KECURANGAN)
-// ------------------------------------------
 function initStudentAttendance() {
     const formContainer = document.getElementById("attendance-form-container");
     if (!formContainer) return;
@@ -35,11 +31,10 @@ function initStudentAttendance() {
     let studentName = localStorage.getItem("student_name");
     let studentClass = localStorage.getItem("student_class");
 
-    if (!studentName || studentName === "Siswa Baru") {
-        studentName = prompt("Masukkan Nama Lengkap Anda untuk Absensi:") || "Siswa Baru";
-        studentClass = prompt("Masukkan Kelas Anda (Contoh: X TEI 1):") || "Umum";
-        localStorage.setItem("student_name", studentName);
-        localStorage.setItem("student_class", studentClass);
+    // Jika belum ada nama, hentikan (karena modal profil akan muncul dari main.js)
+    if (!studentName || !studentClass) {
+        formContainer.innerHTML = `<p class="text-center text-slate-500">Lengkapi profil Anda terlebih dahulu.</p>`;
+        return;
     }
 
     formContainer.innerHTML = `
@@ -53,9 +48,8 @@ function initStudentAttendance() {
     
     checkRef.once('value').then((snapshot) => {
         if (snapshot.exists()) {
-            // === JIKA SUDAH ABSEN (Terkunci) ===
             localStorage.setItem('last_attendance_date', todayStr);
-            stopCamera(); // Pastikan kamera mati
+            stopCamera(); 
             
             formContainer.innerHTML = `
                 <div class="text-center p-6 bg-emerald-50 border-2 border-emerald-200 rounded-xl animate-pop">
@@ -65,19 +59,17 @@ function initStudentAttendance() {
                 </div>
             `;
         } else {
-            // === JIKA BELUM ABSEN (Tampilkan Kamera) ===
             localStorage.removeItem('last_attendance_date');
             selfieTaken = false;
             
+            // Tampilkan Form Kamera
             formContainer.innerHTML = `
                 <div class="space-y-4">
-                    <!-- Info Siswa (Readonly) -->
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm">
                         <div class="flex justify-between mb-1"><span class="text-slate-500">Nama:</span> <span class="font-bold text-slate-800">${studentName}</span></div>
                         <div class="flex justify-between"><span class="text-slate-500">Kelas:</span> <span class="font-bold text-slate-800">${studentClass}</span></div>
                     </div>
 
-                    <!-- Area Kamera -->
                     <div class="relative bg-slate-900 rounded-xl overflow-hidden aspect-square flex items-center justify-center border-2 border-dashed border-slate-300">
                         <video id="camera-stream" autoplay playsinline class="w-full h-full object-cover hidden"></video>
                         <canvas id="photo-canvas" class="w-full h-full object-cover hidden"></canvas>
@@ -87,7 +79,6 @@ function initStudentAttendance() {
                         </div>
                     </div>
 
-                    <!-- Tombol Kamera -->
                     <div id="camera-actions" class="flex gap-2">
                         <button type="button" onclick="startCamera()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md">
                             <i class="fa-solid fa-video mr-1"></i> Nyalakan Kamera
@@ -100,7 +91,6 @@ function initStudentAttendance() {
                         </button>
                     </div>
 
-                    <!-- Tombol Kirim -->
                     <button id="btn-submit-attendance" onclick="submitAttendance('${studentName}', '${studentClass}')" disabled class="w-full bg-slate-300 text-slate-500 py-3.5 rounded-xl font-bold transition-all mt-2 cursor-not-allowed shadow-none">
                         <i class="fa-solid fa-fingerprint mr-2"></i> Kirim Kehadiran
                     </button>
@@ -113,7 +103,6 @@ function initStudentAttendance() {
     });
 }
 
-// Fungsi Menyalakan Kamera
 async function startCamera() {
     try {
         const video = document.getElementById('camera-stream');
@@ -121,7 +110,6 @@ async function startCamera() {
         const btnStart = document.getElementById('camera-actions').children[0];
         const btnTake = document.getElementById('btn-take-photo');
 
-        // Minta izin kamera (depan)
         videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         video.srcObject = videoStream;
         
@@ -129,31 +117,24 @@ async function startCamera() {
         placeholder.classList.add('hidden');
         btnStart.classList.add('hidden');
         btnTake.classList.remove('hidden');
-
     } catch (err) {
         alert("❌ Gagal mengakses kamera. Pastikan Anda memberikan izin kamera pada browser.");
-        console.error(err);
     }
 }
 
-// Fungsi Mengambil Gambar (Tanpa Upload)
 function takeSelfie() {
     const video = document.getElementById('camera-stream');
     const canvas = document.getElementById('photo-canvas');
     
-    // Atur ukuran canvas sama dengan video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
-    // Gambar frame video ke canvas
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    // Tampilkan hasil jepretan
     video.classList.add('hidden');
     canvas.classList.remove('hidden');
     
-    // Sembunyikan tombol jepret, munculkan tombol ulangi & aktifkan tombol submit
     document.getElementById('btn-take-photo').classList.add('hidden');
     document.getElementById('btn-retake-photo').classList.remove('hidden');
     
@@ -162,15 +143,10 @@ function takeSelfie() {
     btnSubmit.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
     btnSubmit.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'shadow-lg');
 
-    // Matikan kamera setelah jepret untuk hemat baterai
-    if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-    }
-
+    if (videoStream) videoStream.getTracks().forEach(track => track.stop());
     selfieTaken = true;
 }
 
-// Fungsi Mengulangi Foto
 function retakeSelfie() {
     const video = document.getElementById('camera-stream');
     const canvas = document.getElementById('photo-canvas');
@@ -186,10 +162,9 @@ function retakeSelfie() {
     btnSubmit.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
     btnSubmit.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'shadow-lg');
 
-    startCamera(); // Nyalakan ulang kamera
+    startCamera();
 }
 
-// Fungsi Kirim Data (Hanya Teks ke Firebase)
 async function submitAttendance(studentName, studentClass) {
     if (!selfieTaken) return alert("Silakan ambil foto selfie terlebih dahulu!");
     
@@ -203,7 +178,6 @@ async function submitAttendance(studentName, studentClass) {
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const checkRef = db.ref(`attendance/${todayStr}/${studentClass}/${studentName}`);
         
-        // HANYA MENYIMPAN TEKS (Foto tidak di-upload)
         await checkRef.set({
             name: studentName,
             class: studentClass,
@@ -213,10 +187,8 @@ async function submitAttendance(studentName, studentClass) {
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
 
-        stopCamera(); // Pastikan kamera mati total
+        stopCamera(); 
         alert(`✅ Absensi Berhasil!\n\nNama: ${studentName}\nKelas: ${studentClass}\nJam: ${timeStr}`);
-        
-        // Refresh tampilan menjadi terkunci
         initStudentAttendance();
 
     } catch (error) {
@@ -225,4 +197,102 @@ async function submitAttendance(studentName, studentClass) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-fingerprint mr-2"></i> Kirim Kehadiran';
     }
+}
+
+// ==========================================
+// DASHBOARD GURU
+// ==========================================
+function initTeacherDashboard() {
+    const tableList = document.getElementById("teacher-attendance-list");
+    if (!tableList) return;
+
+    db.ref('attendance').on('value', (snapshot) => {
+        allAttendanceData = [];
+        snapshot.forEach((dateNode) => {
+            const date = dateNode.key;
+            dateNode.forEach((classNode) => {
+                const className = classNode.key;
+                classNode.forEach((studentNode) => {
+                    allAttendanceData.push({
+                        id: `${date}/${className}/${studentNode.key}`, 
+                        ...studentNode.val()
+                    });
+                });
+            });
+        });
+        allAttendanceData.sort((a, b) => b.timestamp - a.timestamp);
+        renderTeacherTable();
+    });
+}
+
+function renderTeacherTable() {
+    const listElement = document.getElementById("teacher-attendance-list");
+    if (!listElement) return;
+
+    const filterClass = document.getElementById("filter-class").value;
+    const filterDate = document.getElementById("filter-date").value;
+    
+    let filteredData = allAttendanceData;
+    if (filterClass !== "all") filteredData = filteredData.filter(item => item.class === filterClass);
+    if (filterDate) filteredData = filteredData.filter(item => item.date === filterDate);
+
+    listElement.innerHTML = "";
+
+    if (filteredData.length === 0) {
+        listElement.innerHTML = `<tr><td colspan="6" class="text-center p-6 text-slate-500">Tidak ada data absensi untuk filter ini.</td></tr>`;
+        return;
+    }
+
+    filteredData.forEach((data, index) => {
+        listElement.innerHTML += `
+            <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+                <td class="p-3 text-center text-slate-400 text-xs">${index + 1}</td>
+                <td class="p-3 font-medium text-slate-700">${data.name}</td>
+                <td class="p-3 text-emerald-600 font-bold">${data.class}</td>
+                <td class="p-3 text-slate-500 text-xs">${data.day}, ${data.date}</td>
+                <td class="p-3 text-slate-500">${data.time}</td>
+                <td class="p-3 text-center">
+                    <button onclick="deleteAttendance('${data.id}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-bold" title="Hapus Data">
+                        <i class="fa-solid fa-trash"></i> Hapus
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function deleteAttendance(idPath) {
+    if (confirm("⚠️ Yakin ingin menghapus data absensi siswa ini?\n\nJika dihapus, siswa tersebut akan bisa absen kembali dari perangkatnya.")) {
+        db.ref('attendance/' + idPath).remove()
+            .then(() => alert("✅ Data berhasil dihapus. Perangkat siswa akan terbuka kembali."))
+            .catch(err => alert("❌ Gagal menghapus: " + err.message));
+    }
+}
+
+function exportToExcel() {
+    const table = document.getElementById("teacher-attendance-table");
+    if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Absensi" });
+    XLSX.writeFile(wb, `Rekap_Absensi_${todayStr}.xlsx`);
+}
+
+function exportToPDF() {
+    const table = document.getElementById("teacher-attendance-table");
+    if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
+    const element = document.getElementById("print-area");
+    const opt = {
+        margin:       10,
+        filename:     `Rekap_Absensi_${todayStr}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    const filterSection = document.getElementById('filter-section');
+    const exportButtons = document.getElementById('export-buttons');
+    if(filterSection) filterSection.style.display = 'none';
+    if(exportButtons) exportButtons.style.display = 'none';
+    html2pdf().set(opt).from(element).save().then(() => {
+        if(filterSection) filterSection.style.display = 'flex';
+        if(exportButtons) exportButtons.style.display = 'flex';
+    });
 }
