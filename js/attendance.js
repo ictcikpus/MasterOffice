@@ -31,7 +31,6 @@ function initStudentAttendance() {
     let studentName = localStorage.getItem("student_name");
     let studentClass = localStorage.getItem("student_class");
 
-    // Jika belum ada nama, hentikan (karena modal profil akan muncul dari main.js)
     if (!studentName || !studentClass) {
         formContainer.innerHTML = `<p class="text-center text-slate-500">Lengkapi profil Anda terlebih dahulu.</p>`;
         return;
@@ -44,6 +43,7 @@ function initStudentAttendance() {
         </div>
     `;
 
+    // Cek apakah sudah absen hari ini (berdasarkan tanggal hari ini)
     const checkRef = db.ref(`attendance/${todayStr}/${studentClass}/${studentName}`);
     
     checkRef.once('value').then((snapshot) => {
@@ -62,7 +62,6 @@ function initStudentAttendance() {
             localStorage.removeItem('last_attendance_date');
             selfieTaken = false;
             
-            // Tampilkan Form Kamera
             formContainer.innerHTML = `
                 <div class="space-y-4">
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm">
@@ -80,15 +79,9 @@ function initStudentAttendance() {
                     </div>
 
                     <div id="camera-actions" class="flex gap-2">
-                        <button type="button" onclick="startCamera()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md">
-                            <i class="fa-solid fa-video mr-1"></i> Nyalakan Kamera
-                        </button>
-                        <button type="button" id="btn-take-photo" onclick="takeSelfie()" class="hidden flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md">
-                            <i class="fa-solid fa-camera mr-1"></i> Ambil Foto
-                        </button>
-                        <button type="button" id="btn-retake-photo" onclick="retakeSelfie()" class="hidden flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Ulangi
-                        </button>
+                        <button type="button" onclick="startCamera()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"><i class="fa-solid fa-video mr-1"></i> Nyalakan Kamera</button>
+                        <button type="button" id="btn-take-photo" onclick="takeSelfie()" class="hidden flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"><i class="fa-solid fa-camera mr-1"></i> Ambil Foto</button>
+                        <button type="button" id="btn-retake-photo" onclick="retakeSelfie()" class="hidden flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"><i class="fa-solid fa-rotate-left mr-1"></i> Ulangi</button>
                     </div>
 
                     <button id="btn-submit-attendance" onclick="submitAttendance('${studentName}', '${studentClass}')" disabled class="w-full bg-slate-300 text-slate-500 py-3.5 rounded-xl font-bold transition-all mt-2 cursor-not-allowed shadow-none">
@@ -200,12 +193,13 @@ async function submitAttendance(studentName, studentClass) {
 }
 
 // ==========================================
-// DASHBOARD GURU
+// DASHBOARD GURU (ABSENSI)
 // ==========================================
 function initTeacherDashboard() {
     const tableList = document.getElementById("teacher-attendance-list");
     if (!tableList) return;
 
+    // Tarik SEMUA data absensi
     db.ref('attendance').on('value', (snapshot) => {
         allAttendanceData = [];
         snapshot.forEach((dateNode) => {
@@ -229,8 +223,8 @@ function renderTeacherTable() {
     const listElement = document.getElementById("teacher-attendance-list");
     if (!listElement) return;
 
-    const filterClass = document.getElementById("filter-class").value;
-    const filterDate = document.getElementById("filter-date").value;
+    const filterClass = document.getElementById('filter-class').value;
+    const filterDate = document.getElementById('filter-date').value;
     
     let filteredData = allAttendanceData;
     if (filterClass !== "all") filteredData = filteredData.filter(item => item.class === filterClass);
@@ -253,7 +247,7 @@ function renderTeacherTable() {
                 <td class="p-3 text-slate-500">${data.time}</td>
                 <td class="p-3 text-center">
                     <button onclick="deleteAttendance('${data.id}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-bold" title="Hapus Data">
-                        <i class="fa-solid fa-trash"></i> Hapus
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -262,13 +256,16 @@ function renderTeacherTable() {
 }
 
 function deleteAttendance(idPath) {
-    if (confirm("⚠️ Yakin ingin menghapus data absensi siswa ini?\n\nJika dihapus, siswa tersebut akan bisa absen kembali dari perangkatnya.")) {
+    if (confirm("⚠️ Yakin ingin menghapus data absensi siswa ini?\n\nJika dihapus, siswa tersebut akan bisa absen kembali dari perangkatnya hari ini.")) {
         db.ref('attendance/' + idPath).remove()
-            .then(() => alert("✅ Data berhasil dihapus. Perangkat siswa akan terbuka kembali."))
+            .then(() => alert("✅ Data berhasil dihapus."))
             .catch(err => alert("❌ Gagal menghapus: " + err.message));
     }
 }
 
+// ==========================================
+// EXPORT PDF & EXCEL
+// ==========================================
 function exportToExcel() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
