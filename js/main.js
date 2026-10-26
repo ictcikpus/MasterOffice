@@ -1,123 +1,6 @@
 // ==========================================
-// MAIN APP LOGIC & SLIDE MATERI
+// MAIN APP LOGIC (Slide Navigation & Quiz)
 // ==========================================
-
-// Data Materi (Dibagi per Slide/Halaman)
-const materiData = [
-    {
-        id: 'word',
-        title: 'Microsoft Word',
-        icon: 'fa-file-word',
-        color: 'blue',
-        desc: 'Software pengolah kata paling populer.',
-        slides: [
-            {
-                title: 'Halaman 1: Pengenalan Microsoft Word',
-                content: `
-                    <div class="text-center mb-6">
-                        <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl"><i class="fa-solid fa-file-word"></i></div>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">Apa itu Microsoft Word?</h3>
-                    <p class="text-slate-600 leading-relaxed mb-4">Microsoft Word adalah perangkat lunak pengolah kata (word processor) andalan Microsoft. Digunakan untuk membuat, mengedit, dan memformat dokumen seperti surat, laporan, makalah, dan buku.</p>
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                        <p class="text-sm text-blue-800"><b>Tahukah kamu?</b> Ekstensi file Word adalah .doc atau .docx.</p>
-                    </div>
-                `
-            },
-            {
-                title: 'Halaman 2: Fungsi Utama Word',
-                content: `
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Fungsi Utama</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-blue-500 mt-1"></i> <div><b>Membuat Dokumen:</b> Menulis teks, artikel, surat, dan laporan.</div></div>
-                        <div class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-blue-500 mt-1"></i> <div><b>Formatting:</b> Menebalkan (Bold), memiringkan (Italic), memberi warna, dan mengatur spasi.</div></div>
-                        <div class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-blue-500 mt-1"></i> <div><b>Menyisipkan Objek:</b> Menambahkan gambar, tabel, grafik, dan nomor halaman.</div></div>
-                        <div class="flex items-start gap-3"><i class="fa-solid fa-check-circle text-blue-500 mt-1"></i> <div><b>Mail Merge:</b> Membuat surat massal dengan nama penerima berbeda secara otomatis.</div></div>
-                    </div>
-                `
-            },
-            {
-                title: 'Halaman 3: Tampilan Antarmuka (UI)',
-                content: `
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">Mengenal Bagian Word</h3>
-                    <p class="text-slate-600 mb-4">Saat membuka Word, Anda akan melihat beberapa bagian penting:</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><b>1. Ribbon (Menu Atas)</b><br><span class="text-sm text-slate-500">Berisi Tab Home, Insert, Design, dll.</span></div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><b>2. Document Area</b><br><span class="text-sm text-slate-500">Lembar kerja putih tempat Anda mengetik.</span></div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><b>3. Scrollbar</b><br><span class="text-sm text-slate-500">Untuk naik turun halaman.</span></div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><b>4. Status Bar</b><br><span class="text-sm text-slate-500">Menampilkan jumlah halaman & kata.</span></div>
-                    </div>
-                `
-            },
-            {
-                title: 'Halaman 4: Simulasi Interaktif',
-                content: `
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">Simulasi: Ikon Word</h3>
-                    <p class="text-slate-600 mb-4">Klik ikon yang sesuai dengan fungsinya!</p>
-                    <div class="bg-slate-100 p-4 rounded-xl border border-slate-300">
-                        <p class="text-sm font-bold mb-2">Pertanyaan: Ikon mana yang digunakan untuk menebalkan teks?</p>
-                        <div class="flex gap-2">
-                            <button onclick="alert('Salah! Ini untuk memiringkan teks.')" class="bg-white p-3 rounded border hover:bg-slate-50 w-12 font-serif italic font-bold">I</button>
-                            <button onclick="alert('Benar! Ikon B (Bold) untuk menebalkan teks.')" class="bg-white p-3 rounded border hover:bg-slate-50 w-12 font-serif font-bold">B</button>
-                            <button onclick="alert('Salah! Ini untuk menggarisbawahi teks.')" class="bg-white p-3 rounded border hover:bg-slate-50 w-12 font-serif underline">U</button>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                title: 'Halaman 5: Cara Menyimpan',
-                content: `
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Menyimpan Dokumen</h3>
-                    <p class="text-slate-600 mb-4">Jangan sampai pekerjaan Anda hilang! Ada 2 cara menyimpan:</p>
-                    <div class="space-y-4">
-                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
-                            <b>1. Save (Ctrl + S)</b><br>
-                            <span class="text-sm text-slate-600">Menyimpan file yang sudah pernah disimpan sebelumnya.</span>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                            <b>2. Save As (F12)</b><br>
-                            <span class="text-sm text-slate-600">Menyimpan file dengan nama atau format baru (misal: ubah ke PDF).</span>
-                        </div>
-                    </div>
-                `
-            }
-        ]
-    },
-    {
-        id: 'excel',
-        title: 'Microsoft Excel',
-        icon: 'fa-file-excel',
-        color: 'emerald',
-        desc: 'Aplikasi spreadsheet pengolah angka.',
-        slides: [
-            {
-                title: 'Halaman 1: Pengenalan Excel',
-                content: `<h3 class="text-xl font-bold text-slate-800 mb-3">Apa itu Excel?</h3><p class="text-slate-600">Excel adalah program lembar kerja (spreadsheet) untuk mengolah data secara otomatis meliputi perhitungan dasar, penggunaan rumus, dan pembuatan grafik.</p>`
-            },
-            {
-                title: 'Halaman 2: Rumus Dasar (Formula)',
-                content: `<h3 class="text-xl font-bold text-slate-800 mb-3">Aturan Formula</h3><p class="text-slate-600 mb-4">Setiap rumus di Excel <b>WAJIB</b> diawali dengan tanda sama dengan (=).</p><div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200"><b>Contoh:</b> <code class="text-emerald-700">=SUM(A1:A5)</code> untuk menjumlahkan data dari sel A1 sampai A5.</div>`
-            },
-            {
-                title: 'Halaman 3: Simulasi Interaktif',
-                content: `<h3 class="text-xl font-bold text-slate-800 mb-3">Simulasi Excel</h3><p class="text-slate-600 mb-4">Jika Anda ingin menjumlahkan data dari A1 sampai A10, rumus apa yang benar?</p><div class="space-y-2"><button onclick="alert('Salah! Harus diawali tanda =')" class="w-full text-left p-3 bg-white border rounded-xl hover:bg-slate-50">SUM(A1:A10)</button><button onclick="alert('Benar! =SUM(A1:A10) adalah format yang tepat.')" class="w-full text-left p-3 bg-white border rounded-xl hover:bg-slate-50">=SUM(A1:A10)</button></div>`
-            }
-        ]
-    },
-    {
-        id: 'google',
-        title: 'Google Workspace',
-        icon: 'fa-brands fa-google',
-        color: 'yellow',
-        desc: 'Docs, Sheets, Slides (Berbasis Cloud).',
-        slides: [
-            {
-                title: 'Halaman 1: Kolaborasi Cloud',
-                content: `<h3 class="text-xl font-bold text-slate-800 mb-3">Google Docs/Sheets/Slides</h3><p class="text-slate-600">Berbeda dengan Ms Office, Google Workspace berjalan di browser. Keunggulannya adalah <b>Kolaborasi Real-time</b>. Anda dan teman Anda bisa mengetik di dokumen yang sama secara bersamaan!</p>`
-            }
-        ]
-    }
-];
 
 let currentMateriId = null;
 let currentSlideIndex = 0;
@@ -153,10 +36,18 @@ function saveProfile() {
     location.reload();
 }
 
+// Render Daftar Modul
 function renderMateri() {
     const container = document.getElementById('materi-container');
     if(!container) return;
     container.innerHTML = '';
+    
+    // Pastikan materiData sudah dimuat dari data_materi.js
+    if (typeof materiData === 'undefined') {
+        container.innerHTML = '<p class="text-rose-500">Gagal memuat data materi.</p>';
+        return;
+    }
+
     materiData.forEach(m => {
         container.innerHTML += `
             <div onclick="openMateriDetail('${m.id}')" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md cursor-pointer transition-all">
@@ -178,6 +69,7 @@ function openMateriDetail(id) {
     navigate('materi-detail');
 }
 
+// Render Konten Slide + Kuis
 function loadSlide() {
     const materi = materiData.find(m => m.id === currentMateriId);
     if(!materi) return;
@@ -186,12 +78,33 @@ function loadSlide() {
     document.getElementById('slide-current').innerText = currentSlideIndex + 1;
     document.getElementById('slide-total').innerText = materi.slides.length;
     
-    // Render konten slide
-    document.getElementById('slide-content').innerHTML = `
+    let html = `
         <h2 class="text-sm font-bold text-${materi.color}-500 uppercase tracking-widest mb-1">${materi.title}</h2>
         <h1 class="text-2xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-2">${slide.title}</h1>
-        <div class="animate-fade-in">${slide.content}</div>
+        <div class="animate-fade-in text-slate-700 leading-relaxed mb-8">${slide.content}</div>
     `;
+
+    // Jika slide memiliki kuis, tambahkan UI kuis
+    if (slide.quiz) {
+        html += `
+            <div class="bg-slate-50 border border-slate-200 p-5 rounded-2xl mt-4">
+                <h4 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-circle-question text-sky-500 mr-2"></i> Uji Pemahaman</h4>
+                <p class="text-sm font-medium mb-3">${slide.quiz.question}</p>
+                <div class="space-y-2" id="quiz-options">
+        `;
+        
+        slide.quiz.options.forEach((opt, idx) => {
+            html += `<button onclick="checkQuizAnswer(${idx}, ${slide.quiz.correct})" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition text-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+        });
+
+        html += `
+                </div>
+                <div id="quiz-feedback" class="mt-3 text-sm font-bold hidden"></div>
+            </div>
+        `;
+    }
+
+    document.getElementById('slide-content').innerHTML = html;
 
     // Atur tombol navigasi
     document.getElementById('btn-prev-slide').disabled = (currentSlideIndex === 0);
@@ -202,10 +115,29 @@ function loadSlide() {
         btnNext.classList.replace('bg-emerald-600', 'bg-amber-500');
         btnNext.classList.replace('hover:bg-emerald-700', 'hover:bg-amber-600');
     } else {
-        btnNext.innerHTML = 'Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i>';
+        btnNext.innerHTML = 'Lanjut <i class="fa-solid fa-chevron-right ml-1"></i>';
         btnNext.classList.replace('bg-amber-500', 'bg-emerald-600');
         btnNext.classList.replace('hover:bg-amber-600', 'hover:bg-emerald-700');
     }
+}
+
+// Logika Cek Jawaban Kuis di dalam Slide
+function checkQuizAnswer(selected, correct) {
+    const feedback = document.getElementById('quiz-feedback');
+    const buttons = document.getElementById('quiz-options').querySelectorAll('button');
+    
+    // Disable all buttons after answering
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selected === correct) {
+        buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+        feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar! Hebat.</span>';
+    } else {
+        buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+        buttons[correct].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+        feedback.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Jawaban Kurang Tepat. Silakan pelajari lagi.</span>';
+    }
+    feedback.classList.remove('hidden');
 }
 
 function changeSlide(direction) {
@@ -226,6 +158,7 @@ function changeSlide(direction) {
     }
 }
 
+// Inisialisasi Aplikasi
 document.addEventListener('DOMContentLoaded', function() {
     var isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
@@ -242,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             var progress = JSON.parse(localStorage.getItem("office_progress")) || {};
             var levelsDone = Object.values(progress).filter(function(v) { return v === true; }).length;
-            document.getElementById('dash-levels').innerText = levelsDone + "/9";
+            document.getElementById('dash-levels').innerText = levelsDone + "/6";
             
             renderMateri();
         }
