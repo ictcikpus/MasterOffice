@@ -1,8 +1,7 @@
 // ==========================================
-// TASKS SYSTEM (Firebase + Google Apps Script Upload)
+// TASKS SYSTEM (Firebase + Google Apps Script)
 // ==========================================
 
-// URL Google Apps Script Anda
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
 
 let allTasks = [];
@@ -19,11 +18,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         allTasks.reverse();
         
-        // Buat tugas otomatis jika kosong (untuk testing awal)
+        // Tugas Perdana (Jika database kosong)
         if (allTasks.length === 0) {
             db.ref('tasks').push({
-                title: 'Tugas Perkenalan: Microsoft Word',
-                desc: 'Buatlah dokumen Word berisi biodata diri Anda (Nama, Kelas, Alamat, Cita-cita). Unggah file PDF-nya di sini.',
+                title: 'Artikel TIK: Dampak Teknologi Informasi bagi Pelajar',
+                desc: `
+                    <p class="mb-3 font-medium text-slate-700">Tugas ini dirancang untuk melatih keterampilan Anda dalam menggunakan <b>Google Docs</b> secara profesional. Ikuti langkah-langkah berikut dengan teliti:</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2">Langkah Pengerjaan:</h4>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-600">
+                            <li>Buka <a href="https://docs.google.com" target="_blank" class="text-sky-600 underline font-bold">docs.google.com</a> dan login dengan akun Google Anda.</li>
+                            <li>Klik <b>Blank</b> untuk membuat dokumen baru.</li>
+                            <li>Ketik judul: <b>"Dampak Positif dan Negatif Teknologi Informasi bagi Pelajar"</b>. Gunakan format <i>Heading 1</i> untuk judul ini.</li>
+                            <li>Tulis artikel minimal <b>3 paragraf</b> (setiap paragraf 4-5 baris).</li>
+                            <li>Sisipkan 1 gambar yang relevan melalui menu <b>Insert > Image > Search the web</b>.</li>
+                            <li>Gunakan <i>Bold</i> untuk kata kunci penting, dan <i>Italic</i> untuk istilah asing.</li>
+                            <li>Ubah pengaturan halaman menjadi <i>Landscape</i> (File > Page setup > Landscape).</li>
+                            <li>Klik tombol <b>Share</b> (Bagikan) di pojok kanan atas.</li>
+                            <li>Di bagian <i>General access</i>, ubah menjadi <b>"Anyone with the link"</b> (Siapa saja yang memiliki link).</li>
+                            <li>Copy link tersebut dan tempelkan pada formulir pengumpulan tugas di bawah.</li>
+                        </ol>
+                    </div>
+                    <p class="text-xs text-amber-600 font-bold mt-3"><i class="fa-solid fa-circle-info"></i> Anda bisa mengumpulkan dalam bentuk Link Google Docs ATAU Export ke PDF lalu diunggah.</p>
+                `,
                 deadline: '2026-12-31',
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
@@ -62,7 +79,7 @@ function simpanTugas() {
 
     db.ref('tasks').push({
         title: title,
-        desc: desc,
+        desc: desc, // Bisa berisi HTML
         deadline: deadline,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
@@ -84,7 +101,7 @@ function renderGuruTugas() {
     allTasks.forEach(t => {
         container.innerHTML += `
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
+                <div class="flex-1">
                     <h3 class="font-bold text-lg text-slate-800">${t.title}</h3>
                     <p class="text-sm text-slate-500 mt-1">Deadline: <b>${t.deadline}</b></p>
                 </div>
@@ -98,7 +115,7 @@ function renderGuruTugas() {
 }
 
 function hapusTugas(id) {
-    if (confirm("Yakin ingin menghapus tugas ini? Siswa tidak akan bisa melihat tugas ini lagi.")) {
+    if (confirm("Yakin ingin menghapus tugas ini?")) {
         db.ref('tasks/' + id).remove().then(() => alert("Tugas dihapus."));
     }
 }
@@ -119,18 +136,22 @@ function lihatPengumpulan(taskId, title) {
                 const studentName = studentSnap.key;
                 const submissions = studentSnap.val();
                 
-                // Jika siswa ini mengumpulkan tugas yang sedang dicek
                 if (submissions[taskId]) {
                     found = true;
                     const sub = submissions[taskId];
+                    // Cek apakah link dari Google Docs atau upload Drive
+                    const isDocs = sub.link.includes('docs.google.com');
+                    const icon = isDocs ? 'fa-file-word' : 'fa-file-pdf';
+                    const color = isDocs ? 'text-blue-600 bg-blue-100' : 'text-rose-600 bg-rose-100';
+
                     container.innerHTML += `
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-3 border-b border-slate-100 hover:bg-slate-50 gap-2">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-slate-100 hover:bg-slate-50 gap-3">
                             <div>
                                 <p class="font-bold text-slate-800">${studentName}</p>
                                 <p class="text-xs text-slate-500">${className}</p>
                             </div>
-                            <a href="${sub.link}" target="_blank" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2">
-                                <i class="fa-brands fa-google-drive"></i> Buka File Tugas
+                            <a href="${sub.link}" target="_blank" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${color} hover:opacity-80">
+                                <i class="fa-solid ${icon} text-lg"></i> Buka File Tugas
                             </a>
                         </div>
                     `;
@@ -145,7 +166,7 @@ function lihatPengumpulan(taskId, title) {
 }
 
 // ------------------------------------------
-// LOGIKA SISWA (UPLOAD FILE)
+// LOGIKA SISWA
 // ------------------------------------------
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -170,16 +191,16 @@ function renderSiswaTugas() {
             const isSubmitted = mySubmissions[t.id];
             let statusHtml = isSubmitted 
                 ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
-                : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition">Kumpulkan Tugas</button>`;
+                : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
             container.innerHTML += `
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-3">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 gap-2">
-                        <h3 class="font-bold text-lg text-slate-800">${t.title}</h3>
-                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded">Tenggat: ${t.deadline}</span>
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-xl text-slate-800">${t.title}</h3>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${t.deadline}</span>
                     </div>
-                    <p class="text-sm text-slate-600 mb-4">${t.desc}</p>
-                    <div class="flex justify-end border-t border-slate-100 pt-3">${statusHtml}</div>
+                    <div class="text-slate-600 mb-5">${t.desc}</div>
+                    <div class="flex justify-end">${statusHtml}</div>
                 </div>
             `;
         });
@@ -189,7 +210,8 @@ function renderSiswaTugas() {
 function openKumpulTugasModal(taskId, title) {
     currentSelectedTaskId = taskId;
     document.getElementById('kumpul-tugas-title').innerText = "Tugas: " + title;
-    document.getElementById('file-tugas').value = ""; // Reset file input
+    document.getElementById('link-tugas').value = ""; // Reset link
+    document.getElementById('file-tugas').value = ""; // Reset file
     document.getElementById('modal-kumpul-tugas').classList.remove('hidden');
 }
 
@@ -197,53 +219,68 @@ function closeKumpulTugasModal() {
     document.getElementById('modal-kumpul-tugas').classList.add('hidden');
 }
 
-// FUNGSI UNTUK UPLOAD FILE KE GOOGLE DRIVE VIA APPS SCRIPT
-async function uploadDanKirimTugas() {
+// FUNGSI UTAMA: Memproses pengumpulan (Link atau File)
+async function prosesKumpulTugas() {
+    const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
     const file = fileInput.files[0];
 
-    if (!file) return alert("Pilih file tugas terlebih dahulu!");
-    
-    // Validasi ukuran file (maksimal 5MB untuk mencegah error memori)
-    if (file.size > 5 * 1024 * 1024) {
-        return alert("❌ Ukuran file terlalu besar. Maksimal 5MB.");
+    if (!linkInput && !file) {
+        return alert("Silakan masukkan Link Google Docs ATAU unggah file PDF Anda.");
+    }
+
+    if (linkInput && !linkInput.includes('http')) {
+        return alert("Format link tidak valid. Pastikan diawali dengan http:// atau https://");
     }
 
     const btn = document.getElementById('btn-submit-tugas');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengunggah...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...';
+
+    if (linkInput) {
+        // Jika siswa mengisi link
+        saveSubmissionToFirebase(linkInput);
+    } else if (file) {
+        // Jika siswa upload file (via Apps Script)
+        if (file.size > 5 * 1024 * 1024) {
+            alert("❌ Ukuran file maksimal 5MB.");
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            return;
+        }
+        uploadFileToDrive(file);
+    }
+}
+
+function uploadFileToDrive(file) {
+    const btn = document.getElementById('btn-submit-tugas');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengunggah ke Drive...';
 
     const reader = new FileReader();
     reader.onload = async function(e) {
-        // Ambil string base64 saja (buang awalan data:image/png;base64,)
         const base64Data = e.target.result.split(',')[1]; 
         const mimeType = file.type;
         const studentName = localStorage.getItem("student_name");
         const filename = `${studentName}_${Date.now()}_${file.name}`;
 
         try {
-            // Kirim data ke Google Apps Script
             const response = await fetch(GAS_URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    file: base64Data,
-                    filename: filename,
-                    mimeType: mimeType
-                })
+                body: JSON.stringify({ file: base64Data, filename: filename, mimeType: mimeType })
             });
 
             const result = await response.json();
 
             if (result.status === 'success' && result.url) {
-                // Jika berhasil diupload, simpan URL Drive ke Firebase
                 saveSubmissionToFirebase(result.url);
             } else {
                 throw new Error(result.message || "Gagal mengunggah ke Google Drive.");
             }
         } catch (error) {
             console.error("Upload Error:", error);
-            alert(`❌ Gagal mengunggah file.\n\nPesan Error: ${error.message}\n\nPastikan Google Apps Script sudah di-deploy dengan akses "Anyone".`);
+            alert(`❌ Gagal mengunggah file.\n\nPesan Error: ${error.message}`);
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
@@ -251,18 +288,17 @@ async function uploadDanKirimTugas() {
     reader.readAsDataURL(file);
 }
 
-function saveSubmissionToFirebase(driveUrl) {
+function saveSubmissionToFirebase(submissionUrl) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
     db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({
-        link: driveUrl,
+        link: submissionUrl,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
-        alert("✅ Tugas berhasil diunggah dan dikumpulkan!");
+        alert("✅ Tugas berhasil dikumpulkan!");
         closeKumpulTugasModal();
         
-        // Kembalikan tombol ke keadaan semula
         const btn = document.getElementById('btn-submit-tugas');
         btn.disabled = false;
         btn.innerHTML = 'Kirim';
