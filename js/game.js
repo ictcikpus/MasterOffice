@@ -36,14 +36,17 @@ function switchMainTab(tabName) {
     // Sembunyikan semua panel
     document.getElementById('panel-main-learning').classList.add('hidden');
     document.getElementById('panel-main-attendance').classList.add('hidden');
+    document.getElementById('panel-main-dashboard').classList.add('hidden');
     document.getElementById('panel-main-leaderboard').classList.add('hidden');
 
     // Reset style tombol nav
-    const navBtns = ['learning', 'attendance', 'leaderboard'];
+    const navBtns = ['learning', 'attendance', 'dashboard', 'leaderboard'];
     navBtns.forEach(btn => {
         const el = document.getElementById(`nav-btn-${btn}`);
-        el.classList.remove('bg-sky-600', 'text-white');
-        el.classList.add('text-slate-400');
+        if(el) {
+            el.classList.remove('bg-sky-600', 'text-white');
+            el.classList.add('text-slate-400');
+        }
     });
 
     // Tampilkan panel yang dipilih
@@ -51,8 +54,10 @@ function switchMainTab(tabName) {
     
     // Highlight tombol nav
     const activeBtn = document.getElementById(`nav-btn-${tabName}`);
-    activeBtn.classList.remove('text-slate-400');
-    activeBtn.classList.add('bg-sky-600', 'text-white');
+    if(activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('bg-sky-600', 'text-white');
+    }
 
     // Hentikan timer game jika pindah tab
     if (tabName !== 'learning') {
@@ -64,14 +69,24 @@ function switchMainTab(tabName) {
 // INISIALISASI & FETCH DATA JSON
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Profil Siswa Setup
-    if (!localStorage.getItem("student_name")) {
-        userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
-        userClass = prompt("Masukkan Kelas (Contoh: X TEI 1):") || "Kelas Umum";
-        localStorage.setItem("student_name", userName);
-        localStorage.setItem("student_class", userClass);
+    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
+
+    if (!isTeacher) {
+        // Profil Siswa Setup
+        if (!localStorage.getItem("student_name")) {
+            userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
+            userClass = prompt("Masukkan Kelas (Contoh: X TEI 1):") || "Kelas Umum";
+            localStorage.setItem("student_name", userName);
+            localStorage.setItem("student_class", userClass);
+        }
+        updateProfileUI();
+    } else {
+        // Setup Tampilan untuk Guru
+        document.getElementById("player-name").innerText = "Guru / Admin";
+        document.getElementById("player-class").innerText = "Akses Penuh";
+        document.getElementById("game-score").innerText = "-";
+        document.getElementById("lives-count").innerText = "-";
     }
-    updateProfileUI();
 
     // Fetch JSON Paralel
     Promise.all([
@@ -86,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMaterial(currentModule, currentLevel);
         checkAllLevelsCompleted();
         
-        if (score > 0 && typeof window.syncScoreToDatabase === 'function') {
+        if (score > 0 && typeof window.syncScoreToDatabase === 'function' && !isTeacher) {
             window.syncScoreToDatabase(userName, userClass, score);
         }
     })
@@ -245,7 +260,6 @@ function initGameMechanic() {
         return;
     }
     
-    // Pilih 1 soal secara ACAK
     const randomIndex = Math.floor(Math.random() * questionDataRaw.length);
     currentActiveQuestion = questionDataRaw[randomIndex];
     
