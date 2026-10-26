@@ -19,6 +19,7 @@ let typingTotalTyped = 0;
 let typingIsPlaying = false;
 
 function startTypingGame() {
+    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
@@ -50,10 +51,8 @@ function startTypingGame() {
     document.getElementById('typing-wpm').innerText = "0";
     document.getElementById('typing-acc').innerText = "100%";
     
-    // Fokus ke input
     inputEl.focus();
     
-    // Timer
     clearInterval(typingTimer);
     typingTimer = setInterval(() => {
         typingTimeLeft--;
@@ -65,7 +64,6 @@ function startTypingGame() {
     }, 1000);
 }
 
-// Event Listener Input (Hidden Input)
 document.addEventListener('DOMContentLoaded', () => {
     const inputEl = document.getElementById('typing-input');
     if(inputEl) {
@@ -75,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const typedText = e.target.value;
             typingTotalTyped = typedText.length;
             
-            // Hitung Error & Cek Karakter
             typingErrors = 0;
             for (let i = 0; i < typedText.length; i++) {
                 const charSpan = document.getElementById(`char-${i}`);
@@ -89,13 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // Highlight karakter selanjutnya
             if (typedText.length < typingTargetText.length) {
                 const nextChar = document.getElementById(`char-${typedText.length}`);
                 if (nextChar) nextChar.className = "text-slate-800 font-bold bg-yellow-200 rounded-sm animate-pulse";
             }
 
-            // Hitung Akurasi & WPM secara real-time
             const accuracy = typedText.length > 0 ? Math.round(((typedText.length - typingErrors) / typedText.length) * 100) : 100;
             document.getElementById('typing-acc').innerText = `${accuracy}%`;
             
@@ -105,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('typing-wpm').innerText = wpm;
             }
 
-            // Jika selesai
             if (typedText === typingTargetText) {
                 endTypingGame(true);
             }
@@ -119,16 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const keyValue = e.target.getAttribute('data-key');
             const inputEl = document.getElementById('typing-input');
             
-            // Simulasi mengetik (kecuali tombol modifier)
             if (keyValue === "Backspace") {
                 inputEl.value = inputEl.value.slice(0, -1);
             } else if (keyValue === " " || keyValue === "Space") {
                 inputEl.value += " ";
             } else if (keyValue.length === 1) {
-                inputEl.value += keyValue.toLowerCase(); // Huruf kecil default
+                inputEl.value += keyValue.toLowerCase(); 
             }
             
-            // Trigger event input manual
             inputEl.dispatchEvent(new Event('input'));
             inputEl.focus();
         });
@@ -149,9 +141,8 @@ function endTypingGame(isFinished = false) {
         alert(`⏰ Waktu Habis!\n\nKecepatan Akhir: ${finalWpm} WPM\nAkurasi: ${finalAcc}%`);
     }
 
-    // Berikan Poin jika WPM dan Akurasi memenuhi syarat
     if (finalWpm >= 20 && finalAcc >= 80) {
-        const points = Math.round(finalWpm + (finalAcc / 2)); // Contoh rumus poin
+        const points = Math.round(finalWpm + (finalAcc / 2)); 
         if (typeof addGlobalScore === 'function') {
             addGlobalScore(points);
         }
