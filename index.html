@@ -160,25 +160,37 @@
 
         <!-- VIEW 3: ARENA LATIHAN -->
         <div id="view-arena" class="view hidden">
+            <!-- Menu Pilihan Game -->
             <div id="arena-menu">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
-                        <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-keyboard"></i></div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">Game Shortcut</h3>
-                        <p class="text-sm text-slate-500 mb-4">Latih ingatanmu tentang kombinasi tombol keyboard (Ctrl+C, Ctrl+V, dll).</p>
-                        <span class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl text-sm font-bold">+10 Poin / Benar</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Game Shortcut -->
+                    <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Game Shortcut</h3>
+                        <p class="text-xs text-slate-500 mb-4">Latih ingatanmu tentang kombinasi tombol keyboard (Ctrl+C, Ctrl+V, dll).</p>
+                        <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-bold mt-auto">+10 Poin</span>
                     </div>
 
-                    <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
-                        <div class="w-20 h-20 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-brain"></i></div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
-                        <p class="text-sm text-slate-500 mb-4">Uji pemahamanmu tentang materi Word, Excel, PPT, dan Google. Soal bervariasi!</p>
-                        <span class="bg-sky-100 text-sky-700 px-4 py-2 rounded-xl text-sm font-bold">+20 Poin / Benar</span>
+                    <!-- Kuis Materi -->
+                    <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-brain"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
+                        <p class="text-xs text-slate-500 mb-4">Uji pemahamanmu tentang materi Word, Excel, PPT, dan Google.</p>
+                        <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-lg text-xs font-bold mt-auto">+20 Poin</span>
+                    </div>
+
+                    <!-- Latihan Ketik 10 Jari -->
+                    <div onclick="startTypingGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-purple-100 text-purple-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-hand-point-up"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Latihan Ketik 10 Jari</h3>
+                        <p class="text-xs text-slate-500 mb-4">Ketik kalimat secepat mungkin menggunakan keyboard US.</p>
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold mt-auto">+50 Poin</span>
                     </div>
                 </div>
             </div>
 
+            <!-- Container Game Shortcut -->
             <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
@@ -193,14 +205,13 @@
                         <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
                     </div>
                     <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none">
-                        <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd></div>
-                        <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd></div>
-                        <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd></div>
-                        <div class="flex justify-center gap-1"><kbd class="key w-16" data-key="Ctrl">Ctrl</kbd><kbd class="key w-12" data-key="Alt">Alt</kbd><kbd class="key w-32" data-key="Space">Space</kbd><kbd class="key w-14" data-key="Shift">Shift</kbd><kbd class="key w-16" data-key="Enter">Enter</kbd></div>
+                        <!-- Keyboard dipindah ke JS agar dinamis, atau biarkan hardcoded di sini -->
+                        <div id="shortcut-keyboard"></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Container Kuis Materi -->
             <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
@@ -209,6 +220,46 @@
                         <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
                     </div>
                     <div id="quiz-content"></div>
+                </div>
+            </div>
+
+            <!-- Container Latihan Ketik -->
+            <div id="typing-game-container" class="hidden max-w-3xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Waktu</span><span class="text-xl font-bold text-rose-600" id="typing-time">60s</span></div>
+                        <div class="text-center"><span class="block text-xs font-bold text-slate-400 uppercase">Kecepatan (WPM)</span><span class="text-xl font-bold text-sky-600" id="typing-wpm">0</span></div>
+                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Akurasi</span><span class="text-xl font-bold text-emerald-600" id="typing-acc">100%</span></div>
+                    </div>
+                    
+                    <div class="bg-slate-100 p-4 rounded-xl mb-6 text-lg font-mono leading-relaxed" id="typing-text-display">
+                        <!-- Teks akan dirender di sini oleh JS -->
+                    </div>
+
+                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6 opacity-0 absolute -z-10" autocomplete="off">
+
+                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto">
+                        <!-- Virtual Keyboard US -->
+                        <div class="flex flex-col gap-1 items-center min-w-[600px]">
+                            <div class="flex gap-1 w-full justify-center">
+                                <kbd class="key" data-key="`">~</kbd><kbd class="key" data-key="1">1</kbd><kbd class="key" data-key="2">2</kbd><kbd class="key" data-key="3">3</kbd><kbd class="key" data-key="4">4</kbd><kbd class="key" data-key="5">5</kbd><kbd class="key" data-key="6">6</kbd><kbd class="key" data-key="7">7</kbd><kbd class="key" data-key="8">8</kbd><kbd class="key" data-key="9">9</kbd><kbd class="key" data-key="0">0</kbd><kbd class="key" data-key="-">-</kbd><kbd class="key" data-key="=">=</kbd><kbd class="key w-16" data-key="Backspace">Backspace</kbd>
+                            </div>
+                            <div class="flex gap-1 w-full justify-center">
+                                <kbd class="key w-14" data-key="Tab">Tab</kbd><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd><kbd class="key" data-key="[">[</kbd><kbd class="key" data-key="]">]</kbd><kbd class="key w-14" data-key="\">\</kbd>
+                            </div>
+                            <div class="flex gap-1 w-full justify-center">
+                                <kbd class="key w-20" data-key="CapsLock">Caps</kbd><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd><kbd class="key" data-key=";">;</kbd><kbd class="key" data-key="'">'</kbd><kbd class="key w-20" data-key="Enter">Enter</kbd>
+                            </div>
+                            <div class="flex gap-1 w-full justify-center">
+                                <kbd class="key w-24" data-key="ShiftLeft">Shift</kbd><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd><kbd class="key" data-key=",">,</kbd><kbd class="key" data-key=".">.</kbd><kbd class="key" data-key="/">/</kbd><kbd class="key w-24" data-key="ShiftRight">Shift</kbd>
+                            </div>
+                            <div class="flex gap-1 w-full justify-center mt-1">
+                                <kbd class="key w-full max-w-sm" data-key=" ">Space</kbd>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="startTypingGame()" class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold shadow-lg transition">Mulai Ulang Latihan</button>
                 </div>
             </div>
         </div>
@@ -231,7 +282,7 @@
             </div>
         </div>
 
-        <!-- KONTEN GURU -->
+        <!-- KONTEN GURU (Sama seperti sebelumnya) -->
         <div id="view-guru-dashboard" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Guru</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -366,10 +417,10 @@
             <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
             
             <div class="space-y-4">
-                <!-- Opsi 1: Link Google Docs -->
+                <!-- Opsi 1: Link Google Docs / Sheets / Slides -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs (Disarankan)</label>
-                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/document/d/...">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs/Sheets/Slides</label>
+                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/...">
                     <p class="text-[10px] text-slate-400 mt-1">*Pastikan akses diatur ke "Anyone with the link".</p>
                 </div>
 
@@ -403,5 +454,6 @@
     <script src="js/leaderboard.js"></script>
     <script src="js/tasks.js"></script>
     <script src="js/quiz_game.js"></script>
+    <script src="js/typing_game.js"></script> <!-- SCRIPT BARU UNTUK KETIK -->
 </body>
 </html>
