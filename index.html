@@ -57,7 +57,6 @@
             <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
                 <i class="fa-solid fa-book-open w-5 text-center"></i> Modul Belajar
             </button>
-            <!-- Mengganti menu Shortcut menjadi Arena Latihan -->
             <button onclick="navigate('arena')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
                 <i class="fa-solid fa-gamepad w-5 text-center"></i> Arena Latihan
             </button>
@@ -69,7 +68,6 @@
             </button>
         </nav>
 
-        <!-- NAVIGASI GURU -->
         <nav id="nav-guru" class="flex-1 p-4 space-y-2 overflow-y-auto hidden">
             <button onclick="navigate('guru-dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600 bg-amber-50">
                 <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard Guru
@@ -160,13 +158,11 @@
             </div>
         </div>
 
-        <!-- VIEW 3: ARENA LATIHAN (GAME & KUIS) -->
+        <!-- VIEW 3: ARENA LATIHAN -->
         <div id="view-arena" class="view hidden">
-            <!-- Menu Pilihan Game -->
             <div id="arena-menu">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Card Shortcut Game -->
                     <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-keyboard"></i></div>
                         <h3 class="text-xl font-bold text-slate-800 mb-2">Game Shortcut</h3>
@@ -174,7 +170,6 @@
                         <span class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl text-sm font-bold">+10 Poin / Benar</span>
                     </div>
 
-                    <!-- Card Kuis Materi -->
                     <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-4xl mb-4"><i class="fa-solid fa-brain"></i></div>
                         <h3 class="text-xl font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
@@ -184,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Wadah Game Shortcut (Tersembunyi awal) -->
             <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
@@ -207,7 +201,6 @@
                 </div>
             </div>
 
-            <!-- Wadah Kuis Materi (Tersembunyi awal) -->
             <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
@@ -215,10 +208,7 @@
                         <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor Kuis</span><span class="text-xl font-bold text-emerald-600" id="quiz-score">0</span></div>
                         <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
                     </div>
-                    
-                    <div id="quiz-content">
-                        <!-- Soal dirender di sini -->
-                    </div>
+                    <div id="quiz-content"></div>
                 </div>
             </div>
         </div>
@@ -374,15 +364,30 @@
         <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
             <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
+            
             <div class="space-y-4">
+                <!-- Opsi 1: Link Google Docs -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Pilih File (PDF / Gambar)</label>
-                    <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                    <p class="text-[10px] text-slate-400 mt-1">*Maksimal 5MB. File akan diunggah ke Google Drive.</p>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs (Disarankan)</label>
+                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/document/d/...">
+                    <p class="text-[10px] text-slate-400 mt-1">*Pastikan akses diatur ke "Anyone with the link".</p>
                 </div>
+
+                <!-- Garis Pemisah -->
+                <div class="flex items-center gap-2 py-2">
+                    <hr class="flex-1 border-slate-200"> <span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span> <hr class="flex-1 border-slate-200">
+                </div>
+
+                <!-- Opsi 2: Upload File -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 2: Upload File (PDF / Gambar)</label>
+                    <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                    <p class="text-[10px] text-slate-400 mt-1">*Maksimal 5MB. Akan diunggah ke Google Drive.</p>
+                </div>
+
                 <div class="flex gap-2 pt-2">
                     <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
-                    <button id="btn-submit-tugas" onclick="uploadDanKirimTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg transition">Kirim</button>
+                    <button id="btn-submit-tugas" onclick="prosesKumpulTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg transition">Kirim</button>
                 </div>
             </div>
         </div>
@@ -397,6 +402,6 @@
     <script src="js/attendance.js"></script>
     <script src="js/leaderboard.js"></script>
     <script src="js/tasks.js"></script>
-    <script src="js/quiz_game.js"></script> <!-- SCRIPT KUIS BARU -->
+    <script src="js/quiz_game.js"></script>
 </body>
 </html>
