@@ -23,19 +23,48 @@
                 <i class="fa-solid fa-laptop-code text-sky-500 text-2xl"></i>
                 <h1 class="text-xl font-bold text-white tracking-wide">Office Master LMS</h1>
             </div>
-            <nav class="flex gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchMainTab('learning')" id="nav-btn-learning" class="px-5 py-2 rounded-lg text-sm font-bold bg-sky-600 text-white transition-all">
+            <nav class="flex flex-wrap justify-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button onclick="switchMainTab('learning')" id="nav-btn-learning" class="px-4 py-2 rounded-lg text-sm font-bold bg-sky-600 text-white transition-all">
                     <i class="fa-solid fa-gamepad mr-1"></i> Belajar
                 </button>
-                <button onclick="switchMainTab('attendance')" id="nav-btn-attendance" class="px-5 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
+                <button onclick="switchMainTab('attendance')" id="nav-btn-attendance" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
                     <i class="fa-solid fa-clipboard-user mr-1"></i> Absensi
                 </button>
-                <button onclick="switchMainTab('leaderboard')" id="nav-btn-leaderboard" class="px-5 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
+                <!-- Tab Dashboard (Hanya untuk Guru) -->
+                <button onclick="switchMainTab('dashboard')" id="nav-btn-dashboard" class="hidden px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-chalkboard-user mr-1"></i> Dashboard Guru
+                </button>
+                <button onclick="switchMainTab('leaderboard')" id="nav-btn-leaderboard" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
                     <i class="fa-solid fa-ranking-star mr-1"></i> Peringkat
                 </button>
             </nav>
+            <div class="flex items-center gap-2">
+                <button id="btn-login-guru" onclick="openLoginModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg">
+                    <i class="fa-solid fa-lock mr-1"></i> Login Guru
+                </button>
+                <button id="btn-logout-guru" onclick="logoutGuru()" class="hidden bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                </button>
+            </div>
         </div>
     </header>
+
+    <!-- MODAL LOGIN GURU -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <h2 class="text-xl font-bold text-white mb-4 text-center"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i> Login Guru</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Password Khusus Guru</label>
+                    <input type="password" id="teacher-pass" placeholder="Masukkan password..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="closeLoginModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg font-bold transition">Batal</button>
+                    <button onclick="loginGuru()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-2 rounded-lg font-bold transition">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MAIN CONTENT AREA -->
     <main class="flex-grow p-4 w-full max-w-6xl mx-auto">
@@ -92,118 +121,119 @@
             </div>
         </div>
 
-               <!-- ========================================== -->
-        <!-- PANEL 2: ABSENSI (HIDDEN BY DEFAULT) -->
+        <!-- ========================================== -->
+        <!-- PANEL 2: ABSENSI SISWA (HIDDEN BY DEFAULT) -->
         <!-- ========================================== -->
         <div id="panel-main-attendance" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Form Absensi -->
-                <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 h-fit" id="attendance-form-container">
-                    <h2 class="text-xl font-bold text-emerald-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-user-check"></i> Form Kehadiran</h2>
-                    <form id="attendance-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm text-slate-400 mb-1">Nama Lengkap</label>
-                            <input type="text" id="att-name" required placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-slate-400 mb-1">Pilih Kelas</label>
-                            <select id="att-class" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
-                                <option value="" disabled selected>-- Pilih Kelas --</option>
-                                <optgroup label="TEI">
-                                    <option value="X TEI 1">X TEI 1</option>
-                                    <option value="X TEI 2">X TEI 2</option>
-                                    <option value="X TEI 3">X TEI 3</option>
-                                    <option value="X TEI 4">X TEI 4</option>
-                                </optgroup>
-                                <optgroup label="TKR">
-                                    <option value="X TKR 1">X TKR 1</option>
-                                    <option value="X TKR 2">X TKR 2</option>
-                                    <option value="X TKR 3">X TKR 3</option>
-                                    <option value="X TKR 4">X TKR 4</option>
-                                </optgroup>
-                                <optgroup label="TP">
-                                    <option value="X TP 1">X TP 1</option>
-                                    <option value="X TP 2">X TP 2</option>
-                                    <option value="X TP 3">X TP 3</option>
-                                    <option value="X TP 4">X TP 4</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
-                            <i class="fa-solid fa-fingerprint mr-2"></i> Absen Sekarang
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Tabel Rekap Absensi -->
-                <div id="table-container" class="md:col-span-2 bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 border-b border-slate-700 pb-4">
-                        <h2 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-table-list"></i> Rekap Kehadiran</h2>
-                        <div id="export-buttons" class="flex gap-2">
-                            <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
-                                <i class="fa-solid fa-file-excel"></i> Export XLS
-                            </button>
-                            <button onclick="exportToPDF()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
-                                <i class="fa-solid fa-file-pdf"></i> Export PDF
-                            </button>
-                        </div>
+            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-lg mx-auto shadow-xl">
+                <h2 class="text-xl font-bold text-emerald-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-user-check"></i> Form Kehadiran Siswa</h2>
+                <form id="attendance-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Nama Lengkap</label>
+                        <input type="text" id="att-name" required placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
                     </div>
-                    
-                    <!-- Filter -->
-                    <div id="filter-section" class="flex flex-col md:flex-row gap-4 mb-4">
-                        <div class="flex-1">
-                            <label class="block text-xs text-slate-400 mb-1">Filter Kelas</label>
-                            <select id="filter-class" onchange="renderAttendanceTable()" class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-white">
-                                <option value="all">Semua Kelas</option>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Pilih Kelas</label>
+                        <select id="att-class" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
+                            <option value="" disabled selected>-- Pilih Kelas --</option>
+                            <optgroup label="TEI">
                                 <option value="X TEI 1">X TEI 1</option>
                                 <option value="X TEI 2">X TEI 2</option>
                                 <option value="X TEI 3">X TEI 3</option>
                                 <option value="X TEI 4">X TEI 4</option>
+                            </optgroup>
+                            <optgroup label="TKR">
                                 <option value="X TKR 1">X TKR 1</option>
                                 <option value="X TKR 2">X TKR 2</option>
                                 <option value="X TKR 3">X TKR 3</option>
                                 <option value="X TKR 4">X TKR 4</option>
+                            </optgroup>
+                            <optgroup label="TP">
                                 <option value="X TP 1">X TP 1</option>
                                 <option value="X TP 2">X TP 2</option>
                                 <option value="X TP 3">X TP 3</option>
                                 <option value="X TP 4">X TP 4</option>
-                            </select>
-                        </div>
-                        <div class="flex-1">
-                            <label class="block text-xs text-slate-400 mb-1">Filter Tanggal</label>
-                            <input type="date" id="filter-date" onchange="renderAttendanceTable()" class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-white">
-                        </div>
+                            </optgroup>
+                        </select>
                     </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
+                        <i class="fa-solid fa-fingerprint mr-2"></i> Absen Sekarang
+                    </button>
+                </form>
+            </div>
+        </div>
 
-                    <!-- Tabel -->
-                    <div class="overflow-x-auto" id="print-area">
-                        <table class="w-full text-left border-collapse" id="attendance-table">
-                            <thead>
-                                <tr class="bg-slate-800 text-slate-300 text-sm">
-                                    <th class="p-3 border-b border-slate-700 w-12 text-center">No</th>
-                                    <th class="p-3 border-b border-slate-700">Nama Siswa</th>
-                                    <th class="p-3 border-b border-slate-700">Kelas</th>
-                                    <th class="p-3 border-b border-slate-700">Hari / Tanggal</th>
-                                    <th class="p-3 border-b border-slate-700">Jam</th>
-                                    <th id="action-header" class="p-3 border-b border-slate-700 hidden text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendance-list" class="text-sm">
-                                <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data dari server...</td></tr>
-                            </tbody>
-                        </table>
+        <!-- ========================================== -->
+        <!-- PANEL 3: DASHBOARD GURU (HIDDEN BY DEFAULT) -->
+        <!-- ========================================== -->
+        <div id="panel-main-dashboard" class="hidden space-y-6">
+            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 shadow-xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 border-b border-slate-700 pb-4">
+                    <h2 class="text-xl font-bold text-amber-400"><i class="fa-solid fa-table-list mr-2"></i> Rekap Kehadiran Siswa</h2>
+                    <div id="export-buttons" class="flex gap-2">
+                        <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                            <i class="fa-solid fa-file-excel"></i> Export XLS
+                        </button>
+                        <button onclick="exportToPDF()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF
+                        </button>
                     </div>
+                </div>
+                
+                <!-- Filter -->
+                <div id="filter-section" class="flex flex-col md:flex-row gap-4 mb-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <div class="flex-1">
+                        <label class="block text-xs text-slate-400 mb-1">Filter Kelas</label>
+                        <select id="filter-class" onchange="renderTeacherTable()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white">
+                            <option value="all">Semua Kelas</option>
+                            <option value="X TEI 1">X TEI 1</option>
+                            <option value="X TEI 2">X TEI 2</option>
+                            <option value="X TEI 3">X TEI 3</option>
+                            <option value="X TEI 4">X TEI 4</option>
+                            <option value="X TKR 1">X TKR 1</option>
+                            <option value="X TKR 2">X TKR 2</option>
+                            <option value="X TKR 3">X TKR 3</option>
+                            <option value="X TKR 4">X TKR 4</option>
+                            <option value="X TP 1">X TP 1</option>
+                            <option value="X TP 2">X TP 2</option>
+                            <option value="X TP 3">X TP 3</option>
+                            <option value="X TP 4">X TP 4</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs text-slate-400 mb-1">Filter Tanggal</label>
+                        <input type="date" id="filter-date" onchange="renderTeacherTable()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white">
+                    </div>
+                </div>
+
+                <!-- Tabel -->
+                <div class="overflow-x-auto" id="print-area">
+                    <table class="w-full text-left border-collapse" id="teacher-attendance-table">
+                        <thead>
+                            <tr class="bg-slate-800 text-slate-300 text-sm">
+                                <th class="p-3 border-b border-slate-700 w-12 text-center">No</th>
+                                <th class="p-3 border-b border-slate-700">Nama Siswa</th>
+                                <th class="p-3 border-b border-slate-700">Kelas</th>
+                                <th class="p-3 border-b border-slate-700">Hari / Tanggal</th>
+                                <th class="p-3 border-b border-slate-700">Jam</th>
+                                <th class="p-3 border-b border-slate-700 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-attendance-list" class="text-sm">
+                            <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data dari server...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- PANEL 3: LEADERBOARD (HIDDEN BY DEFAULT) -->
+        <!-- PANEL 4: LEADERBOARD (HIDDEN BY DEFAULT) -->
         <!-- ========================================== -->
         <div id="panel-main-leaderboard" class="hidden">
-            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-3xl mx-auto">
+            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-3xl mx-auto shadow-xl">
                 <h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-4 text-center">
-                    <i class="fa-solid fa-trophy"></i> Peringkat Top 10 Siswa
+                    <i class="fa-solid fa-trophy mr-2"></i> Peringkat Top 10 Siswa
                 </h3>
                 <div id="leaderboard-list" class="space-y-3">
                     <p class="text-xs text-slate-500 text-center py-4">Memuat papan peringkat...</p>
@@ -219,6 +249,7 @@
     
     <!-- Script Kustom -->
     <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/leaderboard.js"></script>
     <script src="js/certificate.js"></script>
     <script src="js/game.js"></script>
