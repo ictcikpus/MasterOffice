@@ -2,7 +2,6 @@
 // ARENA LATIHAN (SHORTCUT & KUIS MATERI)
 // ==========================================
 
-// 1. GAME SHORTCUT (Dipindahkan ke sini)
 var shortcutData = [
     { question: "Copy (Salin)", answer: ["Ctrl", "C"] }, { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
     { question: "Cut (Potong)", answer: ["Ctrl", "X"] }, { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
@@ -11,8 +10,10 @@ var shortcutData = [
 var currentShortcutIndex = 0; var shortcutScore = 0; var userKeysPressed = [];
 
 function startShortcutGame() {
+    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
+    document.getElementById('typing-game-container').classList.add('hidden');
     document.getElementById('shortcut-game-container').classList.remove('hidden');
     
     currentShortcutIndex = 0; shortcutScore = 0;
@@ -24,7 +25,7 @@ function loadShortcutQuestion() {
     if (currentShortcutIndex >= shortcutData.length) {
         document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
         document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Game: ${shortcutScore}</span>`;
-        addGlobalScore(shortcutScore); // Simpan skor ke database
+        addGlobalScore(shortcutScore); 
         return;
     }
     var currentQ = shortcutData[currentShortcutIndex];
@@ -32,40 +33,50 @@ function loadShortcutQuestion() {
     document.getElementById('shortcut-q-count').innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
     document.getElementById('shortcut-feedback').innerHTML = "";
     userKeysPressed = [];
-    document.querySelectorAll('.key').forEach(k => k.classList.remove('pressed'));
+    document.querySelectorAll('#shortcut-keyboard .key').forEach(k => k.classList.remove('pressed'));
 }
 
-// Event Listener Keyboard (Hanya jalan jika elemen ada)
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.key').forEach(key => {
-        key.addEventListener('click', (e) => {
-            var keyValue = e.target.getAttribute('data-key');
-            if (!keyValue || document.getElementById('shortcut-game-container').classList.contains('hidden') || currentShortcutIndex >= shortcutData.length) return;
-            
-            e.target.classList.add('pressed');
-            setTimeout(() => e.target.classList.remove('pressed'), 150);
-            userKeysPressed.push(keyValue);
-            
-            var correctAnswer = shortcutData[currentShortcutIndex].answer;
-            var isMatch = true;
-            for (var i = 0; i < userKeysPressed.length; i++) {
-                if (userKeysPressed[i] !== correctAnswer[i]) { isMatch = false; break; }
-            }
-            
-            if (!isMatch) {
-                document.getElementById('shortcut-feedback').innerHTML = '<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah!</span>';
-                setTimeout(() => { userKeysPressed = []; document.getElementById('shortcut-feedback').innerHTML = ""; }, 1000);
-            } else if (userKeysPressed.length === correctAnswer.length) {
-                shortcutScore += 10;
-                document.getElementById('shortcut-score').innerText = shortcutScore;
-                document.getElementById('shortcut-feedback').innerHTML = '<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>';
-                currentShortcutIndex++;
-                setTimeout(loadShortcutQuestion, 1000);
-            } else {
-                document.getElementById('shortcut-feedback').innerHTML = '<span class="text-amber-500">Lanjutkan...</span>';
-            }
+    // Render Virtual Keyboard Shortcut
+    const kbContainer = document.getElementById('shortcut-keyboard');
+    if(kbContainer) {
+        kbContainer.innerHTML = `
+            <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd></div>
+            <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd></div>
+            <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd></div>
+            <div class="flex justify-center gap-1"><kbd class="key w-16" data-key="Ctrl">Ctrl</kbd><kbd class="key w-12" data-key="Alt">Alt</kbd><kbd class="key w-32" data-key="Space">Space</kbd><kbd class="key w-14" data-key="Shift">Shift</kbd><kbd class="key w-16" data-key="Enter">Enter</kbd></div>
+        `;
+
+        document.querySelectorAll('#shortcut-keyboard .key').forEach(key => {
+            key.addEventListener('click', (e) => {
+                var keyValue = e.target.getAttribute('data-key');
+                if (!keyValue || document.getElementById('shortcut-game-container').classList.contains('hidden') || currentShortcutIndex >= shortcutData.length) return;
+                
+                e.target.classList.add('pressed');
+                setTimeout(() => e.target.classList.remove('pressed'), 150);
+                userKeysPressed.push(keyValue);
+                
+                var correctAnswer = shortcutData[currentShortcutIndex].answer;
+                var isMatch = true;
+                for (var i = 0; i < userKeysPressed.length; i++) {
+                    if (userKeysPressed[i] !== correctAnswer[i]) { isMatch = false; break; }
+                }
+                
+                if (!isMatch) {
+                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah!</span>';
+                    setTimeout(() => { userKeysPressed = []; document.getElementById('shortcut-feedback').innerHTML = ""; }, 1000);
+                } else if (userKeysPressed.length === correctAnswer.length) {
+                    shortcutScore += 10;
+                    document.getElementById('shortcut-score').innerText = shortcutScore;
+                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>';
+                    currentShortcutIndex++;
+                    setTimeout(loadShortcutQuestion, 1000);
+                } else {
+                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-amber-500">Lanjutkan...</span>';
+                }
+            });
         });
-    });
+    }
 });
 
 // 2. KUIS MATERI INTERAKTIF
@@ -79,8 +90,10 @@ const quizData = [
 let currentQuizIndex = 0; let quizScore = 0;
 
 function startMateriQuiz() {
+    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
+    document.getElementById('typing-game-container').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.remove('hidden');
     
     currentQuizIndex = 0; quizScore = 0;
@@ -98,7 +111,7 @@ function loadQuizQuestion() {
             </div>
         `;
         document.getElementById('quiz-q-count').innerText = `${quizData.length}/${quizData.length}`;
-        addGlobalScore(quizScore); // Simpan skor ke database
+        addGlobalScore(quizScore); 
         return;
     }
 
@@ -136,6 +149,7 @@ function checkQuizMultiple(selected, correct) {
         buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
         feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Benar! +20 Poin</span>';
         quizScore += 20;
+        if(typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
     } else {
         buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
         buttons[correct].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
@@ -158,13 +172,13 @@ function checkQuizTyping() {
     const btn = document.querySelector('button[onclick="checkQuizTyping()"]');
     if(btn) btn.disabled = true;
 
-    // Hapus spasi di rumus untuk memudahkan penilaian
     const cleanInput = input.replace(/\s+/g, '');
     const cleanCorrect = correct.replace(/\s+/g, '');
 
     if (cleanInput === cleanCorrect) {
         feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Benar! +20 Poin</span>';
         quizScore += 20;
+        if(typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
     } else {
         feedback.innerHTML = `<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Salah. Jawaban yang benar: <b>${quizData[currentQuizIndex].answer}</b></span>`;
     }
@@ -173,33 +187,32 @@ function checkQuizTyping() {
     feedback.classList.remove('hidden');
     
     currentQuizIndex++;
-    setTimeout(loadQuizQuestion, 2500); // Waktu lebih lama agar siswa bisa membaca jawaban yang benar
+    setTimeout(loadQuizQuestion, 2500); 
 }
 
 function closeGame() {
+    document.body.classList.remove('hide-nav'); // MUNCULKAN NAVIGASI KEMBALI
     document.getElementById('arena-menu').classList.remove('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
+    document.getElementById('typing-game-container').classList.add('hidden');
 }
 
-// 3. FUNGSI SIMPAN SKOR GLOBAL (Ke LocalStorage & Firebase)
 function addGlobalScore(points) {
     if(points <= 0) return;
     
-    // Ambil skor saat ini
     let currentScore = parseInt(localStorage.getItem("student_score")) || 0;
     let newScore = currentScore + points;
     localStorage.setItem("student_score", newScore);
     
-    // Update UI Dashboard
     if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = newScore;
     
-    // Kirim ke Firebase (Fungsi ini ada di leaderboard.js)
     const name = localStorage.getItem("student_name");
     const cls = localStorage.getItem("student_class");
     if (typeof window.syncScoreToDatabase === 'function' && name) {
         window.syncScoreToDatabase(name, cls, newScore);
     }
     
+    if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     alert(`🎉 Selamat! Anda mendapatkan tambahan ${points} poin.`);
 }
