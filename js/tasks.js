@@ -1,12 +1,12 @@
 // ==========================================
-// TASKS SYSTEM (Firebase Real-time)
+// TASKS SYSTEM (Firebase + Fallback Dummy)
 // ==========================================
 
 let allTasks = [];
 let currentSelectedTaskId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Sinkronisasi data tugas dari Firebase ke semua perangkat
+    // Sinkronisasi data tugas dari Firebase
     db.ref('tasks').on('value', (snapshot) => {
         allTasks = [];
         snapshot.forEach((childSnapshot) => {
@@ -15,8 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 ...childSnapshot.val()
             });
         });
-        // Urutkan dari yang terbaru
         allTasks.reverse();
+        
+        // Jika Database kosong, buatkan 1 tugas awal agar siswa bisa lihat
+        if (allTasks.length === 0) {
+            db.ref('tasks').push({
+                title: 'Tugas Perkenalan: Microsoft Word',
+                desc: 'Buatlah dokumen Word berisi biodata diri Anda (Nama, Kelas, Alamat, Cita-cita). Gunakan format Bold pada Nama, dan Italic pada Cita-cita. Kumpulkan dalam bentuk link Google Drive (PDF).',
+                deadline: '2026-12-31',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+            return; // Hentikan render, tunggu update listener
+        }
         
         // Render sesuai role
         const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
@@ -66,7 +76,7 @@ function renderGuruTugas() {
     
     container.innerHTML = '';
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="text-center p-8 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500">Belum ada tugas yang dibuat.</p></div>`;
+        container.innerHTML = `<div class="text-center p-8 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500">Belum ada tugas.</p></div>`;
         return;
     }
 
@@ -105,10 +115,13 @@ function renderSiswaTugas() {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
+    if(!studentName) return; // Tunggu profil selesai diisi
+
     // Ambil data pengumpulan tugas siswa ini
-    db.ref(`submissions/${studentClass}/${studentName}`).once('value').then(subSnap => {
+    db.ref(`submissions/${studentClass}/${studentName}`).on('value', subSnap => {
         const mySubmissions = subSnap.val() || {};
 
+        container.innerHTML = '';
         allTasks.forEach(t => {
             const isSubmitted = mySubmissions[t.id];
             let statusHtml = isSubmitted 
@@ -116,7 +129,7 @@ function renderSiswaTugas() {
                 : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition">Kumpulkan</button>`;
 
             container.innerHTML += `
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-3">
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="font-bold text-lg text-slate-800">${t.title}</h3>
                         <span class="bg-rose-100 text-rose-600 text-xs font-bold px-2 py-1 rounded">Tenggat: ${t.deadline}</span>
@@ -147,13 +160,11 @@ function kirimTugas() {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
-    // Simpan ke Firebase dengan struktur: submissions/{kelas}/{nama_siswa}/{id_tugas}
     db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({
         link: link,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
         alert("✅ Tugas berhasil dikumpulkan!");
         closeKumpulTugasModal();
-        renderSiswaTugas(); // Refresh UI
     }).catch(err => alert("Gagal mengumpulkan tugas: " + err.message));
 }
