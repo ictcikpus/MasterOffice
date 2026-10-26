@@ -226,7 +226,6 @@
         </div>
 
         <div id="view-guru-absen" class="view hidden">
-            <!-- Tabel Rekap Absensi -->
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-users-viewfinder text-amber-500 mr-2"></i> Rekap Kehadiran</h2>
@@ -317,19 +316,34 @@
         </div>
     </div>
 
-    <!-- MODAL KUMPUL TUGAS (SISWA) -->
+    <!-- MODAL LIHAT PENGUMPULAN (GURU) -->
+    <div id="modal-lihat-pengumpulan" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-2xl shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                <h2 class="text-xl font-bold text-slate-800">Daftar Pengumpulan</h2>
+                <button onclick="document.getElementById('modal-lihat-pengumpulan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-sm text-slate-500 mb-4" id="lihat-pengumpulan-title">Judul Tugas</p>
+            <div class="overflow-y-auto flex-grow" id="daftar-pengumpulan">
+                <!-- List siswa dan link dirender di sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KUMPUL TUGAS (SISWA) - DIUBAH MENJADI UPLOAD FILE -->
     <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
             <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Link Google Drive (PDF/Foto)</label>
-                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="https://drive.google.com/...">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Pilih File (PDF / Gambar)</label>
+                    <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                    <p class="text-[10px] text-slate-400 mt-1">*Maksimal 5MB. File akan diunggah ke Google Drive Anda.</p>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
-                    <button onclick="kirimTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">Kirim</button>
+                    <button id="btn-submit-tugas" onclick="uploadDanKirimTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg transition">Kirim</button>
                 </div>
             </div>
         </div>
@@ -338,7 +352,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
-    <script src="js/data_materi.js"></script> <!-- File Baru Berisi Ratusan Slide -->
+    <script src="js/data_materi.js"></script>
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/attendance.js"></script>
