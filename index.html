@@ -9,26 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     
-    <!-- Library Tambahan: Confetti untuk efek perayaan -->
+    <!-- Library Tambahan -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <!-- CSS UNTUK MODE FOKUS (SEMBUNYIKAN NAVIGASI SAAT GAME) -->
     <style>
-        body.hide-nav aside,
-        body.hide-nav #bottom-nav-siswa,
-        body.hide-nav #bottom-nav-guru {
-            display: none !important;
-        }
-        body.hide-nav main {
-            padding-left: 0 !important;
-            max-width: 100% !important;
-            margin: 0 auto;
-        }
-        body.hide-nav header {
-            display: none !important;
-        }
+        body.hide-nav aside, body.hide-nav #bottom-nav-siswa, body.hide-nav #bottom-nav-guru { display: none !important; }
+        body.hide-nav main { padding-left: 0 !important; max-width: 100% !important; margin: 0 auto; }
+        body.hide-nav header { display: none !important; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64 transition-all duration-300">
@@ -36,9 +27,7 @@
     <!-- MODAL SETUP PROFIL -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
-            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                <i class="fa-solid fa-user-graduate"></i>
-            </div>
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-user-graduate"></i></div>
             <h2 class="text-xl font-bold text-slate-800 mb-1">Selamat Datang!</h2>
             <p class="text-sm text-slate-500 mb-6">Lengkapi profil Anda untuk memulai.</p>
             <div class="space-y-4 text-left">
@@ -55,9 +44,7 @@
                         <optgroup label="TP"><option>X TP 1</option><option>X TP 2</option><option>X TP 3</option><option>X TP 4</option></optgroup>
                     </select>
                 </div>
-                <button onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
-                    Simpan & Mulai
-                </button>
+                <button onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">Simpan & Mulai</button>
             </div>
         </div>
     </div>
@@ -70,49 +57,23 @@
         </div>
         
         <nav id="nav-siswa" class="flex-1 p-4 space-y-2 overflow-y-auto hidden">
-            <button onclick="navigate('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-emerald-600 bg-emerald-50">
-                <i class="fa-solid fa-house w-5 text-center"></i> Dashboard
-            </button>
-            <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-book-open w-5 text-center"></i> Modul Belajar
-            </button>
-            <button onclick="navigate('arena')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-gamepad w-5 text-center"></i> Arena Latihan
-            </button>
-            <button onclick="navigate('tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-file-pen w-5 text-center"></i> Tugas Saya
-            </button>
-            <button onclick="navigate('absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-clipboard-user w-5 text-center"></i> Absensi
-            </button>
-            <button onclick="navigate('profil')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-user-astronaut w-5 text-center"></i> Profil & Lencana
-            </button>
+            <button onclick="navigate('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-emerald-600 bg-emerald-50"><i class="fa-solid fa-house w-5 text-center"></i> Dashboard</button>
+            <button onclick="navigate('materi')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-book-open w-5 text-center"></i> Modul Belajar</button>
+            <button onclick="navigate('arena')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-gamepad w-5 text-center"></i> Arena Latihan</button>
+            <button onclick="navigate('tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-file-pen w-5 text-center"></i> Tugas Saya</button>
+            <button onclick="navigate('absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-clipboard-user w-5 text-center"></i> Absensi</button>
+            <button onclick="navigate('profil')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-user-astronaut w-5 text-center"></i> Profil & Lencana</button>
         </nav>
 
         <nav id="nav-guru" class="flex-1 p-4 space-y-2 overflow-y-auto hidden">
-            <button onclick="navigate('guru-dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600 bg-amber-50">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard Guru
-            </button>
-            <!-- TAMBAHKAN TOMBOL INI -->
-            <button onclick="resetTugasDefault()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition">
-                <i class="fa-solid fa-rotate-right mr-1"></i> Reset Tugas Default
-            </button>
-            <button onclick="navigate('guru-tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-list-check w-5 text-center"></i> Kelola Tugas
-            </button>
-            <button onclick="navigate('guru-absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50">
-                <i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Rekap Absensi
-            </button>
+            <button onclick="navigate('guru-dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-amber-600 bg-amber-50"><i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard Guru</button>
+            <button onclick="navigate('guru-tugas')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-list-check w-5 text-center"></i> Kelola Tugas</button>
+            <button onclick="navigate('guru-absen')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-slate-500 hover:bg-slate-50"><i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Rekap Absensi</button>
         </nav>
 
         <div class="p-4 border-t border-slate-100 space-y-2">
-            <button onclick="openLoginModal()" id="btn-login-guru" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
-                <i class="fa-solid fa-lock"></i> Login Guru
-            </button>
-            <button onclick="logoutGuru()" id="btn-logout-guru" class="hidden w-full flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md">
-                <i class="fa-solid fa-power-off"></i> Logout Guru
-            </button>
+            <button onclick="openLoginModal()" id="btn-login-guru" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md"><i class="fa-solid fa-lock"></i> Login Guru</button>
+            <button onclick="logoutGuru()" id="btn-logout-guru" class="hidden w-full flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md"><i class="fa-solid fa-power-off"></i> Logout Guru</button>
         </div>
     </aside>
 
@@ -130,9 +91,9 @@
     </header>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="p-4 md:p-8 max-w-5xl mx-auto w-full">
+    <main class="p-4 md:p-8 max-w-6xl mx-auto w-full">
         
-        <!-- VIEW 1: HOME -->
+        <!-- VIEW 1: HOME SISWA -->
         <div id="view-home" class="view hidden">
             <div id="announcement-banner" class="hidden bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-xl mb-6 shadow-sm flex items-start gap-3">
                 <i class="fa-solid fa-bullhorn text-xl mt-0.5 animate-bounce"></i>
@@ -178,9 +139,7 @@
         <div id="view-profil" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Profil & Lencana</h2>
             <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-6">
-                <div class="w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-5xl shadow-inner">
-                    <i class="fa-solid fa-user-astronaut"></i>
-                </div>
+                <div class="w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-5xl shadow-inner"><i class="fa-solid fa-user-astronaut"></i></div>
                 <div class="text-center md:text-left flex-1">
                     <h3 class="text-2xl font-bold text-slate-800" id="profile-name">Nama Siswa</h3>
                     <p class="text-slate-500" id="profile-class">Kelas</p>
@@ -200,14 +159,13 @@
             <div id="materi-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- VIEW 2B: DETAIL MATERI -->
         <div id="view-materi-detail" class="view hidden">
             <div class="flex justify-between items-center mb-4">
                 <button onclick="navigate('materi')" class="text-sm font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg transition"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
                 <div class="text-sm font-bold text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-200">Slide <span id="slide-current">1</span> / <span id="slide-total">5</span></div>
             </div>
             <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm min-h-[450px] flex flex-col relative overflow-hidden">
-                <div id="slide-content" class="flex-grow overflow-y-auto max-h-[60vh] pr-2"></div>
+                <div id="slide-content" class="flex-grow overflow-y-auto max-h-[60vh] pr-2 custom-scroll"></div>
                 <div class="mt-4 flex justify-between items-center border-t border-slate-100 pt-4">
                     <button id="btn-prev-slide" onclick="changeSlide(-1)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-bold transition disabled:opacity-50"><i class="fa-solid fa-chevron-left mr-1"></i> Mundur</button>
                     <button id="btn-next-slide" onclick="changeSlide(1)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition shadow-md">Lanjut <i class="fa-solid fa-chevron-right ml-1"></i></button>
@@ -241,6 +199,7 @@
                 </div>
             </div>
 
+            <!-- Container Game (Shortcut, Quiz, Typing) -->
             <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
@@ -279,7 +238,7 @@
                     </div>
                     <div class="bg-slate-100 p-4 rounded-xl mb-6 text-lg font-mono leading-relaxed" id="typing-text-display"></div>
                     <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6 opacity-0 absolute -z-10" autocomplete="off">
-                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto">
+                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto custom-scroll">
                         <div class="flex flex-col gap-1 items-center min-w-[600px]">
                             <div class="flex gap-1 w-full justify-center"><kbd class="key" data-key="`">~</kbd><kbd class="key" data-key="1">1</kbd><kbd class="key" data-key="2">2</kbd><kbd class="key" data-key="3">3</kbd><kbd class="key" data-key="4">4</kbd><kbd class="key" data-key="5">5</kbd><kbd class="key" data-key="6">6</kbd><kbd class="key" data-key="7">7</kbd><kbd class="key" data-key="8">8</kbd><kbd class="key" data-key="9">9</kbd><kbd class="key" data-key="0">0</kbd><kbd class="key" data-key="-">-</kbd><kbd class="key" data-key="=">=</kbd><kbd class="key w-16" data-key="Backspace">Backspace</kbd></div>
                             <div class="flex gap-1 w-full justify-center"><kbd class="key w-14" data-key="Tab">Tab</kbd><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd><kbd class="key" data-key="[">[</kbd><kbd class="key" data-key="]">]</kbd><kbd class="key w-14" data-key="\">\</kbd></div>
@@ -311,9 +270,13 @@
             </div>
         </div>
 
-        <!-- KONTEN GURU -->
+        <!-- ========================================== -->
+        <!-- KONTEN GURU (DASHBOARD UTAMA) -->
+        <!-- ========================================== -->
         <div id="view-guru-dashboard" class="view hidden">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Guru</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Utama Guru</h2>
+            
+            <!-- Form Pengumuman -->
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-6">
                 <h3 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-bullhorn text-amber-500 mr-2"></i> Buat Pengumuman</h3>
                 <div class="flex gap-2">
@@ -321,6 +284,8 @@
                     <button onclick="kirimPengumuman()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Kirim</button>
                 </div>
             </div>
+
+            <!-- Statistik Ringkas -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
@@ -335,14 +300,49 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- KONTEN GURU: KELOLA TUGAS (UX BARU) -->
+        <!-- ========================================== -->
         <div id="view-guru-tugas" class="view hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-slate-800">Kelola Tugas</h2>
-                <button onclick="openBuatTugasModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-slate-800">Kelola & Rekap Tugas</h2>
+                <div class="flex gap-2">
+                    <button onclick="generateDefaultTasks()" class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generate 3 Tugas Awal</button>
+                    <button onclick="openBuatTugasModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
+                </div>
             </div>
-            <div id="guru-tugas-list" class="space-y-4"></div>
+
+            <!-- Filter Kelas -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-4">
+                <label class="block text-xs font-bold text-slate-600 mb-2">Filter Berdasarkan Kelas:</label>
+                <select id="filter-kelas-tugas" onchange="renderRekapTugasGuru()" class="w-full md:w-64 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                    <option value="all">Semua Kelas</option>
+                    <option value="X TEI 1">X TEI 1</option><option value="X TEI 2">X TEI 2</option><option value="X TEI 3">X TEI 3</option><option value="X TEI 4">X TEI 4</option>
+                    <option value="X TKR 1">X TKR 1</option><option value="X TKR 2">X TKR 2</option><option value="X TKR 3">X TKR 3</option><option value="X TKR 4">X TKR 4</option>
+                    <option value="X TP 1">X TP 1</option><option value="X TP 2">X TP 2</option><option value="X TP 3">X TP 3</option><option value="X TP 4">X TP 4</option>
+                </select>
+            </div>
+
+            <!-- Tabel Rekap Tugas (Siswa vs Tugas) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="tabel-rekap-tugas">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                                <th class="p-3 border-b border-slate-200">Nama Siswa</th>
+                                <th class="p-3 border-b border-slate-200">Kelas</th>
+                                <th class="p-3 border-b border-slate-200 text-center">Status Tugas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="body-rekap-tugas" class="text-sm">
+                            <!-- Dirender via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
+        <!-- KONTEN GURU: REKAP ABSENSI -->
         <div id="view-guru-absen" class="view hidden">
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -431,18 +431,6 @@
                     <button onclick="simpanTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">Simpan Tugas</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL LIHAT PENGUMPULAN (GURU) -->
-    <div id="modal-lihat-pengumpulan" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-2xl shadow-2xl max-h-[80vh] flex flex-col">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
-                <h2 class="text-xl font-bold text-slate-800">Daftar Pengumpulan</h2>
-                <button onclick="document.getElementById('modal-lihat-pengumpulan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <p class="text-sm text-slate-500 mb-4" id="lihat-pengumpulan-title">Judul Tugas</p>
-            <div class="overflow-y-auto flex-grow" id="daftar-pengumpulan"></div>
         </div>
     </div>
 
