@@ -5,8 +5,13 @@
 let currentMateriId = null;
 let currentSlideIndex = 0;
 
+// ... (Kode atas tetap sama) ...
+
 function navigate(viewId) {
     if (typeof stopCamera === 'function') stopCamera();
+    
+    // Pastikan Navbar kembali muncul jika user pindah menu
+    document.body.classList.remove('hide-nav'); 
 
     document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
     const targetView = document.getElementById('view-' + viewId);
@@ -25,13 +30,14 @@ function navigate(viewId) {
         else activeNav.classList.add('text-emerald-600', 'bg-emerald-50');
     }
     
-    // Jika membuka Profil, render ulang datanya
     if (viewId === 'profil' && typeof renderProfile === 'function') {
         renderProfile();
     }
 
     window.scrollTo(0, 0);
 }
+
+// ... (Sisa kode main.js tetap sama) ...
 
 function saveProfile() {
     const name = document.getElementById('setup-name').value.trim();
