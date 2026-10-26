@@ -5,20 +5,30 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #0f172a; /* Warna background track sesuaikan dengan slate-950 */
+    background: #0f172a; /* Warna background track */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #334155; /* Warna thumb sesuaikan dengan slate-700 */
+    background: #334155; /* Warna thumb */
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #475569; /* Warna saat dihover sesuaikan dengan slate-600 */
+    background: #475569; /* Warna saat dihover */
 }
 
-/* Mematikan seleksi teks pada tombol agar tidak biru saat diklik cepat */
+/* Mematikan seleksi teks pada tombol */
 button {
     user-select: none;
     -webkit-user-select: none;
+}
+
+/* Custom styling untuk PDF Print */
+@media print {
+    body { background: white; color: black; }
+    header, nav, #attendance-form, .flex.gap-2, #filter-class, #filter-date, label { display: none !important; }
+    #panel-main-attendance { display: block !important; }
+    #print-area { width: 100%; }
+    table { border: 1px solid #ccc; }
+    th, td { border: 1px solid #ccc; padding: 8px; color: black; }
 }
