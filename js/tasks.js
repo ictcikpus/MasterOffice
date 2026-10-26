@@ -18,9 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         allTasks.reverse();
         
-        // SUNTIKKAN 3 TUGAS PERDANA (Jika database kosong)
+        // Tugas Perdana (Jika database kosong)
         if (allTasks.length === 0) {
-            // Tugas 1: Word / Docs
             db.ref('tasks').push({
                 title: 'Tugas 1: Artikel TIK (Word / Google Docs)',
                 desc: `
@@ -42,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
-            // Tugas 2: Excel / Sheets
             db.ref('tasks').push({
                 title: 'Tugas 2: Laporan Nilai (Excel / Google Sheets)',
                 desc: `
@@ -63,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
-            // Tugas 3: PPT / Slides
             db.ref('tasks').push({
                 title: 'Tugas 3: Presentasi Profil Sekolah (PPT / Google Slides)',
                 desc: `
@@ -118,7 +115,7 @@ function simpanTugas() {
 
     db.ref('tasks').push({
         title: title,
-        desc: desc, // Bisa berisi HTML
+        desc: desc, 
         deadline: deadline,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
@@ -204,7 +201,7 @@ function lihatPengumpulan(taskId, title) {
 }
 
 // ------------------------------------------
-// LOGIKA SISWA
+// LOGIKA SISWA (PERBAIKAN BUG isSubmitted)
 // ------------------------------------------
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -226,8 +223,8 @@ function renderSiswaTugas() {
 
         container.innerHTML = '';
         allTasks.forEach(t => {
-            const isSubmitted = mySubmissions[t.id];
-            let statusHtml = isSubmited 
+            const isSubmitted = mySubmissions[t.id]; // <-- FIX TYPO DI SINI
+            let statusHtml = isSubmitted 
                 ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
                 : `<button onclick="openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
