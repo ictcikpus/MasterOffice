@@ -3,83 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Master - Edu Game</title>
+    <title>Office Master - Edu Game & LMS</title>
+    
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Libraries untuk Export PDF & Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen p-4 flex justify-center">
+<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen flex flex-col">
 
-    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- HEADER & NAVIGASI UTAMA -->
+    <header class="bg-slate-900 border-b border-slate-700/50 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-laptop-code text-sky-500 text-2xl"></i>
+                <h1 class="text-xl font-bold text-white tracking-wide">Office Master LMS</h1>
+            </div>
+            <nav class="flex gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button onclick="switchMainTab('learning')" id="nav-btn-learning" class="px-5 py-2 rounded-lg text-sm font-bold bg-sky-600 text-white transition-all">
+                    <i class="fa-solid fa-gamepad mr-1"></i> Belajar
+                </button>
+                <button onclick="switchMainTab('attendance')" id="nav-btn-attendance" class="px-5 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-clipboard-user mr-1"></i> Absensi
+                </button>
+                <button onclick="switchMainTab('leaderboard')" id="nav-btn-leaderboard" class="px-5 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-ranking-star mr-1"></i> Peringkat
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow p-4 w-full max-w-6xl mx-auto">
         
-        <!-- SIDEBAR KIRI: Profil & Navigasi Level -->
-        <div class="space-y-4">
-            <!-- Profil Siswa -->
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <h3 id="player-name" class="font-bold text-sky-400">Memuat Nama...</h3>
-                <p id="player-class" class="text-xs text-slate-400 mb-3">Kelas: -</p>
-                <div class="flex gap-4 text-sm font-bold">
-                    <span class="text-amber-400"><i class="fa-solid fa-star"></i> Skor: <span id="game-score">0</span></span>
-                    <span class="text-rose-400"><i class="fa-solid fa-heart"></i> Nyawa: <span id="lives-count">3</span></span>
+        <!-- ========================================== -->
+        <!-- PANEL 1: BELAJAR (GAME) -->
+        <!-- ========================================== -->
+        <div id="panel-main-learning" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- SIDEBAR KIRI: Profil & Navigasi Level -->
+            <div class="space-y-4">
+                <!-- Profil Siswa -->
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                    <h3 id="player-name" class="font-bold text-sky-400">Memuat Nama...</h3>
+                    <p id="player-class" class="text-xs text-slate-400 mb-3">Kelas: -</p>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="text-amber-400"><i class="fa-solid fa-star"></i> Skor: <span id="game-score">0</span></span>
+                        <span class="text-rose-400"><i class="fa-solid fa-heart"></i> Nyawa: <span id="lives-count">3</span></span>
+                    </div>
+                </div>
+
+                <!-- Peta Level -->
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                    <h3 class="font-bold text-slate-200 mb-3 border-b border-slate-700 pb-2">Pilih Materi</h3>
+                    <div id="level-tree" class="max-h-[400px] overflow-y-auto pr-2 custom-scroll"></div>
+                    <button id="btn-cert" disabled class="w-full mt-4 bg-amber-600/50 text-amber-200 py-2 rounded-lg text-sm font-bold cursor-not-allowed opacity-50 transition-all hover:bg-amber-500 hover:text-white">
+                        <i class="fa-solid fa-certificate"></i> Cetak Sertifikat
+                    </button>
                 </div>
             </div>
 
-            <!-- Peta Level (Di-generate oleh game.js) -->
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <h3 class="font-bold text-slate-200 mb-3 border-b border-slate-700 pb-2">Pilih Materi</h3>
-                <div id="level-tree"></div>
-                <button id="btn-cert" disabled class="w-full mt-4 bg-amber-600/50 text-amber-200 py-2 rounded-lg text-sm font-bold cursor-not-allowed opacity-50 transition-all hover:bg-amber-500 hover:text-white">
-                    <i class="fa-solid fa-certificate"></i> Cetak Sertifikat
-                </button>
+            <!-- AREA KANAN: Konten Belajar -->
+            <div class="md:col-span-2 space-y-4">
+                <!-- PANEL MATERI -->
+                <div id="panel-material" class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
+                    <div class="border-b border-slate-700 pb-4 mb-4">
+                        <h2 id="mat-title" class="text-2xl font-bold text-sky-400">Pilih Level di Kiri</h2>
+                        <p id="mat-module" class="text-sm text-slate-400 mt-1">Silakan mulai dari Modul Word Level 1</p>
+                    </div>
+                    <div id="mat-content" class="mb-6">
+                        <!-- Konten materi dirender di sini -->
+                    </div>
+                    <button onclick="startChallengeFromMaterial()" class="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl font-bold transition">
+                        Mulai Tantangan Level Ini <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- PANEL GAMEPLAY (Sembunyi secara default) -->
+                <div id="panel-game" class="hidden bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
+                    <h2 class="text-xl font-bold text-amber-400 mb-4 border-b border-slate-700 pb-2">Tantangan Aktif</h2>
+                    <div id="game-workspace">
+                        <!-- Timer, Soal, dan Jawaban dirender di sini -->
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- AREA KANAN: Konten Utama -->
-        <div class="md:col-span-2 space-y-4">
-            
-            <!-- PANEL 1: MATERI -->
-            <div id="panel-material" class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
-                <div class="border-b border-slate-700 pb-4 mb-4">
-                    <h2 id="mat-title" class="text-2xl font-bold text-sky-400">Pilih Level di Kiri</h2>
-                    <p id="mat-module" class="text-sm text-slate-400 mt-1">Silakan mulai dari Modul Word Level 1</p>
+        <!-- ========================================== -->
+        <!-- PANEL 2: ABSENSI (HIDDEN BY DEFAULT) -->
+        <!-- ========================================== -->
+        <div id="panel-main-attendance" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Form Absensi -->
+                <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 h-fit">
+                    <h2 class="text-xl font-bold text-emerald-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-user-check"></i> Form Kehadiran</h2>
+                    <form id="attendance-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Nama Lengkap</label>
+                            <input type="text" id="att-name" required placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Pilih Kelas</label>
+                            <select id="att-class" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500">
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+                                <optgroup label="TEI">
+                                    <option value="X TEI 1">X TEI 1</option>
+                                    <option value="X TEI 2">X TEI 2</option>
+                                    <option value="X TEI 3">X TEI 3</option>
+                                    <option value="X TEI 4">X TEI 4</option>
+                                </optgroup>
+                                <optgroup label="TKR">
+                                    <option value="X TKR 1">X TKR 1</option>
+                                    <option value="X TKR 2">X TKR 2</option>
+                                    <option value="X TKR 3">X TKR 3</option>
+                                    <option value="X TKR 4">X TKR 4</option>
+                                </optgroup>
+                                <optgroup label="TP">
+                                    <option value="X TP 1">X TP 1</option>
+                                    <option value="X TP 2">X TP 2</option>
+                                    <option value="X TP 3">X TP 3</option>
+                                    <option value="X TP 4">X TP 4</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg mt-2">
+                            <i class="fa-solid fa-fingerprint mr-2"></i> Absen Sekarang
+                        </button>
+                    </form>
                 </div>
-                <div id="mat-content" class="mb-6">
-                    <!-- Konten materi dirender di sini -->
-                </div>
-                <button onclick="startChallengeFromMaterial()" class="w-full bg-sky-600 hover:bg-sky-500 text-white py-3 rounded-xl font-bold transition">
-                    Mulai Tantangan Level Ini <i class="fa-solid fa-arrow-right ml-2"></i>
-                </button>
-            </div>
 
-            <!-- PANEL 2: GAMEPLAY (Sembunyi secara default) -->
-            <div id="panel-game" class="hidden bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 min-h-[400px]">
-                <h2 class="text-xl font-bold text-amber-400 mb-4 border-b border-slate-700 pb-2">Tantangan Aktif</h2>
-                <div id="game-workspace">
-                    <!-- Timer, Soal, dan Jawaban dirender di sini -->
+                <!-- Tabel Rekap Absensi -->
+                <div class="md:col-span-2 bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 border-b border-slate-700 pb-4">
+                        <h2 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-table-list"></i> Rekap Kehadiran</h2>
+                        <div class="flex gap-2">
+                            <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                                <i class="fa-solid fa-file-excel"></i> Export XLS
+                            </button>
+                            <button onclick="exportToPDF()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+                                <i class="fa-solid fa-file-pdf"></i> Export PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter -->
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div class="flex-1">
+                            <label class="block text-xs text-slate-400 mb-1">Filter Kelas</label>
+                            <select id="filter-class" onchange="renderAttendanceTable()" class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-white">
+                                <option value="all">Semua Kelas</option>
+                                <option value="X TEI 1">X TEI 1</option>
+                                <option value="X TEI 2">X TEI 2</option>
+                                <option value="X TEI 3">X TEI 3</option>
+                                <option value="X TEI 4">X TEI 4</option>
+                                <option value="X TKR 1">X TKR 1</option>
+                                <option value="X TKR 2">X TKR 2</option>
+                                <option value="X TKR 3">X TKR 3</option>
+                                <option value="X TKR 4">X TKR 4</option>
+                                <option value="X TP 1">X TP 1</option>
+                                <option value="X TP 2">X TP 2</option>
+                                <option value="X TP 3">X TP 3</option>
+                                <option value="X TP 4">X TP 4</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-xs text-slate-400 mb-1">Filter Tanggal</label>
+                            <input type="date" id="filter-date" onchange="renderAttendanceTable()" class="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-white">
+                        </div>
+                    </div>
+
+                    <!-- Tabel -->
+                    <div class="overflow-x-auto" id="print-area">
+                        <table class="w-full text-left border-collapse" id="attendance-table">
+                            <thead>
+                                <tr class="bg-slate-800 text-slate-300 text-sm">
+                                    <th class="p-3 border-b border-slate-700 w-12 text-center">No</th>
+                                    <th class="p-3 border-b border-slate-700">Nama Siswa</th>
+                                    <th class="p-3 border-b border-slate-700">Kelas</th>
+                                    <th class="p-3 border-b border-slate-700">Hari / Tanggal</th>
+                                    <th class="p-3 border-b border-slate-700">Jam</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-list" class="text-sm">
+                                <!-- Data dirender via JS -->
+                                <tr><td colspan="5" class="text-center p-4 text-slate-500">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- LEADERBOARD (Selalu Tampil di Bawah) -->
-            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50">
-                <h3 class="font-bold text-slate-200 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-ranking-star text-amber-400"></i> Peringkat Top 10</h3>
-                <div id="leaderboard-list" class="space-y-2">
+        <!-- ========================================== -->
+        <!-- PANEL 3: LEADERBOARD (HIDDEN BY DEFAULT) -->
+        <!-- ========================================== -->
+        <div id="panel-main-leaderboard" class="hidden">
+            <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700/50 max-w-3xl mx-auto">
+                <h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-4 text-center">
+                    <i class="fa-solid fa-trophy"></i> Peringkat Top 10 Siswa
+                </h3>
+                <div id="leaderboard-list" class="space-y-3">
                     <p class="text-xs text-slate-500 text-center py-4">Memuat papan peringkat...</p>
                 </div>
             </div>
-
         </div>
-    </div>
 
-    <!-- Pustaka Firebase (Compat version untuk sintaks realtime database) -->
+    </main>
+
+    <!-- Pustaka Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     
-    <!-- Script Kustom Sesuai Struktur Folder -->
+    <!-- Script Kustom -->
     <script src="js/firebase-config.js"></script>
     <script src="js/leaderboard.js"></script>
     <script src="js/certificate.js"></script>
     <script src="js/game.js"></script>
-    <!-- <script src="js/script.js"></script> Jika ada tambahan interaksi UI -->
+    <script src="js/attendance.js"></script>
 </body>
 </html>
