@@ -1,5 +1,5 @@
 // ==========================================
-// MAIN APP LOGIC (Slide Navigation & Quiz)
+// MAIN APP LOGIC (Navigasi & Slide Materi)
 // ==========================================
 
 let currentMateriId = null;
@@ -36,17 +36,11 @@ function saveProfile() {
     location.reload();
 }
 
-// Render Daftar Modul
 function renderMateri() {
     const container = document.getElementById('materi-container');
     if(!container) return;
     container.innerHTML = '';
-    
-    // Pastikan materiData sudah dimuat dari data_materi.js
-    if (typeof materiData === 'undefined') {
-        container.innerHTML = '<p class="text-rose-500">Gagal memuat data materi.</p>';
-        return;
-    }
+    if (typeof materiData === 'undefined') return;
 
     materiData.forEach(m => {
         container.innerHTML += `
@@ -69,7 +63,6 @@ function openMateriDetail(id) {
     navigate('materi-detail');
 }
 
-// Render Konten Slide + Kuis
 function loadSlide() {
     const materi = materiData.find(m => m.id === currentMateriId);
     if(!materi) return;
@@ -84,7 +77,6 @@ function loadSlide() {
         <div class="animate-fade-in text-slate-700 leading-relaxed mb-8">${slide.content}</div>
     `;
 
-    // Jika slide memiliki kuis, tambahkan UI kuis
     if (slide.quiz) {
         html += `
             <div class="bg-slate-50 border border-slate-200 p-5 rounded-2xl mt-4">
@@ -92,23 +84,15 @@ function loadSlide() {
                 <p class="text-sm font-medium mb-3">${slide.quiz.question}</p>
                 <div class="space-y-2" id="quiz-options">
         `;
-        
         slide.quiz.options.forEach((opt, idx) => {
-            html += `<button onclick="checkQuizAnswer(${idx}, ${slide.quiz.correct})" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition text-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+            html += `<button onclick="checkSlideQuiz(${idx}, ${slide.quiz.correct})" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition text-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
         });
-
-        html += `
-                </div>
-                <div id="quiz-feedback" class="mt-3 text-sm font-bold hidden"></div>
-            </div>
-        `;
+        html += `</div><div id="quiz-feedback" class="mt-3 text-sm font-bold hidden"></div></div>`;
     }
 
     document.getElementById('slide-content').innerHTML = html;
 
-    // Atur tombol navigasi
     document.getElementById('btn-prev-slide').disabled = (currentSlideIndex === 0);
-    
     const btnNext = document.getElementById('btn-next-slide');
     if (currentSlideIndex === materi.slides.length - 1) {
         btnNext.innerHTML = 'Selesai <i class="fa-solid fa-check ml-1"></i>';
@@ -121,21 +105,18 @@ function loadSlide() {
     }
 }
 
-// Logika Cek Jawaban Kuis di dalam Slide
-function checkQuizAnswer(selected, correct) {
+function checkSlideQuiz(selected, correct) {
     const feedback = document.getElementById('quiz-feedback');
     const buttons = document.getElementById('quiz-options').querySelectorAll('button');
-    
-    // Disable all buttons after answering
     buttons.forEach(btn => btn.disabled = true);
 
     if (selected === correct) {
         buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
-        feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar! Hebat.</span>';
+        feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar!</span>';
     } else {
         buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
         buttons[correct].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
-        feedback.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Jawaban Kurang Tepat. Silakan pelajari lagi.</span>';
+        feedback.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Jawaban Kurang Tepat.</span>';
     }
     feedback.classList.remove('hidden');
 }
@@ -143,15 +124,13 @@ function checkQuizAnswer(selected, correct) {
 function changeSlide(direction) {
     const materi = materiData.find(m => m.id === currentMateriId);
     if(!materi) return;
-    
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
-        alert("🎉 Hebat! Anda telah menyelesaikan modul ini.");
+        alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Jangan lupa kerjakan kuis di Arena Latihan untuk menambah skor!");
         navigate('materi');
         return;
     }
-    
     if (newIndex >= 0 && newIndex < materi.slides.length) {
         currentSlideIndex = newIndex;
         loadSlide();
@@ -184,64 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('mobile-player-name').innerText = "Guru";
         navigate('guru-dashboard');
     }
-
-    initShortcutGame();
 });
 
-// Fitur Fullscreen & Shortcut Game (Sama seperti sebelumnya)
 function toggleFullscreen() {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => alert(`Gagal: ${err.message}`));
     else { if (document.exitFullscreen) document.exitFullscreen(); }
 }
-
-var shortcutData = [
-    { question: "Copy (Salin)", answer: ["Ctrl", "C"] }, { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
-    { question: "Cut (Potong)", answer: ["Ctrl", "X"] }, { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
-    { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] }, { question: "Save (Simpan)", answer: ["Ctrl", "S"] }
-];
-var currentShortcutIndex = 0; var shortcutScore = 0; var userKeysPressed = [];
-
-function initShortcutGame() {
-    currentShortcutIndex = 0; shortcutScore = 0;
-    if(document.getElementById('shortcut-score')) document.getElementById('shortcut-score').innerText = shortcutScore;
-    loadShortcutQuestion();
-}
-function loadShortcutQuestion() {
-    if (currentShortcutIndex >= shortcutData.length) {
-        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
-        document.getElementById('shortcut-feedback').innerHTML = '<span class="text-emerald-600">Skor: ' + shortcutScore + '</span>';
-        return;
-    }
-    var currentQ = shortcutData[currentShortcutIndex];
-    document.getElementById('shortcut-question').innerText = currentQ.question;
-    document.getElementById('shortcut-q-count').innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
-    document.getElementById('shortcut-feedback').innerHTML = "";
-    userKeysPressed = [];
-    document.querySelectorAll('.key').forEach(k => k.classList.remove('pressed'));
-}
-document.querySelectorAll('.key').forEach(key => {
-    key.addEventListener('click', (e) => {
-        var keyValue = e.target.getAttribute('data-key');
-        if (!keyValue || currentShortcutIndex >= shortcutData.length) return;
-        e.target.classList.add('pressed');
-        setTimeout(() => e.target.classList.remove('pressed'), 150);
-        userKeysPressed.push(keyValue);
-        var correctAnswer = shortcutData[currentShortcutIndex].answer;
-        var isMatch = true;
-        for (var i = 0; i < userKeysPressed.length; i++) {
-            if (userKeysPressed[i] !== correctAnswer[i]) { isMatch = false; break; }
-        }
-        if (!isMatch) {
-            document.getElementById('shortcut-feedback').innerHTML = '<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah!</span>';
-            setTimeout(() => { userKeysPressed = []; document.getElementById('shortcut-feedback').innerHTML = ""; }, 1000);
-        } else if (userKeysPressed.length === correctAnswer.length) {
-            shortcutScore += 10;
-            document.getElementById('shortcut-score').innerText = shortcutScore;
-            document.getElementById('shortcut-feedback').innerHTML = '<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>';
-            currentShortcutIndex++;
-            setTimeout(loadShortcutQuestion, 1000);
-        } else {
-            document.getElementById('shortcut-feedback').innerHTML = '<span class="text-amber-500">Lanjutkan...</span>';
-        }
-    });
-});
