@@ -1,13 +1,7 @@
-/**
- * GAME ENGINE - EDP (OFFICE MASTER)
- * - Membaca data dinamis dari ./data/materials.json & ./data/questions.json
- * - Mendukung bank soal berupa Array (Pengacakan Soal & Pilihan Jawaban)
- * - Terintegrasi dengan leaderboard.js dan certificate.js
- */
+// ==========================================
+// GAME ENGINE - EDP (OFFICE MASTER)
+// ==========================================
 
-// ==========================================
-// 1. KONSTANTA & KONFIGURASI MODUL
-// ==========================================
 const LEVEL_SEQUENCE = [
     "word_1", "word_2", "word_3",
     "excel_1", "excel_2", "excel_3",
@@ -20,7 +14,6 @@ const MODULE_CONFIG = [
     { id: "ppt", name: "Microsoft PPT", icon: "fa-file-powerpoint text-amber-500" }
 ];
 
-// State Global Game
 let QUESTION_BANK = {}; 
 let materialsData = []; 
 
@@ -37,28 +30,53 @@ let timeLeft = 0;
 let currentActiveQuestion = null;
 
 // ==========================================
-// 2. INISIALISASI & FETCH DATA JSON
+// NAVIGASI TAB UTAMA
+// ==========================================
+function switchMainTab(tabName) {
+    // Sembunyikan semua panel
+    document.getElementById('panel-main-learning').classList.add('hidden');
+    document.getElementById('panel-main-attendance').classList.add('hidden');
+    document.getElementById('panel-main-leaderboard').classList.add('hidden');
+
+    // Reset style tombol nav
+    const navBtns = ['learning', 'attendance', 'leaderboard'];
+    navBtns.forEach(btn => {
+        const el = document.getElementById(`nav-btn-${btn}`);
+        el.classList.remove('bg-sky-600', 'text-white');
+        el.classList.add('text-slate-400');
+    });
+
+    // Tampilkan panel yang dipilih
+    document.getElementById(`panel-main-${tabName}`).classList.remove('hidden');
+    
+    // Highlight tombol nav
+    const activeBtn = document.getElementById(`nav-btn-${tabName}`);
+    activeBtn.classList.remove('text-slate-400');
+    activeBtn.classList.add('bg-sky-600', 'text-white');
+
+    // Hentikan timer game jika pindah tab
+    if (tabName !== 'learning') {
+        clearInterval(gameTimerInterval);
+    }
+}
+
+// ==========================================
+// INISIALISASI & FETCH DATA JSON
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     // Profil Siswa Setup
     if (!localStorage.getItem("student_name")) {
         userName = prompt("Masukkan Nama Lengkap Siswa:") || "Siswa Baru";
-        userClass = prompt("Masukkan Kelas (Contoh: X-RPL 1):") || "Kelas Umum";
+        userClass = prompt("Masukkan Kelas (Contoh: X TEI 1):") || "Kelas Umum";
         localStorage.setItem("student_name", userName);
         localStorage.setItem("student_class", userClass);
     }
     updateProfileUI();
 
-    // Fetch JSON Paralel dari Folder data/
+    // Fetch JSON Paralel
     Promise.all([
-        fetch('./data/materials.json').then(res => {
-            if (!res.ok) throw new Error("Gagal mengambil materials.json");
-            return res.json();
-        }),
-        fetch('./data/questions.json').then(res => {
-            if (!res.ok) throw new Error("Gagal mengambil questions.json");
-            return res.json();
-        })
+        fetch('./data/materials.json').then(res => res.json()),
+        fetch('./data/questions.json').then(res => res.json())
     ])
     .then(([materials, questions]) => {
         materialsData = materials;
@@ -68,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMaterial(currentModule, currentLevel);
         checkAllLevelsCompleted();
         
-        // Kirim nilai awal ke Firebase jika pernah bermain sebelumnya
         if (score > 0 && typeof window.syncScoreToDatabase === 'function') {
             window.syncScoreToDatabase(userName, userClass, score);
         }
@@ -78,19 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const matContent = document.getElementById("mat-content");
         if (matContent) {
             matContent.innerHTML = `<p class="text-rose-500 font-bold p-4 bg-rose-950/30 rounded-xl border border-rose-800/50">
-                ⚠️ Gagal memuat data soal/materi (${err.message}).<br>
-                <span class="text-xs font-normal text-slate-300">Pastikan nama file di folder data/ sudah benar (lowercase) dan dijalankan di Live Server / GitHub Pages.</span>
+                ⚠️ Gagal memuat data (${err.message}).<br>Pastikan dijalankan via Live Server.
             </p>`;
         }
     });
 });
 
 // ==========================================
-// 3. LOGIKA UNLOCKING & NAVIGASI LEVEL
+// LOGIKA UNLOCKING & NAVIGASI LEVEL
 // ==========================================
 function isLevelUnlocked(levelId) {
     const index = LEVEL_SEQUENCE.indexOf(levelId);
-    if (index === 0) return true; // Level 1 Word selalu terbuka
+    if (index === 0) return true;
     return userProgress[LEVEL_SEQUENCE[index - 1]] === true;
 }
 
@@ -98,7 +114,6 @@ function saveProgress() {
     localStorage.setItem("office_progress", JSON.stringify(userProgress));
     localStorage.setItem("student_score", score.toString());
     
-    // Sinkronkan ke Firebase melalui leaderboard.js
     if (typeof window.syncScoreToDatabase === 'function') {
         window.syncScoreToDatabase(userName, userClass, score);
     }
@@ -128,7 +143,7 @@ function renderLevelTree() {
             const isActive = currentModule === m.id && currentLevel === l;
             
             let btnClass = isDone ? "bg-emerald-600/20 border-emerald-500/50 text-emerald-400" : 
-                           unlocked ? "bg-sky-600/20 border-sky-500/50 text-sky-300 cursor-pointer animate-pulse" : 
+                           unlocked ? "bg-sky-600/20 border-sky-500/50 text-sky-300 cursor-pointer" : 
                            "bg-slate-800/40 border-slate-700 text-slate-600 cursor-not-allowed opacity-60";
             
             let iconHtml = isDone ? '<i class="fa-solid fa-circle-check text-[10px]"></i>' : 
@@ -150,7 +165,7 @@ function renderLevelTree() {
 }
 
 function selectLevel(mod, lvl) {
-    if (!isLevelUnlocked(`${mod}_${lvl}`)) return alert("🔒 Selesaikan level sebelumnya terlebih dahulu!");
+    if (!isLevelUnlocked(`${mod}_${lvl}`)) return alert("🔒 Selesaikan level sebelumnya!");
     currentModule = mod; 
     currentLevel = lvl;
     renderLevelTree(); 
@@ -158,9 +173,6 @@ function selectLevel(mod, lvl) {
     switchTab('material');
 }
 
-// ==========================================
-// 4. PEMUATAN MATERI & MANAJEMEN TAB
-// ==========================================
 function loadMaterial(mod, lvl) {
     const key = `${mod}_${lvl}`;
     const mat = materialsData.find(m => m.id === key);
@@ -168,7 +180,7 @@ function loadMaterial(mod, lvl) {
     if (!contentEl) return;
 
     if (!mat) {
-        contentEl.innerHTML = `<p class="text-slate-400 text-sm italic">Materi untuk level ini belum tersedia di data/materials.json.</p>`;
+        contentEl.innerHTML = `<p class="text-slate-400 text-sm italic">Materi belum tersedia.</p>`;
         return;
     }
 
@@ -193,8 +205,6 @@ function loadMaterial(mod, lvl) {
             });
             htmlContent += `</ul></div>`;
         });
-    } else {
-        htmlContent += `<p class="text-slate-300 text-sm">${mat.content || ''}</p>`;
     }
     contentEl.innerHTML = htmlContent + `</div>`;
 }
@@ -211,7 +221,7 @@ function startChallengeFromMaterial() {
 }
 
 // ==========================================
-// 5. MEKANISME GAME & PENGACAKAN SOAL
+// MEKANISME GAME
 // ==========================================
 function shuffleArray(array) {
     let shuffled = [...array];
@@ -230,26 +240,14 @@ function initGameMechanic() {
     const levelKey = `${currentModule}_${currentLevel}`;
     const questionDataRaw = QUESTION_BANK[levelKey];
     
-    if (!questionDataRaw) {
-        workspace.innerHTML = `<div class="p-6 text-center text-slate-400">
-            <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-600"></i>
-            <p class="font-semibold text-sm">Soal untuk ${levelKey} belum dimuat dari questions.json.</p>
-        </div>`;
+    if (!questionDataRaw || questionDataRaw.length === 0) {
+        workspace.innerHTML = `<div class="p-6 text-center text-slate-400">Soal belum tersedia.</div>`;
         return;
     }
     
-    // Pilih 1 soal secara ACAK jika data bernilai Array
-    if (Array.isArray(questionDataRaw)) {
-        if (questionDataRaw.length === 0) {
-            workspace.innerHTML = "<p class='text-slate-400 p-4'>Bank soal level ini kosong.</p>";
-            return;
-        }
-        const randomIndex = Math.floor(Math.random() * questionDataRaw.length);
-        currentActiveQuestion = questionDataRaw[randomIndex];
-    } else {
-        // Fallback jika format JSON masih berbentuk objek tunggal
-        currentActiveQuestion = questionDataRaw;
-    }
+    // Pilih 1 soal secara ACAK
+    const randomIndex = Math.floor(Math.random() * questionDataRaw.length);
+    currentActiveQuestion = questionDataRaw[randomIndex];
     
     timeLeft = currentActiveQuestion.time || 30; 
     clearInterval(gameTimerInterval); 
@@ -263,7 +261,6 @@ function initGameMechanic() {
     `;
     
     if (currentActiveQuestion.type === "quiz") {
-        // Acak opsi jawaban (A, B, C, D)
         let optionsHtml = shuffleArray(currentActiveQuestion.options).map((opt, idx) => `
             <button onclick="handleAnswer(${opt.correct})" class="w-full p-4 bg-slate-800 hover:bg-sky-600 border border-slate-700 rounded-xl text-left text-sm text-slate-200 transition-all font-medium flex items-start">
                 <span class="mr-3 font-bold bg-slate-950 px-2.5 py-0.5 rounded text-sky-400 shrink-0">${String.fromCharCode(65 + idx)}</span> 
@@ -287,9 +284,9 @@ function initGameMechanic() {
         workspace.innerHTML = timerHtml + `
             <p class="font-bold text-lg mb-2 text-white leading-relaxed">${currentActiveQuestion.question}</p>
             <p class="text-xs text-amber-400 mb-5 bg-amber-500/10 inline-block px-3 py-1.5 rounded-lg border border-amber-500/20">
-                <i class="fa-solid fa-lightbulb"></i> Petunjuk: ${currentActiveQuestion.hint || "Ketik jawaban yang tepat"}
+                <i class="fa-solid fa-lightbulb"></i> Petunjuk: ${currentActiveQuestion.hint || "Ketik jawaban"}
             </p>
-            <input type="text" id="sim-input" placeholder="Ketik jawaban di sini..." 
+            <input type="text" id="sim-input" placeholder="Ketik jawaban..." 
                 onkeypress="if(event.key === 'Enter') checkSimulatorAnswer()" 
                 class="w-full p-4 bg-slate-950 border border-sky-500/50 rounded-xl text-sky-400 font-mono text-base mb-4 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
             <button onclick="checkSimulatorAnswer()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg">
@@ -339,7 +336,7 @@ function completeCurrentLevel() {
         const [nextMod, nextLvl] = LEVEL_SEQUENCE[idx + 1].split("_");
         selectLevel(nextMod, parseInt(nextLvl));
     } else {
-        alert("🏆 LUAR BIASA! Kamu menyelesaikan semua modul di game ini!");
+        alert("🏆 LUAR BIASA! Kamu menyelesaikan semua modul!");
         switchTab('material');
     }
 }
@@ -356,16 +353,11 @@ function checkAllLevelsCompleted() {
         btn.onclick = () => {
             if (typeof window.generateCertificate === 'function') {
                 window.generateCertificate(userName, userClass, score);
-            } else {
-                alert("Sertifikat siap dicetak!");
             }
         };
     }
 }
 
-// ==========================================
-// 6. UTILITY PROFILE & STATE RESET
-// ==========================================
 function updateProfileUI() { 
     if (document.getElementById("player-name")) document.getElementById("player-name").innerText = userName; 
     if (document.getElementById("player-class")) document.getElementById("player-class").innerText = "Kelas: " + userClass;
