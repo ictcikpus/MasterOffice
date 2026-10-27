@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Master Office - LMS Interaktif</title>
     
-    <!-- FAVICON KOPER -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💼</text></svg>">
+    <!-- FAVICON (Ikon Tas Kerja) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -111,7 +111,7 @@
         </div>
     </header>
 
-    <!-- 5. MAIN CONTENT AREA -->
+    <!-- 5. KONTEN UTAMA -->
     <main class="p-4 md:p-8 max-w-6xl mx-auto w-full">
         
         <!-- VIEW SISWA: HOME -->
@@ -183,17 +183,14 @@
                     <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
                         <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2">Game Shortcut</h3>
-                        <p class="text-xs text-slate-500 mb-4">Latih ingatanmu tentang kombinasi tombol keyboard.</p>
                     </div>
                     <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
                         <div class="w-16 h-16 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-brain"></i></div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
-                        <p class="text-xs text-slate-500 mb-4">Uji pemahamanmu tentang materi.</p>
                     </div>
                     <div onclick="startTypingGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
                         <div class="w-16 h-16 bg-purple-100 text-purple-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-hand-point-up"></i></div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2">Latihan Ketik 10 Jari</h3>
-                        <p class="text-xs text-slate-500 mb-4">Ketik secepat mungkin.</p>
                     </div>
                 </div>
             </div>
@@ -267,7 +264,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold text-slate-800">Daftar Tugas Kelas</h2>
                 <div class="flex gap-2">
-                    <!-- TOMBOL GENERATE DIHAPUS -->
+                    <!-- Tombol Generate Tugas Awal DIHAPUS -->
                     <button onclick="openBuatTugasModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
                 </div>
             </div>
@@ -405,7 +402,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs/Sheets/Slides</label>
                     <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/...">
-                    <p class="text-[10px] text-slate-400 mt-1">*Pastikan akses diatur ke "Anyone with the link".</p>
+                    <p class="text-[10px] text-slate-500 mt-1"><i class="fa-solid fa-circle-info text-sky-500"></i> Pastikan akses diatur ke <b>"Anyone with the link"</b>.</p>
                 </div>
                 <div class="flex items-center gap-2 py-2">
                     <hr class="flex-1 border-slate-200"> <span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span> <hr class="flex-1 border-slate-200">
