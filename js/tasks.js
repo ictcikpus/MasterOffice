@@ -1,10 +1,10 @@
 // ==========================================
-// TASKS SYSTEM (FULL PROGRAM)
+// TASKS SYSTEM (GLOBAL LISTENER & AUTO-RENDER)
 // Master Office LMS
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
-const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e"; // Pastikan ID ini sesuai dengan folder Drive Anda
+const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e"; 
 
 let allTasks = [];
 let allSubmissionsData = {}; 
@@ -14,65 +14,57 @@ let currentViewingTaskId = null;
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
 // ==========================================
-// 1. INISIALISASI & LISTENER FIREBASE
+// 1. GLOBAL LISTENER (Mendengar Perubahan Data)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // Jalankan pendeteksi database setiap kali halaman dibuka
     listenToFirebaseData();
-    
-    // Jika yang login adalah siswa, render tampilannya setelah data ter-load
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    if (!isTeacher) {
-        setTimeout(() => { renderSiswaTugas(); }, 500);
-    }
 });
 
 function listenToFirebaseData() {
     // Listener Tugas
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
-        allTasks.reverse(); // Urutkan dari yang terbaru
+        snap.forEach(child => {
+            allTasks.push({ id: child.key, ...child.val() });
+        });
+        allTasks.reverse(); // Tugas terbaru di paling atas
         
+        // Update angka statistik di Dashboard Guru
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
-        const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-        if (isTeacher) {
-            if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-                window.renderGuruTugasList();
-            }
-        } else {
-            renderSiswaTugas();
-        }
+        // Paksa render ke layar (Guru & Siswa)
+        forceRender();
     }, error => {
-        console.error("Error membaca tugas:", error);
+        console.error("Gagal membaca Tugas:", error);
     });
 
     // Listener Pengumpulan Tugas
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-        
-        if (isTeacher) {
-            if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-                window.renderGuruTugasList(); 
-            }
-        } else {
-            renderSiswaTugas(); 
-        }
+        forceRender(); // Paksa render jika ada siswa baru yang kumpul
     }, error => {
-        console.error("Error membaca pengumpulan:", error);
+        console.error("Gagal membaca Pengumpulan:", error);
     });
 }
 
+// Fungsi untuk memaksa layar menggambar ulang data
+function forceRender() {
+    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
+    
+    if (isTeacher) {
+        if (typeof window.renderGuruTugasList === 'function') window.renderGuruTugasList();
+    } else {
+        if (typeof renderSiswaTugas === 'function') renderSiswaTugas();
+    }
+}
+
 // ==========================================
-// 2. FUNGSI GURU (BUAT & REKAP TUGAS)
+// 2. FUNGSI UNTUK GURU
 // ==========================================
 window.initTeacherTasks = function() {
-    // Fungsi ini dipanggil oleh auth.js setelah login guru
-    if(document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-        window.renderGuruTugasList();
-    }
+    forceRender(); // Dipanggil oleh auth.js saat guru login
 };
 
 window.openBuatTugasModal = function() { 
@@ -88,13 +80,14 @@ window.simpanTugas = function() {
     const desc = document.getElementById('tugas-desc').value.trim();
     const deadline = document.getElementById('tugas-deadline').value;
     
-    if (!title || !desc || !deadline) return alert("⚠️ Harap isi semua kolom (Judul, Instruksi, Tenggat)!");
+    if (!title || !desc || !deadline) return alert("⚠️ Harap isi semua kolom!");
 
     const btn = document.querySelector('#modal-buat-tugas button[onclick="simpanTugas()"]');
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
 
+    // Simpan ke Firebase
     db.ref('tasks').push({ 
         title: title, 
         desc: desc, 
@@ -102,20 +95,23 @@ window.simpanTugas = function() {
         timestamp: firebase.database.ServerValue.TIMESTAMP 
     })
     .then(() => { 
-        alert("✅ Tugas berhasil dibuat dan disinkronkan ke siswa!");
+        alert("✅ Tugas berhasil dibuat dan disinkronkan!");
+        
+        // Kosongkan form
         document.getElementById('tugas-title').value = '';
         document.getElementById('tugas-desc').value = '';
         document.getElementById('tugas-deadline').value = '';
+        
         window.closeBuatTugasModal();
         
-        // Arahkan ke halaman kelola tugas agar guru langsung melihatnya
+        // Paksa pindah ke halaman kelola tugas agar guru langsung melihat hasilnya
         if (typeof navigate === 'function') navigate('guru-tugas');
         
         btn.disabled = false;
         btn.innerHTML = originalText;
     })
     .catch(err => {
-        alert("❌ GAGAL MENYIMPAN!\n\nError: " + err.message + "\n\nPastikan Firebase Rules Anda mengizinkan Write.");
+        alert("❌ GAGAL MENYIMPAN!\n\nError: " + err.message);
         btn.disabled = false;
         btn.innerHTML = originalText;
     });
@@ -123,43 +119,50 @@ window.simpanTugas = function() {
 
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
-    if(!container) return;
+    if(!container) return; // Hentikan jika wadahnya tidak ada di halaman saat ini
+
     container.innerHTML = '';
 
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span><br><span class="text-sm">Silakan klik tombol <b>"Buat Tugas Baru"</b>.</span></div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span><br><span class="text-sm">Silakan buat tugas baru.</span></div>`;
         return;
     }
 
     allTasks.forEach(t => {
-        // Hitung berapa siswa yang sudah mengumpulkan tugas ini
         let submittedCount = 0;
+        // Hitung jumlah siswa yang mengumpulkan
         for (const cls in allSubmissionsData) {
             for (const name in allSubmissionsData[cls]) {
                 if (allSubmissionsData[cls][name][t.id]) submittedCount++;
             }
         }
 
-        // Tampilkan dalam bentuk Kartu (Card)
-        container.innerHTML += `
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
-                <div>
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${t.title}</h3>
-                        <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${t.deadline}</span>
+        // Cek apakah deskripsi mengandung tag HTML untuk mencegah error
+        const safeDesc = t.desc ? t.desc : "Tidak ada instruksi.";
+        
+        try {
+            container.innerHTML += `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${t.title}</h3>
+                            <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${t.deadline}</span>
+                        </div>
+                        <div class="text-sm text-slate-500 line-clamp-3 mt-2 overflow-hidden">${safeDesc}</div>
                     </div>
-                    <div class="text-sm text-slate-500 line-clamp-3 mt-2 overflow-hidden">${t.desc}</div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div class="text-sm font-bold text-emerald-600">
-                        <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Mengumpulkan
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="text-sm font-bold text-emerald-600">
+                            <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Mengumpulkan
+                        </div>
+                        <button onclick="openLihatPengumpulan('${t.id}', '${t.title}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition">
+                            Lihat Rekap <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
                     </div>
-                    <button onclick="openLihatPengumpulan('${t.id}', '${t.title}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition">
-                        Lihat Rekap <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
                 </div>
-            </div>
-        `;
+            `;
+        } catch (e) {
+            console.error("Gagal merender tugas:", t.title, e);
+        }
     });
 };
 
@@ -180,7 +183,6 @@ window.renderModalPengumpulan = function() {
     
     for (const cls in allSubmissionsData) {
         if (filterKelas !== 'all' && filterKelas !== cls) continue;
-
         for (const name in allSubmissionsData[cls]) {
             const sub = allSubmissionsData[cls][name][currentViewingTaskId];
             if (sub) {
@@ -199,51 +201,25 @@ window.renderModalPengumpulan = function() {
             }
         }
     }
-
     if (!found) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan tugas ini untuk filter kelas tersebut.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan tugas ini.</td></tr>`;
     }
 };
 
-window.generateDefaultTasks = function() {
-    if (!confirm("Ini akan menambahkan 3 Tugas Default ke dalam daftar. Lanjutkan?")) return;
-    
-    const defaultTasks = [
-        { 
-            title: 'Tugas 1: Surat Jalan Perusahaan (Word / Google Docs)', 
-            desc: '<p class="mb-2">Tugas administrasi bisnis formal.</p><ol class="list-decimal pl-4 text-sm"><li>Judul: <b>"PT. MAJU BERSAMA SEJAHTERA"</b> (Tengah).</li><li>Format Surat: No, Tanggal, Kepada, Alamat.</li><li><b>Tabel</b>: No, Nama Barang, Kuantitas, Ket (3 barang).</li><li>Tanda tangan Pengirim & Penerima.</li></ol>', 
-            deadline: '2026-12-31' 
-        },
-        { 
-            title: 'Tugas 2: Catatan Uang Kas Pribadi (Excel / Google Sheets)', 
-            desc: '<p class="mb-2">Pengelolaan keuangan dasar.</p><ol class="list-decimal pl-4 text-sm"><li>Header: Tanggal, Ket, Pemasukan, Pengeluaran, Saldo.</li><li>Isi 5 baris data.</li><li>Saldo gunakan rumus: <code>=C2-D2</code>, dst.</li><li>Gunakan <b>SUM</b> untuk total.</li></ol>', 
-            deadline: '2026-12-31' 
-        },
-        { 
-            title: 'Tugas 3: Presentasi Peluncuran Produk (PPT / Google Slides)', 
-            desc: '<p class="mb-2">Materi presentasi visual.</p><ol class="list-decimal pl-4 text-sm"><li>Minimal 4 slide (Judul, Fitur, Harga, Penutup).</li><li>Tambahkan Gambar dan Transisi.</li></ol>', 
-            deadline: '2026-12-31' 
-        }
-    ];
-
-    const promises = defaultTasks.map(t => db.ref('tasks').push({ ...t, timestamp: firebase.database.ServerValue.TIMESTAMP }));
-    
-    Promise.all(promises).then(() => {
-        alert("✅ 3 Tugas Default berhasil ditambahkan!");
-    }).catch(err => alert("Gagal membuat tugas default: " + err.message));
-};
-
 // ==========================================
-// 3. FUNGSI SISWA (MELIHAT & KUMPUL TUGAS)
+// 3. FUNGSI UNTUK SISWA
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
-    if(!container) return;
+    if(!container) return; // Hentikan jika tidak ada wadah di halaman ini
     
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
-    if(!studentName || !studentClass) return;
+    if(!studentName || !studentClass) {
+        container.innerHTML = `<div class="text-center p-8 bg-amber-50 rounded-2xl border border-amber-200"><i class="fa-solid fa-user-slash text-4xl text-amber-500 mb-3"></i><p class="text-amber-700 font-bold">Profil Anda belum lengkap.</p></div>`;
+        return;
+    }
 
     container.innerHTML = '';
     if (allTasks.length === 0) {
@@ -259,17 +235,22 @@ function renderSiswaTugas() {
             ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
             : `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
-        // Tampilan Card untuk Siswa
-        container.innerHTML += `
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
-                    <h3 class="font-bold text-xl text-slate-800 pr-2">${t.title}</h3>
-                    <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${t.deadline}</span>
+        const safeDesc = t.desc ? t.desc : "Tidak ada instruksi.";
+
+        try {
+            container.innerHTML += `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-xl text-slate-800 pr-2">${t.title}</h3>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${t.deadline}</span>
+                    </div>
+                    <div class="text-slate-600 mb-5 overflow-hidden">${safeDesc}</div>
+                    <div class="flex justify-end">${statusHtml}</div>
                 </div>
-                <div class="text-slate-600 mb-5 overflow-hidden">${t.desc}</div>
-                <div class="flex justify-end">${statusHtml}</div>
-            </div>
-        `;
+            `;
+        } catch (e) {
+            console.error("Gagal merender tugas siswa:", e);
+        }
     });
 }
 
@@ -277,7 +258,6 @@ window.openKumpulTugasModal = function(taskId, title) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
     
-    // Tampilkan loading di tombol
     const btn = event ? event.target.closest('button') : null;
     let originalText = "";
     if(btn) {
@@ -286,7 +266,6 @@ window.openKumpulTugasModal = function(taskId, title) {
         btn.disabled = true;
     }
 
-    // Cek apakah siswa sudah absen hari ini
     db.ref(`attendance/${todayStrTasks}/${studentClass}/${studentName}`).once('value').then(snap => {
         if(btn) {
             btn.innerHTML = originalText;
@@ -299,7 +278,6 @@ window.openKumpulTugasModal = function(taskId, title) {
             return;
         }
 
-        // Jika sudah absen, buka modal
         currentSelectedTaskId = taskId;
         document.getElementById('kumpul-tugas-title').innerText = "Tugas: " + title;
         document.getElementById('link-tugas').value = "";
@@ -354,21 +332,11 @@ function uploadFileToDrive(file) {
         const studentName = localStorage.getItem("student_name");
         const filename = `${studentName}_${Date.now()}_${file.name}`;
 
-        if (FOLDER_ID === "GANTI_DENGAN_ID_FOLDER_DRIVE_ANDA") {
-            alert("⚠️ ID Folder Google Drive belum diatur.");
-            btn.disabled = false; btn.innerHTML = originalText; return;
-        }
-
         try {
             const response = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ 
-                    file: base64Data, 
-                    filename: filename, 
-                    mimeType: mimeType, 
-                    folderId: FOLDER_ID 
-                })
+                body: JSON.stringify({ file: base64Data, filename: filename, mimeType: mimeType, folderId: FOLDER_ID })
             });
             const result = await response.json();
             
