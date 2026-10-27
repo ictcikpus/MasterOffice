@@ -25,6 +25,14 @@
         body.hide-nav header { display: none !important; }
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* CSS Khusus untuk Typing Game */
+        .typing-text-area { cursor: text; }
+        .typing-text-area:focus { outline: none; }
+        .virtual-keyboard { display: none; } /* Sembunyikan di mobile */
+        @media (min-width: 768px) {
+            .virtual-keyboard { display: block; } /* Munculkan di desktop */
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64 transition-all duration-300">
@@ -176,9 +184,8 @@
             </div>
         </div>
 
-        <!-- VIEW SISWA: ARENA LATIHAN (LENGKAP DENGAN HTML) -->
+        <!-- VIEW SISWA: ARENA LATIHAN -->
         <div id="view-arena" class="view hidden">
-            <!-- Menu Pilihan -->
             <div id="arena-menu">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -200,7 +207,7 @@
                 </div>
             </div>
             
-            <!-- Game Shortcut -->
+            <!-- GAME SHORTCUT -->
             <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
@@ -214,13 +221,11 @@
                         <h3 class="text-2xl font-extrabold text-slate-800" id="shortcut-question">Copy</h3>
                         <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
                     </div>
-                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none" id="shortcut-keyboard">
-                        <!-- Keyboard akan dirender oleh JS -->
-                    </div>
+                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none" id="shortcut-keyboard"></div>
                 </div>
             </div>
 
-            <!-- Game Kuis -->
+            <!-- GAME KUIS -->
             <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
@@ -232,8 +237,8 @@
                 </div>
             </div>
 
-            <!-- Game Typing -->
-            <div id="typing-game-container" class="hidden max-w-3xl mx-auto">
+            <!-- GAME TYPING (RESPONSIVE) -->
+            <div id="typing-game-container" class="hidden max-w-4xl mx-auto">
                 <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
                 <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
                     <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
@@ -241,17 +246,27 @@
                         <div class="text-center"><span class="block text-xs font-bold text-slate-400 uppercase">WPM</span><span class="text-xl font-bold text-sky-600" id="typing-wpm">0</span></div>
                         <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Akurasi</span><span class="text-xl font-bold text-emerald-600" id="typing-acc">100%</span></div>
                     </div>
-                    <div class="bg-slate-100 p-4 rounded-xl mb-6 text-lg font-mono leading-relaxed" id="typing-text-display"></div>
-                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6 opacity-0 absolute -z-10" autocomplete="off">
-                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto custom-scroll">
-                        <div class="flex flex-col gap-1 items-center min-w-[600px]">
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key" data-key="`">~</kbd><kbd class="key" data-key="1">1</kbd><kbd class="key" data-key="2">2</kbd><kbd class="key" data-key="3">3</kbd><kbd class="key" data-key="4">4</kbd><kbd class="key" data-key="5">5</kbd><kbd class="key" data-key="6">6</kbd><kbd class="key" data-key="7">7</kbd><kbd class="key" data-key="8">8</kbd><kbd class="key" data-key="9">9</kbd><kbd class="key" data-key="0">0</kbd><kbd class="key" data-key="-">-</kbd><kbd class="key" data-key="=">=</kbd><kbd class="key w-16" data-key="Backspace">Backspace</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-14" data-key="Tab">Tab</kbd><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd><kbd class="key" data-key="[">[</kbd><kbd class="key" data-key="]">]</kbd><kbd class="key w-14" data-key="\">\</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-20" data-key="CapsLock">Caps</kbd><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd><kbd class="key" data-key=";">;</kbd><kbd class="key" data-key="'">'</kbd><kbd class="key w-20" data-key="Enter">Enter</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-24" data-key="ShiftLeft">Shift</kbd><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd><kbd class="key" data-key=",">,</kbd><kbd class="key" data-key=".">.</kbd><kbd class="key" data-key="/">/</kbd><kbd class="key w-24" data-key="ShiftRight">Shift</kbd></div>
-                            <div class="flex gap-1 w-full justify-center mt-1"><kbd class="key w-full max-w-sm" data-key=" ">Space</kbd></div>
+                    
+                    <!-- Instruksi Mobile -->
+                    <p class="text-center text-xs text-slate-400 mb-2 md:hidden"><i class="fa-solid fa-mobile-screen"></i> Ketuk teks di bawah untuk memunculkan keyboard HP Anda.</p>
+
+                    <!-- Area Teks -->
+                    <div id="typing-text-display" class="typing-text-area bg-slate-100 p-4 rounded-xl mb-4 text-lg font-mono leading-relaxed outline-none" onclick="document.getElementById('typing-input').focus()"></div>
+                    
+                    <!-- Input Hidden -->
+                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4 opacity-0 absolute -z-10" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+                    <!-- Virtual Keyboard (Hanya tampil di Desktop) -->
+                    <div class="virtual-keyboard bg-slate-800 p-2 rounded-2xl shadow-inner w-full">
+                        <div class="flex flex-col gap-1 items-center w-full">
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-1 max-w-[40px]" data-key="`">~</kbd><kbd class="key flex-1 max-w-[40px]" data-key="1">1</kbd><kbd class="key flex-1 max-w-[40px]" data-key="2">2</kbd><kbd class="key flex-1 max-w-[40px]" data-key="3">3</kbd><kbd class="key flex-1 max-w-[40px]" data-key="4">4</kbd><kbd class="key flex-1 max-w-[40px]" data-key="5">5</kbd><kbd class="key flex-1 max-w-[40px]" data-key="6">6</kbd><kbd class="key flex-1 max-w-[40px]" data-key="7">7</kbd><kbd class="key flex-1 max-w-[40px]" data-key="8">8</kbd><kbd class="key flex-1 max-w-[40px]" data-key="9">9</kbd><kbd class="key flex-1 max-w-[40px]" data-key="0">0</kbd><kbd class="key flex-1 max-w-[40px]" data-key="-">-</kbd><kbd class="key flex-1 max-w-[40px]" data-key="=">=</kbd><kbd class="key flex-[2]" data-key="Backspace">Backspace</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[1.5]" data-key="Tab">Tab</kbd><kbd class="key flex-1" data-key="Q">Q</kbd><kbd class="key flex-1" data-key="W">W</kbd><kbd class="key flex-1" data-key="E">E</kbd><kbd class="key flex-1" data-key="R">R</kbd><kbd class="key flex-1" data-key="T">T</kbd><kbd class="key flex-1" data-key="Y">Y</kbd><kbd class="key flex-1" data-key="U">U</kbd><kbd class="key flex-1" data-key="I">I</kbd><kbd class="key flex-1" data-key="O">O</kbd><kbd class="key flex-1" data-key="P">P</kbd><kbd class="key flex-1" data-key="[">[</kbd><kbd class="key flex-1" data-key="]">]</kbd><kbd class="key flex-[1.5]" data-key="\">\</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[2]" data-key="CapsLock">Caps</kbd><kbd class="key flex-1" data-key="A">A</kbd><kbd class="key flex-1" data-key="S">S</kbd><kbd class="key flex-1" data-key="D">D</kbd><kbd class="key flex-1" data-key="F">F</kbd><kbd class="key flex-1" data-key="G">G</kbd><kbd class="key flex-1" data-key="H">H</kbd><kbd class="key flex-1" data-key="J">J</kbd><kbd class="key flex-1" data-key="K">K</kbd><kbd class="key flex-1" data-key="L">L</kbd><kbd class="key flex-1" data-key=";">;</kbd><kbd class="key flex-1" data-key="'">'</kbd><kbd class="key flex-[2]" data-key="Enter">Enter</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[2.5]" data-key="ShiftLeft">Shift</kbd><kbd class="key flex-1" data-key="Z">Z</kbd><kbd class="key flex-1" data-key="X">X</kbd><kbd class="key flex-1" data-key="C">C</kbd><kbd class="key flex-1" data-key="V">V</kbd><kbd class="key flex-1" data-key="B">B</kbd><kbd class="key flex-1" data-key="N">N</kbd><kbd class="key flex-1" data-key="M">M</kbd><kbd class="key flex-1" data-key=",">,</kbd><kbd class="key flex-1" data-key=".">.</kbd><kbd class="key flex-1" data-key="/">/</kbd><kbd class="key flex-[2.5]" data-key="ShiftRight">Shift</kbd></div>
+                            <div class="flex gap-1 w-full justify-center mt-1"><kbd class="key flex-1 max-w-sm" data-key=" ">Space</kbd></div>
                         </div>
                     </div>
+                    
                     <button onclick="startTypingGame()" class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold shadow-lg transition">Mulai Ulang Latihan</button>
                 </div>
             </div>
@@ -289,9 +304,7 @@
                     </div>
                 </div>
             </div>
-            
             <div id="certificate-container" class="mb-6"></div>
-
             <h3 class="font-bold text-slate-800 mb-4">Koleksi Lencana (Badges)</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="badges-container"></div>
         </div>
@@ -299,6 +312,8 @@
         <!-- VIEW GURU: DASHBOARD -->
         <div id="view-guru-dashboard" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Utama Guru</h2>
+            
+            <!-- Pengumuman -->
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-6">
                 <h3 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-bullhorn text-amber-500 mr-2"></i> Buat Pengumuman</h3>
                 <div class="flex gap-2">
@@ -306,6 +321,8 @@
                     <button onclick="kirimPengumuman()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Kirim</button>
                 </div>
             </div>
+
+            <!-- Statistik -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
@@ -316,6 +333,14 @@
                     <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-file-pen"></i></div>
                     <h3 class="text-3xl font-bold text-slate-800" id="stat-tugas">0</h3>
                     <p class="text-sm text-slate-500">Tugas Aktif</p>
+                </div>
+            </div>
+
+            <!-- LEADERBOARD GURU (BARU) -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-4"><i class="fa-solid fa-ranking-star text-amber-500 mr-2"></i> Peringkat Siswa (Top 10)</h3>
+                <div id="teacher-leaderboard-list" class="space-y-3">
+                    <p class="text-xs text-slate-500 text-center py-4">Memuat papan peringkat...</p>
                 </div>
             </div>
         </div>
@@ -479,9 +504,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- SCRIPT JS -->
-    <!-- ========================================== -->
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
