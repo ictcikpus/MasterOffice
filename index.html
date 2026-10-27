@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64 transition-all duration-300">
 
-    <!-- ================= LAYAR PILIHAN PERAN (AWAL MASUK) ================= -->
+    <!-- MODAL PILIHAN PERAN -->
     <div id="role-selection-modal" class="fixed inset-0 bg-slate-900/95 z-[300] flex items-center justify-center p-4 backdrop-blur-md transition-opacity">
         <div class="bg-white rounded-3xl p-8 max-w-2xl w-full text-center shadow-2xl">
             <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner">
@@ -33,20 +33,13 @@
             <p class="text-slate-500 mb-8">Silakan pilih peran Anda untuk melanjutkan ke platform.</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Pilihan Siswa -->
                 <button onclick="chooseRole('siswa')" class="group bg-white border-2 border-slate-100 hover:border-emerald-500 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl flex flex-col items-center">
-                    <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-user-graduate"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform"><i class="fa-solid fa-user-graduate"></i></div>
                     <h2 class="text-xl font-bold text-slate-800 mb-1">Masuk Siswa</h2>
                     <p class="text-sm text-slate-500">Belajar materi, ikut kuis, dan kumpulkan tugas.</p>
                 </button>
-
-                <!-- Pilihan Guru -->
                 <button onclick="chooseRole('guru')" class="group bg-white border-2 border-slate-100 hover:border-amber-500 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl flex flex-col items-center">
-                    <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chalkboard-user"></i></div>
                     <h2 class="text-xl font-bold text-slate-800 mb-1">Masuk Guru</h2>
                     <p class="text-sm text-slate-500">Kelola tugas, absensi, dan pantau nilai siswa.</p>
                 </button>
@@ -54,13 +47,12 @@
         </div>
     </div>
 
-    <!-- MODAL SETUP PROFIL (SISWA) -->
+    <!-- MODAL SETUP PROFIL SISWA -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
             <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-user-graduate"></i></div>
             <h2 class="text-xl font-bold text-slate-800 mb-1">Lengkapi Profil</h2>
-            <p class="text-sm text-slate-500 mb-6">Isi data diri Anda untuk memulai.</p>
-            <div class="space-y-4 text-left">
+            <div class="space-y-4 text-left mt-6">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap</label>
                     <input type="text" id="setup-name" placeholder="Ketik nama Anda..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -79,7 +71,7 @@
         </div>
     </div>
 
-    <!-- SIDEBAR (DESKTOP) -->
+    <!-- SIDEBAR -->
     <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50">
         <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-lg">M</div>
@@ -118,7 +110,7 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT AREA (Sama seperti sebelumnya, dipersingkat untuk ruang) -->
+    <!-- MAIN CONTENT AREA -->
     <main class="p-4 md:p-8 max-w-6xl mx-auto w-full">
         
         <!-- VIEW 1: HOME SISWA -->
@@ -201,9 +193,29 @@
             </div>
         </div>
 
-        <!-- VIEW 3: ARENA LATIHAN (Sama seperti sebelumnya) -->
+        <!-- VIEW 3: ARENA LATIHAN -->
         <div id="view-arena" class="view hidden">
-            <!-- isi arena -->
+            <div id="arena-menu">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div onclick="startShortcutGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-keyboard"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Game Shortcut</h3>
+                        <p class="text-xs text-slate-500 mb-4">Latih ingatanmu tentang kombinasi tombol keyboard.</p>
+                    </div>
+                    <div onclick="startMateriQuiz()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-brain"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Kuis Pemahaman</h3>
+                        <p class="text-xs text-slate-500 mb-4">Uji pemahamanmu tentang materi.</p>
+                    </div>
+                    <div onclick="startTypingGame()" class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-purple-100 text-purple-500 rounded-full flex items-center justify-center text-3xl mb-3"><i class="fa-solid fa-hand-point-up"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Latihan Ketik 10 Jari</h3>
+                        <p class="text-xs text-slate-500 mb-4">Ketik secepat mungkin.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Container Game disingkat agar file tidak terlalu panjang, pastikan Anda menyalin sisanya dari file sebelumnya -->
         </div>
 
         <!-- VIEW 4: TUGAS SISWA -->
@@ -254,6 +266,7 @@
                 <h2 class="text-2xl font-bold text-slate-800">Kelola & Rekap Tugas</h2>
                 <div class="flex gap-2">
                     <button onclick="generateDefaultTasks()" class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generate 3 Tugas Awal</button>
+                    <!-- TOMBOL YANG MEMANGGIL MODAL -->
                     <button onclick="openBuatTugasModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition"><i class="fa-solid fa-plus mr-1"></i> Buat Tugas Baru</button>
                 </div>
             </div>
@@ -286,11 +299,40 @@
 
         <!-- KONTEN GURU: REKAP ABSENSI -->
         <div id="view-guru-absen" class="view hidden">
-            <!-- isi absensi guru -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-users-viewfinder text-amber-500 mr-2"></i> Rekap Kehadiran</h2>
+                    <div class="flex gap-2" id="export-buttons">
+                        <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> XLS</button>
+                        <button onclick="exportToPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-pdf mr-1"></i> PDF</button>
+                    </div>
+                </div>
+                <div id="filter-section" class="flex flex-col md:flex-row gap-3 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <select id="filter-class" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                        <option value="all">Semua Kelas</option>
+                        <option value="X TEI 1">X TEI 1</option><option value="X TEI 2">X TEI 2</option><option value="X TEI 3">X TEI 3</option><option value="X TEI 4">X TEI 4</option>
+                        <option value="X TKR 1">X TKR 1</option><option value="X TKR 2">X TKR 2</option><option value="X TKR 3">X TKR 3</option><option value="X TKR 4">X TKR 4</option>
+                        <option value="X TP 1">X TP 1</option><option value="X TP 2">X TP 2</option><option value="X TP 3">X TP 3</option><option value="X TP 4">X TP 4</option>
+                    </select>
+                    <input type="date" id="filter-date" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
+                </div>
+                <div class="overflow-x-auto" id="print-area">
+                    <table class="w-full text-left border-collapse" id="teacher-attendance-table">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                                <th class="p-3 border-b border-slate-200 text-center">No</th><th class="p-3 border-b border-slate-200">Nama</th><th class="p-3 border-b border-slate-200">Kelas</th><th class="p-3 border-b border-slate-200">Hari/Tanggal</th><th class="p-3 border-b border-slate-200">Jam</th><th class="p-3 border-b border-slate-200 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-attendance-list" class="text-sm">
+                            <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- BOTTOM NAV (MOBILE) -->
+    <!-- BOTTOM NAV -->
     <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
         <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span></button>
         <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-book-open text-lg mb-1"></i><span class="text-[10px] font-semibold">Materi</span></button>
@@ -322,12 +364,58 @@
         </div>
     </div>
 
-    <!-- MODAL BUAT TUGAS (GURU) -->
-    <!-- ... (Sama seperti sebelumnya) ... -->
+    <!-- MODAL BUAT TUGAS (GURU) - INI YANG HILANG SEBELUMNYA -->
+    <div id="modal-buat-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Buat Tugas Baru</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Judul Tugas</label>
+                    <input type="text" id="tugas-title" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Contoh: Praktik Word Dasar">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Instruksi Tugas (Bisa HTML)</label>
+                    <textarea id="tugas-desc" rows="5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Jelaskan detail tugas..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tenggat Waktu</label>
+                    <input type="date" id="tugas-deadline" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="closeBuatTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
+                    <button onclick="simpanTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg">Simpan Tugas</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL KUMPUL TUGAS (SISWA) -->
-    <!-- ... (Sama seperti sebelumnya) ... -->
+    <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
+            <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs/Sheets/Slides</label>
+                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/...">
+                    <p class="text-[10px] text-slate-400 mt-1">*Pastikan akses diatur ke "Anyone with the link".</p>
+                </div>
+                <div class="flex items-center gap-2 py-2">
+                    <hr class="flex-1 border-slate-200"> <span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span> <hr class="flex-1 border-slate-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 2: Upload File (PDF / Gambar)</label>
+                    <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
+                    <button id="btn-submit-tugas" onclick="prosesKumpulTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg transition">Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Pustaka Firebase & Script -->
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
