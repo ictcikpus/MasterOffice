@@ -1,5 +1,5 @@
 // ==========================================
-// AUTHENTICATION SYSTEM (Login Guru & Trigger Data)
+// AUTHENTICATION SYSTEM
 // ==========================================
 
 const TEACHER_PASSWORD = "guru123";
@@ -17,27 +17,25 @@ function loginGuru() {
     if (pass === TEACHER_PASSWORD) {
         sessionStorage.setItem('is_teacher', 'true');
         
-        // Sembunyikan modal
         document.getElementById('login-modal').classList.add('hidden');
         document.getElementById('role-selection-modal').classList.add('hidden');
 
-        // Tampilkan UI Guru
+        // UI Guru
         document.getElementById('nav-siswa').classList.add('hidden');
         document.getElementById('bottom-nav-siswa').classList.add('hidden');
-        
         document.getElementById('nav-guru').classList.remove('hidden');
         document.getElementById('bottom-nav-guru').classList.remove('hidden');
-        
         document.getElementById('mobile-player-name').innerText = "Guru";
 
-        // 🔥 KUNCI PERBAIKAN: Panggil inisialisasi data Guru di sini
+        // 🔥 PENTING: Tarik data Firebase seketika setelah login
         if (typeof window.initTeacherAttendance === 'function') window.initTeacherAttendance();
         if (typeof window.initTeacherTasks === 'function') window.initTeacherTasks();
+        
+        // Sembunyikan layar pilihan peran
+        document.getElementById('role-selection-modal').classList.add('hidden');
 
-        // Pindah ke tab dashboard guru
         if (typeof navigate === 'function') navigate('guru-dashboard');
         
-        // Mulai data realtime pengumuman dan streak (jika ada)
         if (typeof loadAnnouncement === 'function') loadAnnouncement();
     } else {
         alert("❌ Password salah!");
