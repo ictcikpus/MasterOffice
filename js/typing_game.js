@@ -19,7 +19,7 @@ let typingTotalTyped = 0;
 let typingIsPlaying = false;
 
 function startTypingGame() {
-    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
+    document.body.classList.add('hide-nav');
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
@@ -33,6 +33,8 @@ function startTypingGame() {
     typingIsPlaying = true;
     
     const inputEl = document.getElementById('typing-input');
+    if(!inputEl) return;
+    
     inputEl.value = "";
     inputEl.disabled = false;
     
