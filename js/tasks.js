@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FULL PROGRAM & VALIDASI LINK)
+// TASKS SYSTEM (Full Program with Link Validation)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,7 +13,7 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi pembersih HTML
+// Pembersih HTML untuk preview card
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -22,7 +22,33 @@ function stripHtml(html) {
 }
 
 // ==========================================
-// 1. INISIALISASI & LISTENER FIREBASE
+// FUNGSI VALIDASI LINK GOOGLE DRIVE/DOCS
+// ==========================================
+async function validateGoogleLink(url) {
+    // Regex untuk mengambil ID file dari berbagai format link Google
+    const regex = /(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/)([a-zA-Z0-9_-]{25,})/;
+    const match = url.match(regex);
+
+    // Jika bukan link Google Drive/Docs yang valid, biarkan (mungkin link lain)
+    if (!match) return { valid: true };
+
+    const fileId = match[1];
+    // Gunakan endpoint thumbnail untuk mengecek akses tanpa API
+    const testUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w100`;
+
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve({ valid: true }); // Link bisa diakses publik
+        img.onerror = () => resolve({ 
+            valid: false, 
+            message: "File ini bersifat PRIVAT. Buka file Anda, klik 'Share', dan ubah akses menjadi 'Anyone with the link'." 
+        });
+        img.src = testUrl;
+    });
+}
+
+// ==========================================
+// INISIALISASI & LISTENER FIREBASE
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
@@ -31,7 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
 function listenToFirebaseData() {
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
+        snap.forEach(child => {
+            allTasks.push({ id: child.key, ...child.val() });
+        });
         allTasks.reverse(); 
         
         const statTugas = document.getElementById('stat-tugas');
@@ -52,7 +80,7 @@ function forceRender() {
 }
 
 // ==========================================
-// 2. FUNGSI GURU (RENDER KARTU & CRUD)
+// FUNGSI GURU (CRUD)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
@@ -132,7 +160,7 @@ window.renderGuruTugasList = function() {
     container.innerHTML = '';
 
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>Silakan klik "Buat Tugas Baru".</div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span></div>`;
         return;
     }
 
@@ -177,7 +205,7 @@ window.renderGuruTugasList = function() {
                 </div>
             `;
         } catch (err) {
-            console.error("Gagal render tugas guru:", err, t);
+            console.error("Gagal merender satu tugas guru:", err, t);
         }
     });
 
@@ -224,7 +252,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (VALIDASI & UPLOAD)
+// FUNGSI SISWA (DENGAN VALIDASI LINK)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -266,7 +294,7 @@ function renderSiswaTugas() {
                 </div>
             `;
         } catch (err) {
-            console.error("Gagal render tugas siswa:", err, t);
+            console.error("Gagal merender satu tugas siswa:", err, t);
         }
     });
 
@@ -296,52 +324,43 @@ window.openKumpulTugasModal = function(taskId, title) {
 
 window.closeKumpulTugasModal = function() { document.getElementById('modal-kumpul-tugas').classList.add('hidden'); };
 
-// FUNGSI VALIDASI LINK GOOGLE DRIVE / DOCS / SHEETS / SLIDES
-function isValidGoogleLink(url) {
-    const regex = /(docs\.google\.com\/(document|spreadsheets|presentation)\/d\/|drive\.google\.com\/file\/d\/)/;
-    return regex.test(url);
-}
-
+// FUNGSI PROSES KUMPUL (DENGAN VALIDASI)
 window.prosesKumpulTugas = async function() {
     const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
     const file = fileInput.files[0];
-
-    if (!linkInput && !file) return alert("Masukkan Link ATAU Upload File.");
     
-    // Jika menggunakan Link (Bukan File)
-    if (linkInput) {
-        if (!linkInput.includes('http')) return alert("Format link tidak valid (harus diawali http/https).");
-        
-        if (!isValidGoogleLink(linkInput)) {
-            return alert("⚠️ Link tidak valid!\n\nHarap gunakan link dari Google Docs, Google Sheets, Google Slides, atau Google Drive.");
-        }
-
-        // VALIDASI IZIN AKSES
-        const konfirmasiIzin = confirm("PENTING: Apakah Anda sudah mengatur akses file menjadi 'Anyone with the link' (Siapa saja yang memiliki link)?\n\nJika belum, Guru tidak akan bisa membuka file Anda.\n\nKlik OK jika sudah, atau Batal untuk memperbaikinya.");
-        
-        if (!konfirmasiIzin) {
-            return; // Hentikan proses jika siswa belum yakin
-        }
-    }
+    if (!linkInput && !file) return alert("Masukkan Link ATAU Upload File.");
+    if (linkInput && !linkInput.includes('http')) return alert("Format link salah.");
 
     const btn = document.getElementById('btn-submit-tugas');
-    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-    
+    const originalText = btn.innerHTML;
+
     if (linkInput) {
+        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Validasi Link...';
+        
+        // VALIDASI LINK GOOGLE
+        const check = await validateGoogleLink(linkInput);
+        if (!check.valid) {
+            alert(`❌ LINK BELUM BISA DIAKSES!\n\n${check.message}`);
+            btn.disabled = false; btn.innerHTML = originalText;
+            return;
+        }
+        
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
         saveSubmissionToFirebase(linkInput);
     } else if (file) {
         if (file.size > 5 * 1024 * 1024) { 
             alert("❌ Ukuran file maksimal 5MB."); 
-            btn.disabled = false; btn.innerHTML = 'Kirim'; return; 
+            btn.disabled = false; btn.innerHTML = originalText; return; 
         }
+        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
         uploadFileToDrive(file);
     }
 };
 
 function uploadFileToDrive(file) {
     const btn = document.getElementById('btn-submit-tugas');
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
     const reader = new FileReader();
     reader.onload = async function(e) {
         const base64Data = e.target.result.split(',')[1]; 
@@ -353,7 +372,8 @@ function uploadFileToDrive(file) {
             if (result.status === 'success' && result.url) saveSubmissionToFirebase(result.url);
             else throw new Error(result.message || "Gagal.");
         } catch (error) {
-            alert(`❌ Gagal: ${error.message}`); btn.disabled = false; btn.innerHTML = 'Kirim';
+            alert(`❌ Gagal: ${error.message}`); 
+            btn.disabled = false; btn.innerHTML = 'Kirim';
         }
     };
     reader.readAsDataURL(file);
@@ -364,7 +384,14 @@ function saveSubmissionToFirebase(submissionUrl) {
     const studentClass = localStorage.getItem("student_class");
     db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({ link: submissionUrl, timestamp: firebase.database.ServerValue.TIMESTAMP })
     .then(() => {
-        alert("✅ Tugas berhasil dikumpulkan!"); window.closeKumpulTugasModal();
-        document.getElementById('btn-submit-tugas').disabled = false; document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
+        alert("✅ Tugas berhasil dikumpulkan!"); 
+        window.closeKumpulTugasModal();
+        document.getElementById('btn-submit-tugas').disabled = false; 
+        document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
+    })
+    .catch(err => {
+        alert("Gagal menyimpan: " + err.message);
+        document.getElementById('btn-submit-tugas').disabled = false; 
+        document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
     });
 }
