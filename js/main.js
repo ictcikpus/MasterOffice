@@ -1,33 +1,49 @@
 // ==========================================
-// MAIN APP LOGIC
+// MAIN APP LOGIC (Fixed Null References)
 // ==========================================
 
 let currentMateriId = null;
 let currentSlideIndex = 0;
 
 function chooseRole(role) {
-    document.getElementById('role-selection-modal').classList.add('hidden');
+    const roleModal = document.getElementById('role-selection-modal');
+    if(roleModal) roleModal.classList.add('hidden');
+
     if (role === 'siswa') {
-        if (localStorage.getItem('student_name')) applyStudentUI();
-        else document.getElementById('profile-modal').classList.remove('hidden');
+        if (localStorage.getItem('student_name')) {
+            applyStudentUI();
+        } else {
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
     } else if (role === 'guru') {
         document.getElementById('login-modal').classList.remove('hidden');
     }
 }
 
 function backToRoleSelection() {
-    document.getElementById('login-modal').classList.add('hidden');
-    document.getElementById('role-selection-modal').classList.remove('hidden');
+    const loginModal = document.getElementById('login-modal');
+    if(loginModal) loginModal.classList.add('hidden');
+    
+    const roleModal = document.getElementById('role-selection-modal');
+    if(roleModal) roleModal.classList.remove('hidden');
 }
 
 function applyStudentUI() {
-    document.getElementById('nav-siswa').classList.remove('hidden');
-    document.getElementById('bottom-nav-siswa').classList.remove('hidden');
+    const navSiswa = document.getElementById('nav-siswa');
+    const bottomNavSiswa = document.getElementById('bottom-nav-siswa');
+    if(navSiswa) navSiswa.classList.remove('hidden');
+    if(bottomNavSiswa) bottomNavSiswa.classList.remove('hidden');
+    
     const name = localStorage.getItem("student_name");
-    document.getElementById('dashboard-player-name').innerText = name;
-    document.getElementById('mobile-player-name').innerText = name.split(' ')[0];
+    const dashName = document.getElementById('dashboard-player-name');
+    const mobName = document.getElementById('mobile-player-name');
+    
+    if(dashName) dashName.innerText = name;
+    if(mobName) mobName.innerText = name.split(' ')[0];
+    
     let score = parseInt(localStorage.getItem("student_score")) || 0;
     if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = score;
+    
     renderMateri();
     navigate('home');
 }
@@ -36,8 +52,10 @@ function saveProfile() {
     const name = document.getElementById('setup-name').value.trim();
     const cls = document.getElementById('setup-class').value;
     if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
+    
     localStorage.setItem("student_name", name);
     localStorage.setItem("student_class", cls);
+    
     document.getElementById('profile-modal').classList.add('hidden');
     applyStudentUI();
 }
@@ -63,7 +81,6 @@ function navigate(viewId) {
         else activeNav.classList.add('text-emerald-600', 'bg-emerald-50');
     }
     
-    // Pemicu Render saat Pindah Tab
     if (viewId === 'profil' && typeof renderProfile === 'function') renderProfile();
     if (viewId === 'guru-tugas' && typeof window.renderGuruTugasList === 'function') window.renderGuruTugasList();
     if (viewId === 'guru-absen' && typeof window.renderTeacherTable === 'function') window.renderTeacherTable();
@@ -90,9 +107,92 @@ function renderMateri() {
 }
 
 // (Fungsi openMateriDetail, loadSlide, checkSlideQuiz, changeSlide tetap sama seperti sebelumnya)
+function openMateriDetail(id) {
+    const materi = materiData.find(m => m.id === id);
+    if(!materi) return;
+    currentMateriId = id;
+    currentSlideIndex = 0;
+    loadSlide();
+    navigate('materi-detail');
+}
+
+function loadSlide() {
+    const materi = materiData.find(m => m.id === currentMateriId);
+    if(!materi) return;
+    const slide = materi.slides[currentSlideIndex];
+    
+    document.getElementById('slide-current').innerText = currentSlideIndex + 1;
+    document.getElementById('slide-total').innerText = materi.slides.length;
+    
+    let html = `
+        <h2 class="text-sm font-bold text-${materi.color}-500 uppercase tracking-widest mb-1">${materi.title}</h2>
+        <h1 class="text-2xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-2">${slide.title}</h1>
+        <div class="animate-fade-in text-slate-700 leading-relaxed mb-8">${slide.content}</div>
+    `;
+
+    if (slide.quiz) {
+        html += `
+            <div class="bg-slate-50 border border-slate-200 p-5 rounded-2xl mt-4">
+                <h4 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-circle-question text-sky-500 mr-2"></i> Uji Pemahaman</h4>
+                <p class="text-sm font-medium mb-3">${slide.quiz.question}</p>
+                <div class="space-y-2" id="quiz-options">
+        `;
+        slide.quiz.options.forEach((opt, idx) => {
+            html += `<button onclick="checkSlideQuiz(${idx}, ${slide.quiz.correct})" class="w-full text-left p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition text-sm">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
+        });
+        html += `</div><div id="quiz-feedback" class="mt-3 text-sm font-bold hidden"></div></div>`;
+    }
+
+    document.getElementById('slide-content').innerHTML = html;
+
+    document.getElementById('btn-prev-slide').disabled = (currentSlideIndex === 0);
+    const btnNext = document.getElementById('btn-next-slide');
+    if (currentSlideIndex === materi.slides.length - 1) {
+        btnNext.innerHTML = 'Selesai <i class="fa-solid fa-check ml-1"></i>';
+        btnNext.classList.replace('bg-emerald-600', 'bg-amber-500');
+        btnNext.classList.replace('hover:bg-emerald-700', 'hover:bg-amber-600');
+    } else {
+        btnNext.innerHTML = 'Lanjut <i class="fa-solid fa-chevron-right ml-1"></i>';
+        btnNext.classList.replace('bg-amber-500', 'bg-emerald-600');
+        btnNext.classList.replace('hover:bg-amber-600', 'hover:bg-emerald-700');
+    }
+}
+
+function checkSlideQuiz(selected, correct) {
+    const feedback = document.getElementById('quiz-feedback');
+    const buttons = document.getElementById('quiz-options').querySelectorAll('button');
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selected === correct) {
+        buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+        feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar!</span>';
+        if(typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+    } else {
+        buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+        buttons[correct].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+        feedback.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Jawaban Kurang Tepat.</span>';
+    }
+    feedback.classList.remove('hidden');
+}
+
+function changeSlide(direction) {
+    const materi = materiData.find(m => m.id === currentMateriId);
+    if(!materi) return;
+    const newIndex = currentSlideIndex + direction;
+    
+    if (newIndex >= materi.slides.length) {
+        alert("🎉 Hebat! Anda telah menyelesaikan modul ini.");
+        navigate('materi');
+        return;
+    }
+    if (newIndex >= 0 && newIndex < materi.slides.length) {
+        currentSlideIndex = newIndex;
+        loadSlide();
+    }
+}
 
 function logoutApp() {
-    if(confirm("Yakin ingin keluar?")) {
+    if(confirm("Yakin ingin keluar dari aplikasi?")) {
         sessionStorage.removeItem('is_teacher');
         location.reload(); 
     }
@@ -102,11 +202,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     if (isTeacher) {
         document.getElementById('role-selection-modal').classList.add('hidden');
-        document.getElementById('nav-guru').classList.remove('hidden');
-        document.getElementById('bottom-nav-guru').classList.remove('hidden');
+        
+        const navGuru = document.getElementById('nav-guru');
+        const botNavGuru = document.getElementById('bottom-nav-guru');
+        if(navGuru) navGuru.classList.remove('hidden');
+        if(botNavGuru) botNavGuru.classList.remove('hidden');
+        
         document.getElementById('mobile-player-name').innerText = "Guru";
+        
         if (typeof window.initTeacherAttendance === 'function') window.initTeacherAttendance();
         if (typeof window.initTeacherTasks === 'function') window.initTeacherTasks();
+        
         navigate('guru-dashboard');
     }
 });
