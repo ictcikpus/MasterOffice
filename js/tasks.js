@@ -8,7 +8,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCx
 // Cara mendapatkan: Buka folder di Drive, lihat URL-nya:
 // https://drive.google.com/drive/folders/1ABC...XYZ
 // ID Folder adalah bagian setelah /folders/ (contoh: 1ABC...XYZ)
-const FOLDER_ID = "GANTI_DENGAN_ID_FOLDER_DRIVE_ANDA";
+const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e";
 
 let allTasks = [];
 let allSubmissionsData = {}; 
