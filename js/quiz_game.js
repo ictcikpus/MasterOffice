@@ -88,7 +88,7 @@ function loadShortcutQuestion() {
 }
 
 
-// 2. KUIS MATERI INTERAKTIF (SOAL DIPERBANYAK)
+// 2. KUIS MATERI INTERAKTIF
 const quizData = [
     { type: "multiple", question: "Apa ekstensi file Microsoft Word yang bisa diedit?", options: [".pdf", ".docx", ".exe", ".jpg"], correct: 1 },
     { type: "typing", question: "Ketikkan rumus Excel untuk menjumlahkan A1 sampai A5", answer: "=sum(a1:a5)" },
