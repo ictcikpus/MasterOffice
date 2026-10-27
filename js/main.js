@@ -1,11 +1,60 @@
 // ==========================================
-// MAIN APP LOGIC (Navigasi & Slide Materi)
+// MAIN APP LOGIC & ROLE SELECTION
 // ==========================================
 
 let currentMateriId = null;
 let currentSlideIndex = 0;
 
-// ... (Kode atas tetap sama) ...
+// Fungsi saat memilih peran di layar awal
+function chooseRole(role) {
+    const roleModal = document.getElementById('role-selection-modal');
+    roleModal.classList.add('hidden');
+
+    if (role === 'siswa') {
+        // Cek apakah siswa sudah punya nama di localStorage
+        if (localStorage.getItem('student_name')) {
+            applyStudentUI();
+        } else {
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+    } else if (role === 'guru') {
+        document.getElementById('login-modal').classList.remove('hidden');
+    }
+}
+
+// Fungsi jika Guru membatalkan login
+function backToRoleSelection() {
+    document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('role-selection-modal').classList.remove('hidden');
+}
+
+function applyStudentUI() {
+    // Setup Navbar Siswa
+    document.getElementById('nav-siswa').classList.remove('hidden');
+    document.getElementById('bottom-nav-siswa').classList.remove('hidden');
+    
+    const name = localStorage.getItem("student_name");
+    document.getElementById('dashboard-player-name').innerText = name;
+    document.getElementById('mobile-player-name').innerText = name.split(' ')[0];
+    
+    let score = parseInt(localStorage.getItem("student_score")) || 0;
+    if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = score;
+    
+    renderMateri();
+    navigate('home');
+}
+
+function saveProfile() {
+    const name = document.getElementById('setup-name').value.trim();
+    const cls = document.getElementById('setup-class').value;
+    if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
+    
+    localStorage.setItem("student_name", name);
+    localStorage.setItem("student_class", cls);
+    
+    document.getElementById('profile-modal').classList.add('hidden');
+    applyStudentUI(); // Langsung masuk tanpa reload
+}
 
 function navigate(viewId) {
     if (typeof stopCamera === 'function') stopCamera();
@@ -32,23 +81,11 @@ function navigate(viewId) {
         renderProfile();
     }
     
-    // TAMBAHKAN BARIS INI UNTUK MERENDER TABEL GURU
-    if (viewId === 'guru-tugas' && typeof renderRekapTugasGuru === 'function') {
-        renderRekapTugasGuru();
+    if (viewId === 'guru-tugas' && typeof window.renderRekapTugasGuru === 'function') {
+        window.renderRekapTugasGuru();
     }
 
     window.scrollTo(0, 0);
-}
-
-// ... (Sisa kode main.js tetap sama) ...
-
-function saveProfile() {
-    const name = document.getElementById('setup-name').value.trim();
-    const cls = document.getElementById('setup-class').value;
-    if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
-    localStorage.setItem("student_name", name);
-    localStorage.setItem("student_class", cls);
-    location.reload();
 }
 
 function renderMateri() {
@@ -128,8 +165,6 @@ function checkSlideQuiz(selected, correct) {
     if (selected === correct) {
         buttons[selected].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
         feedback.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-check-circle"></i> Jawaban Benar!</span>';
-        
-        // Efek Confetti
         if(typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
     } else {
         buttons[selected].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
@@ -145,7 +180,7 @@ function changeSlide(direction) {
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
-        alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Jangan lupa kerjakan kuis di Arena Latihan!");
+        alert("🎉 Hebat! Anda telah menyelesaikan modul ini.");
         navigate('materi');
         return;
     }
@@ -155,28 +190,26 @@ function changeSlide(direction) {
     }
 }
 
-// Inisialisasi Aplikasi
+// Fungsi untuk keluar ke pilihan peran
+function logoutApp() {
+    if(confirm("Yakin ingin keluar dari aplikasi?")) {
+        sessionStorage.removeItem('is_teacher');
+        // Jangan hapus student_name agar siswa tidak perlu input nama lagi jika login sebagai siswa
+        location.reload(); 
+    }
+}
+
+// Inisialisasi Awal
 document.addEventListener('DOMContentLoaded', function() {
-    var isTeacher = sessionStorage.getItem('is_teacher') === 'true';
+    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
-    if (!isTeacher) {
-        var name = localStorage.getItem("student_name");
-        if (!name) {
-            document.getElementById('profile-modal').classList.remove('hidden');
-        } else {
-            document.getElementById('dashboard-player-name').innerText = name;
-            document.getElementById('mobile-player-name').innerText = name.split(' ')[0];
-            
-            renderMateri();
-        }
-        navigate('home');
-    } else {
+    // Jika sebelumnya sudah login sebagai guru, langsung ke dashboard
+    if (isTeacher) {
+        document.getElementById('role-selection-modal').classList.add('hidden');
+        document.getElementById('nav-guru').classList.remove('hidden');
+        document.getElementById('bottom-nav-guru').classList.remove('hidden');
         document.getElementById('mobile-player-name').innerText = "Guru";
         navigate('guru-dashboard');
-    }
+    } 
+    // Jika tidak, biarkan modal role selection muncul (jangan lakukan apa-apa)
 });
-
-function toggleFullscreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => alert(`Gagal: ${err.message}`));
-    else { if (document.exitFullscreen) document.exitFullscreen(); }
-}
