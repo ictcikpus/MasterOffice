@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Master Office - LMS Interaktif</title>
     
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
 
+    <!-- Tailwind & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     
+    <!-- Library Tambahan -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -173,7 +176,7 @@
             </div>
         </div>
 
-        <!-- VIEW SISWA: ARENA LATIHAN (LENGKAP) -->
+        <!-- VIEW SISWA: ARENA LATIHAN -->
         <div id="view-arena" class="view hidden">
             <div id="arena-menu">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
@@ -195,62 +198,9 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- GAME SHORTCUT -->
-            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
-                    <h2 class="text-xl font-bold text-slate-800 mb-2">Latihan Shortcut</h2>
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="shortcut-q-count">1/5</span></div>
-                    </div>
-                    <div class="mb-8">
-                        <p class="text-xs font-bold text-emerald-500 mb-2 uppercase tracking-wide">Apa shortcut untuk:</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800" id="shortcut-question">Copy</h3>
-                        <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
-                    </div>
-                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none" id="shortcut-keyboard">
-                        <!-- Keyboard dirender JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- GAME QUIZ -->
-            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="quiz-score">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
-                    </div>
-                    <div id="quiz-content"></div>
-                </div>
-            </div>
-
-            <!-- GAME TYPING -->
-            <div id="typing-game-container" class="hidden max-w-3xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Waktu</span><span class="text-xl font-bold text-rose-600" id="typing-time">60s</span></div>
-                        <div class="text-center"><span class="block text-xs font-bold text-slate-400 uppercase">WPM</span><span class="text-xl font-bold text-sky-600" id="typing-wpm">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Akurasi</span><span class="text-xl font-bold text-emerald-600" id="typing-acc">100%</span></div>
-                    </div>
-                    <div class="bg-slate-100 p-4 rounded-xl mb-6 text-lg font-mono leading-relaxed" id="typing-text-display"></div>
-                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6 opacity-0 absolute -z-10" autocomplete="off">
-                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto custom-scroll">
-                        <div class="flex flex-col gap-1 items-center min-w-[600px]">
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key" data-key="`">~</kbd><kbd class="key" data-key="1">1</kbd><kbd class="key" data-key="2">2</kbd><kbd class="key" data-key="3">3</kbd><kbd class="key" data-key="4">4</kbd><kbd class="key" data-key="5">5</kbd><kbd class="key" data-key="6">6</kbd><kbd class="key" data-key="7">7</kbd><kbd class="key" data-key="8">8</kbd><kbd class="key" data-key="9">9</kbd><kbd class="key" data-key="0">0</kbd><kbd class="key" data-key="-">-</kbd><kbd class="key" data-key="=">=</kbd><kbd class="key w-16" data-key="Backspace">Backspace</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-14" data-key="Tab">Tab</kbd><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd><kbd class="key" data-key="[">[</kbd><kbd class="key" data-key="]">]</kbd><kbd class="key w-14" data-key="\">\</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-20" data-key="CapsLock">Caps</kbd><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd><kbd class="key" data-key=";">;</kbd><kbd class="key" data-key="'">'</kbd><kbd class="key w-20" data-key="Enter">Enter</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-24" data-key="ShiftLeft">Shift</kbd><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd><kbd class="key" data-key=",">,</kbd><kbd class="key" data-key=".">.</kbd><kbd class="key" data-key="/">/</kbd><kbd class="key w-24" data-key="ShiftRight">Shift</kbd></div>
-                            <div class="flex gap-1 w-full justify-center mt-1"><kbd class="key w-full max-w-sm" data-key=" ">Space</kbd></div>
-                        </div>
-                    </div>
-                    <button onclick="startTypingGame()" class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold shadow-lg transition">Mulai Ulang Latihan</button>
-                </div>
-            </div>
+            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto"></div>
+            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto"></div>
+            <div id="typing-game-container" class="hidden max-w-3xl mx-auto"></div>
         </div>
 
         <!-- VIEW SISWA: TUGAS -->
@@ -275,7 +225,6 @@
         <div id="view-profil" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Profil & Lencana</h2>
             <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-6">
-                <!-- (Isi profil tetap sama) -->
                 <div class="w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-5xl shadow-inner"><i class="fa-solid fa-user-astronaut"></i></div>
                 <div class="text-center md:text-left flex-1">
                     <h3 class="text-2xl font-bold text-slate-800" id="profile-name">Nama Siswa</h3>
@@ -287,7 +236,7 @@
                 </div>
             </div>
             
-            <!-- BAGIAN SERTIFIKAT BARU -->
+            <!-- WADAH SERTIFIKAT -->
             <div id="certificate-container" class="mb-6"></div>
 
             <h3 class="font-bold text-slate-800 mb-4">Koleksi Lencana (Badges)</h3>
@@ -380,7 +329,6 @@
     </nav>
 
     <!-- 7. MODAL-MODAL -->
-    <!-- Modal Login -->
     <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
             <div class="text-center mb-6">
@@ -397,7 +345,6 @@
         </div>
     </div>
 
-    <!-- Modal Buat Tugas -->
     <div id="modal-buat-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <h2 id="modal-tugas-title" class="text-xl font-bold text-slate-800 mb-4">Buat Tugas Baru</h2>
@@ -408,7 +355,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Instruksi Tugas</label>
-                    <textarea id="tugas-desc" rows="5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Jelaskan detail tugas (Gunakan teks biasa)..."></textarea>
+                    <textarea id="tugas-desc" rows="5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Jelaskan detail tugas..."></textarea>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">Tenggat Waktu</label>
@@ -422,7 +369,6 @@
         </div>
     </div>
 
-    <!-- Modal Lihat Pengumpulan -->
     <div id="modal-lihat-pengumpulan" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-3xl shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
@@ -455,7 +401,6 @@
         </div>
     </div>
 
-    <!-- Modal Kumpul Tugas -->
     <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
@@ -481,7 +426,18 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- PENTING: URUTAN SCRIPT HARUS SEPERTI INI -->
+    <!-- ========================================== -->
+    
+    <!-- 1. CDN Firebase (Wajib Paling Atas) -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
+
+    <!-- 2. Konfigurasi Firebase (Membuat variabel 'db') -->
     <script src="js/firebase-config.js"></script>
+
+    <!-- 3. File Javascript Aplikasi Anda -->
     <script src="js/data_materi.js"></script>
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
@@ -491,8 +447,6 @@
     <script src="js/quiz_game.js"></script>
     <script src="js/typing_game.js"></script>
     <script src="js/dashboard_ext.js"></script>
-    <script src="js/certificate.js"></script>
-</body>
-</html>
+    <script src="js/certificate.js"></script> 
 </body>
 </html>
