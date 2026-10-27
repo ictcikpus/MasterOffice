@@ -1,10 +1,9 @@
 // ==========================================
 // TASKS SYSTEM (FULL & OPTIMIZED SYNC)
-// Master Office LMS
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
-const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e"; // Pastikan ID ini sesuai dengan folder Drive Anda
+const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e"; 
 
 let allTasks = [];
 let allSubmissionsData = {}; 
@@ -14,33 +13,35 @@ let currentViewingTaskId = null;
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
 // ==========================================
-// 1. INISIALISASI (Dijalankan sekali saja)
+// 1. INISIALISASI & LISTENER FIREBASE
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
+    console.log("🚀 Tasks System Initialized");
     
-    // Siapa pun yang login, kita tarik data tasks dan submissions secara global
-    // agar data selalu siap sedia.
+    // Mulai mendengarkan perubahan data dari Firebase
     listenToFirebaseData();
 
+    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     if (!isTeacher) {
-        // Jika siswa, render tampilan siswa
-        setTimeout(() => { if(typeof renderSiswaTugas === 'function') renderSiswaTugas(); }, 500);
+        // Render awal untuk siswa
+        renderSiswaTugas();
     }
 });
 
 function listenToFirebaseData() {
-    // Listener Tugas
+    // 1. Mendengarkan daftar Tugas
     db.ref('tasks').on('value', snap => {
         allTasks = [];
         snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
-        allTasks.reverse(); // Tugas terbaru di atas
+        allTasks.reverse(); // Urutkan dari yang terbaru
         
-        // Update statistik jika di halaman guru
+        console.log(`🔄 Data Tugas diperbarui. Total: ${allTasks.length} tugas.`);
+        
+        // Update statistik Dashboard Guru
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
-        // Render ulang jika sedang membuka halaman terkait
+        // Render ulang tampilan (Guru atau Siswa)
         const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
         if (isTeacher) {
             if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
@@ -49,9 +50,12 @@ function listenToFirebaseData() {
         } else {
             renderSiswaTugas();
         }
+    }, error => {
+        console.error("❌ Gagal membaca data Tugas dari Firebase:", error);
+        alert("Gagal memuat tugas. Pastikan Firebase Rules mengizinkan 'Read'.");
     });
 
-    // Listener Pengumpulan Tugas
+    // 2. Mendengarkan data Pengumpulan Tugas
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
         
@@ -63,14 +67,16 @@ function listenToFirebaseData() {
         } else {
             renderSiswaTugas(); 
         }
+    }, error => {
+        console.error("❌ Gagal membaca data pengumpulan:", error);
     });
 }
 
 // ==========================================
-// 2. FUNGSI GURU
+// 2. FUNGSI GURU (BUAT & LIHAT TUGAS)
 // ==========================================
 window.initTeacherTasks = function() {
-    // Fungsi ini dipanggil oleh auth.js saat login, memastikan render langsung jalan
+    // Paksa render jika guru baru login
     if(document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
         window.renderGuruTugasList();
     }
@@ -80,16 +86,18 @@ window.openBuatTugasModal = function() { document.getElementById('modal-buat-tug
 window.closeBuatTugasModal = function() { document.getElementById('modal-buat-tugas').classList.add('hidden'); };
 
 window.simpanTugas = function() {
-    const title = document.getElementById('tugas-title').value;
-    const desc = document.getElementById('tugas-desc').value;
+    const title = document.getElementById('tugas-title').value.trim();
+    const desc = document.getElementById('tugas-desc').value.trim();
     const deadline = document.getElementById('tugas-deadline').value;
     
-    if (!title || !desc || !deadline) return alert("Harap isi semua kolom!");
+    if (!title || !desc || !deadline) return alert("⚠️ Harap isi semua kolom (Judul, Instruksi, dan Tenggat)!");
 
     const btn = document.querySelector('#modal-buat-tugas button[onclick="simpanTugas()"]');
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+    console.log("Mencoba menyimpan tugas ke Firebase...");
 
     db.ref('tasks').push({ 
         title: title, 
@@ -98,22 +106,25 @@ window.simpanTugas = function() {
         timestamp: firebase.database.ServerValue.TIMESTAMP 
     })
     .then(() => { 
-        alert("✅ Tugas berhasil dibuat dan dikirim ke database!");
+        console.log("✅ Tugas berhasil disimpan ke database.");
+        alert("✅ Tugas berhasil dibuat dan disinkronkan ke siswa!");
+        
+        // Bersihkan form
         document.getElementById('tugas-title').value = '';
         document.getElementById('tugas-desc').value = '';
         document.getElementById('tugas-deadline').value = '';
+        
         window.closeBuatTugasModal();
         
-        // Paksa render ulang manual untuk memastikan muncul
-        if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-            window.renderGuruTugasList();
-        }
+        // Paksa render ulang (jika listener Firebase lambat)
+        window.renderGuruTugasList();
         
         btn.disabled = false;
         btn.innerHTML = originalText;
     })
     .catch(err => {
-        alert("❌ Gagal membuat tugas. Pastikan Firebase Rules mengizinkan Write.\nError: " + err.message);
+        console.error("❌ Gagal menyimpan tugas:", err);
+        alert("❌ GAGAL MENYIMPAN TUGAS!\n\nError: " + err.message + "\n\nKemungkinan besar Firebase Rules Anda memblokir proses 'Write'. Silakan cek Firebase Console.");
         btn.disabled = false;
         btn.innerHTML = originalText;
     });
@@ -231,7 +242,7 @@ window.generateDefaultTasks = function() {
 
 
 // ==========================================
-// 3. FUNGSI SISWA
+// 3. FUNGSI SISWA (TAMPILAN & PENGUMPULAN)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -273,7 +284,6 @@ window.openKumpulTugasModal = function(taskId, title) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
     
-    // Cek apakah event valid
     const btn = event ? event.target.closest('button') : null;
     let originalText = "";
     if(btn) {
@@ -339,11 +349,6 @@ function uploadFileToDrive(file) {
         const mimeType = file.type;
         const studentName = localStorage.getItem("student_name");
         const filename = `${studentName}_${Date.now()}_${file.name}`;
-
-        if (FOLDER_ID === "GANTI_DENGAN_ID_FOLDER_DRIVE_ANDA") {
-            alert("⚠️ ID Folder Google Drive belum diatur.");
-            btn.disabled = false; btn.innerHTML = originalText; return;
-        }
 
         try {
             const response = await fetch(GAS_URL, {
