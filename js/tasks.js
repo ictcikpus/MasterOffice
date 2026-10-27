@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (Full Program with CRUD)
+// TASKS SYSTEM (Robust & Force Render)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -9,21 +9,19 @@ let allTasks = [];
 let allSubmissionsData = {}; 
 let currentSelectedTaskId = null; 
 let currentViewingTaskId = null; 
-let currentEditTaskId = null; // Menyimpan ID tugas yang sedang diedit
+let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi untuk membersihkan tag HTML agar teks di card rapi
 function stripHtml(html) {
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
+// 1. INISIALISASI
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    if (!isTeacher) setTimeout(() => { renderSiswaTugas(); }, 500);
 });
 
 function listenToFirebaseData() {
@@ -35,31 +33,32 @@ function listenToFirebaseData() {
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
-        forceRender();
+        forceRender(); // Paksa gambar ulang ke layar
     });
 
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        forceRender();
+        forceRender(); // Paksa gambar ulang ke layar
     });
 }
 
+// 2. FUNGSI FORCE RENDER (Anti Gagal)
 function forceRender() {
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    if (isTeacher) {
-        if (typeof window.renderGuruTugasList === 'function') window.renderGuruTugasList();
-    } else {
-        if (typeof renderSiswaTugas === 'function') renderSiswaTugas();
+    // Render ke wadah Guru JIKA wadahnya ada di DOM
+    if (document.getElementById('guru-tugas-list')) {
+        window.renderGuruTugasList();
+    }
+    // Render ke wadah Siswa JIKA wadahnya ada di DOM
+    if (document.getElementById('siswa-tugas-list')) {
+        renderSiswaTugas();
     }
 }
 
-// ==========================================
-// FUNGSI GURU (CRUD)
-// ==========================================
+// 3. FUNGSI GURU (CRUD)
 window.initTeacherTasks = function() { forceRender(); };
 
 window.openBuatTugasModal = function() {
-    currentEditTaskId = null; // Reset mode edit
+    currentEditTaskId = null;
     document.getElementById('modal-tugas-title').innerText = "Buat Tugas Baru";
     document.getElementById('tugas-title').value = '';
     document.getElementById('tugas-desc').value = '';
@@ -67,25 +66,21 @@ window.openBuatTugasModal = function() {
     document.getElementById('modal-buat-tugas').classList.remove('hidden'); 
 };
 
-window.closeBuatTugasModal = function() { 
-    document.getElementById('modal-buat-tugas').classList.add('hidden'); 
-};
+window.closeBuatTugasModal = function() { document.getElementById('modal-buat-tugas').classList.add('hidden'); };
 
 window.editTugas = function(id) {
     const task = allTasks.find(t => t.id === id);
     if(!task) return;
-    
     currentEditTaskId = id;
     document.getElementById('modal-tugas-title').innerText = "Edit Tugas";
     document.getElementById('tugas-title').value = task.title;
     document.getElementById('tugas-desc').value = task.desc;
     document.getElementById('tugas-deadline').value = task.deadline;
-    
     document.getElementById('modal-buat-tugas').classList.remove('hidden');
 };
 
 window.hapusTugas = function(id) {
-    if(confirm("⚠️ Yakin ingin menghapus tugas ini?\n\nData pengumpulan siswa untuk tugas ini juga akan terhapus secara permanen.")) {
+    if(confirm("⚠️ Yakin ingin menghapus tugas ini?\n\nData pengumpulan siswa juga akan terhapus permanen.")) {
         db.ref('tasks/' + id).remove()
         .then(() => alert("✅ Tugas berhasil dihapus."))
         .catch(err => alert("Gagal menghapus: " + err.message));
@@ -104,15 +99,9 @@ window.simpanTugas = function() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
 
-    const taskData = {
-        title: title,
-        desc: desc,
-        deadline: deadline,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
-    };
+    const taskData = { title, desc, deadline, timestamp: firebase.database.ServerValue.TIMESTAMP };
 
     if (currentEditTaskId) {
-        // Mode UPDATE
         db.ref('tasks/' + currentEditTaskId).update(taskData)
         .then(() => {
             alert("✅ Tugas berhasil diperbarui!");
@@ -124,7 +113,6 @@ window.simpanTugas = function() {
             btn.disabled = false; btn.innerHTML = originalText;
         });
     } else {
-        // Mode CREATE
         db.ref('tasks').push(taskData)
         .then(() => { 
             alert("✅ Tugas baru berhasil dibuat!");
@@ -157,7 +145,6 @@ window.renderGuruTugasList = function() {
             }
         }
 
-        // Bersihkan HTML untuk preview di card
         let cleanDesc = stripHtml(t.desc);
         if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
 
@@ -175,16 +162,9 @@ window.renderGuruTugasList = function() {
                         <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
                     </div>
                     <div class="flex gap-2">
-                        <!-- Tombol CRUD -->
-                        <button onclick="editTugas('${t.id}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button onclick="hapusTugas('${t.id}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                        <button onclick="openLihatPengumpulan('${t.id}', '${t.title}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">
-                            Rekap <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
+                        <button onclick="editTugas('${t.id}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="hapusTugas('${t.id}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="openLihatPengumpulan('${t.id}', '${t.title}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
                     </div>
                 </div>
             </div>
@@ -192,48 +172,7 @@ window.renderGuruTugasList = function() {
     });
 };
 
-window.openLihatPengumpulan = function(taskId, title) {
-    currentViewingTaskId = taskId;
-    document.getElementById('lihat-pengumpulan-title').innerText = title;
-    document.getElementById('filter-kelas-modal').value = 'all';
-    document.getElementById('modal-lihat-pengumpulan').classList.remove('hidden');
-    window.renderModalPengumpulan();
-};
-
-window.renderModalPengumpulan = function() {
-    const filterKelas = document.getElementById('filter-kelas-modal').value;
-    const tbody = document.getElementById('daftar-pengumpulan');
-    tbody.innerHTML = '';
-
-    let found = false;
-    for (const cls in allSubmissionsData) {
-        if (filterKelas !== 'all' && filterKelas !== cls) continue;
-        for (const name in allSubmissionsData[cls]) {
-            const sub = allSubmissionsData[cls][name][currentViewingTaskId];
-            if (sub) {
-                found = true;
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-medium text-slate-700">${name}</td>
-                        <td class="p-3 text-sky-600 font-bold">${cls}</td>
-                        <td class="p-3 text-center">
-                            <a href="${sub.link}" target="_blank" class="inline-block bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition">
-                                <i class="fa-solid fa-external-link-alt mr-1"></i> Buka
-                            </a>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-    }
-    if (!found) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan.</td></tr>`;
-    }
-};
-
-// ==========================================
-// FUNGSI SISWA
-// ==========================================
+// 4. FUNGSI SISWA
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
     if(!container) return;
@@ -257,7 +196,6 @@ function renderSiswaTugas() {
             ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
             : `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
-        // Siswa tetap melihat instruksi secara utuh (HTML), tapi dibungkus rapi
         container.innerHTML += `
             <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
@@ -270,7 +208,8 @@ function renderSiswaTugas() {
         `;
     });
 }
-// (Fungsi openKumpulTugasModal, prosesKumpulTugas, uploadFileToDrive, saveSubmissionToFirebase tetap sama)
+
+// Lanjutan fungsi Modal (Open, Close, Proses, Upload, Simpan) tetap sama
 window.openKumpulTugasModal = function(taskId, title) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
@@ -331,3 +270,34 @@ function saveSubmissionToFirebase(submissionUrl) {
         document.getElementById('btn-submit-tugas').disabled = false; document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
     });
 }
+window.openLihatPengumpulan = function(taskId, title) {
+    currentViewingTaskId = taskId;
+    document.getElementById('lihat-pengumpulan-title').innerText = title;
+    document.getElementById('filter-kelas-modal').value = 'all';
+    document.getElementById('modal-lihat-pengumpulan').classList.remove('hidden');
+    window.renderModalPengumpulan();
+};
+window.renderModalPengumpulan = function() {
+    const filterKelas = document.getElementById('filter-kelas-modal').value;
+    const tbody = document.getElementById('daftar-pengumpulan');
+    tbody.innerHTML = '';
+    let found = false;
+    for (const cls in allSubmissionsData) {
+        if (filterKelas !== 'all' && filterKelas !== cls) continue;
+        for (const name in allSubmissionsData[cls]) {
+            const sub = allSubmissionsData[cls][name][currentViewingTaskId];
+            if (sub) {
+                found = true;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 font-medium text-slate-700">${name}</td>
+                        <td class="p-3 text-sky-600 font-bold">${cls}</td>
+                        <td class="p-3 text-center">
+                            <a href="${sub.link}" target="_blank" class="inline-block bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition">Buka</a>
+                        </td>
+                    </tr>`;
+            }
+        }
+    }
+    if (!found) tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan.</td></tr>`;
+};
