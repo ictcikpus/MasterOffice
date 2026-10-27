@@ -3,20 +3,22 @@
 // ==========================================
 
 let allAttendanceData = [];
-const todayStr = new Date().toISOString().split('T')[0]; 
+const todayStrAttendance = new Date().toISOString().split('T')[0]; 
 let videoStream = null; 
 let selfieTaken = false; 
+let isTeacherAttListenerAttached = false;
 
 document.addEventListener("DOMContentLoaded", () => {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
     
-    if (isTeacher) {
-        initTeacherDashboard();
-    } else {
+    if (!isTeacher) {
         initStudentAttendance();
     }
 });
 
+// ==========================================
+// FUNGSI SISWA
+// ==========================================
 function stopCamera() {
     if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -43,12 +45,11 @@ function initStudentAttendance() {
         </div>
     `;
 
-    // Cek apakah sudah absen hari ini (berdasarkan tanggal hari ini)
-    const checkRef = db.ref(`attendance/${todayStr}/${studentClass}/${studentName}`);
+    const checkRef = db.ref(`attendance/${todayStrAttendance}/${studentClass}/${studentName}`);
     
     checkRef.once('value').then((snapshot) => {
         if (snapshot.exists()) {
-            localStorage.setItem('last_attendance_date', todayStr);
+            localStorage.setItem('last_attendance_date', todayStrAttendance);
             stopCamera(); 
             
             formContainer.innerHTML = `
@@ -169,12 +170,12 @@ async function submitAttendance(studentName, studentClass) {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const checkRef = db.ref(`attendance/${todayStr}/${studentClass}/${studentName}`);
+        const checkRef = db.ref(`attendance/${todayStrAttendance}/${studentClass}/${studentName}`);
         
         await checkRef.set({
             name: studentName,
             class: studentClass,
-            date: todayStr,
+            date: todayStrAttendance,
             day: days[now.getDay()],
             time: timeStr,
             timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -192,12 +193,13 @@ async function submitAttendance(studentName, studentClass) {
     }
 }
 
+
 // ==========================================
-// DASHBOARD GURU (ABSENSI)
+// FUNGSI GURU (Dipanggil saat login Guru)
 // ==========================================
-function initTeacherDashboard() {
-    const tableList = document.getElementById("teacher-attendance-list");
-    if (!tableList) return;
+window.initTeacherAttendance = function() {
+    if (isTeacherAttListenerAttached) return; // Cegah duplikasi listener
+    isTeacherAttListenerAttached = true;
 
     // Tarik SEMUA data absensi
     db.ref('attendance').on('value', (snapshot) => {
@@ -215,11 +217,15 @@ function initTeacherDashboard() {
             });
         });
         allAttendanceData.sort((a, b) => b.timestamp - a.timestamp);
-        renderTeacherTable();
+        
+        // Render jika tabel ada
+        if(document.getElementById('teacher-attendance-list')) {
+            window.renderTeacherTable();
+        }
     });
-}
+};
 
-function renderTeacherTable() {
+window.renderTeacherTable = function() {
     const listElement = document.getElementById("teacher-attendance-list");
     if (!listElement) return;
 
@@ -253,33 +259,31 @@ function renderTeacherTable() {
             </tr>
         `;
     });
-}
+};
 
-function deleteAttendance(idPath) {
+window.deleteAttendance = function(idPath) {
     if (confirm("⚠️ Yakin ingin menghapus data absensi siswa ini?\n\nJika dihapus, siswa tersebut akan bisa absen kembali dari perangkatnya hari ini.")) {
         db.ref('attendance/' + idPath).remove()
             .then(() => alert("✅ Data berhasil dihapus."))
             .catch(err => alert("❌ Gagal menghapus: " + err.message));
     }
-}
+};
 
-// ==========================================
-// EXPORT PDF & EXCEL
-// ==========================================
-function exportToExcel() {
+// Export
+window.exportToExcel = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
     const wb = XLSX.utils.table_to_book(table, { sheet: "Absensi" });
-    XLSX.writeFile(wb, `Rekap_Absensi_${todayStr}.xlsx`);
-}
+    XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
+};
 
-function exportToPDF() {
+window.exportToPDF = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
     const element = document.getElementById("print-area");
     const opt = {
         margin:       10,
-        filename:     `Rekap_Absensi_${todayStr}.pdf`,
+        filename:     `Rekap_Absensi_${todayStrAttendance}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -292,4 +296,4 @@ function exportToPDF() {
         if(filterSection) filterSection.style.display = 'flex';
         if(exportButtons) exportButtons.style.display = 'flex';
     });
-}
+};
