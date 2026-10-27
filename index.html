@@ -275,6 +275,7 @@
         <div id="view-profil" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Profil & Lencana</h2>
             <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-6">
+                <!-- (Isi profil tetap sama) -->
                 <div class="w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-5xl shadow-inner"><i class="fa-solid fa-user-astronaut"></i></div>
                 <div class="text-center md:text-left flex-1">
                     <h3 class="text-2xl font-bold text-slate-800" id="profile-name">Nama Siswa</h3>
@@ -285,6 +286,10 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- BAGIAN SERTIFIKAT BARU -->
+            <div id="certificate-container" class="mb-6"></div>
+
             <h3 class="font-bold text-slate-800 mb-4">Koleksi Lencana (Badges)</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="badges-container"></div>
         </div>
@@ -476,8 +481,6 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/data_materi.js"></script>
     <script src="js/main.js"></script>
@@ -488,5 +491,8 @@
     <script src="js/quiz_game.js"></script>
     <script src="js/typing_game.js"></script>
     <script src="js/dashboard_ext.js"></script>
+    <script src="js/certificate.js"></script>
+</body>
+</html>
 </body>
 </html>
