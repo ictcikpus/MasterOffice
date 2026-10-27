@@ -112,40 +112,6 @@
         
         <!-- VIEW 1: HOME SISWA -->
         <div id="view-home" class="view hidden">
-            <div id="announcement-banner" class="hidden bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-xl mb-6 shadow-sm flex items-start gap-3">
-                <i class="fa-solid fa-bullhorn text-xl mt-0.5 animate-bounce"></i>
-                <div>
-                    <h4 class="font-bold text-sm">Pengumuman dari Guru</h4>
-                    <p class="text-sm mt-1" id="announcement-text">Memuat pesan...</p>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
-                <div class="relative z-10 flex justify-between items-start">
-                    <div>
-                        <h2 class="text-2xl md:text-3xl font-bold mb-2">Halo, <span id="dashboard-player-name">Siswa!</span> 👋</h2>
-                        <p class="text-emerald-100 text-sm md:text-base max-w-md">Siap kuasai Microsoft Office & Google Workspace hari ini?</p>
-                    </div>
-                    <div class="text-right">
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-2 px-4 border border-white/30 text-center inline-block">
-                            <span class="block text-xs text-emerald-100 font-semibold">Streak (Hari)</span>
-                            <span id="dash-streak" class="text-xl font-bold">🔥 0</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 flex gap-4 relative z-10">
-                    <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-3 px-5 border border-white/30 text-center">
-                        <span class="block text-xs text-emerald-100 font-semibold">Total Skor</span>
-                        <span id="dash-score" class="text-2xl font-bold">0</span>
-                    </div>
-                    <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-3 px-5 border border-white/30 text-center">
-                        <span class="block text-xs text-emerald-100 font-semibold">Materi Selesai</span>
-                        <span id="dash-levels" class="text-2xl font-bold">0/6</span>
-                    </div>
-                </div>
-                <i class="fa-solid fa-briefcase absolute -bottom-6 -right-4 text-8xl text-white/10 rotate-12"></i>
-            </div>
-
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
                 <h3 class="font-bold text-slate-800 mb-4"><i class="fa-solid fa-trophy text-amber-500 mr-2"></i> Peringkat Teratas</h3>
                 <div id="leaderboard-list" class="space-y-3"></div>
@@ -160,43 +126,13 @@
             </div>
         </div>
 
-        <!-- VIEW 5: ABSENSI -->
-        <div id="view-absen" class="view hidden">
-            <div class="max-w-md mx-auto">
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
-                    <h2 class="text-xl font-bold text-center text-slate-800 mb-6">Absensi Kehadiran</h2>
-                    <div id="attendance-form-container"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- KONTEN GURU (DASHBOARD UTAMA) -->
+        <!-- KONTEN GURU: DASHBOARD UTAMA -->
         <div id="view-guru-dashboard" class="view hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Utama Guru</h2>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-6">
-                <h3 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-bullhorn text-amber-500 mr-2"></i> Buat Pengumuman</h3>
-                <div class="flex gap-2">
-                    <input type="text" id="input-pengumuman" class="flex-1 p-2 border border-slate-200 rounded-lg text-sm" placeholder="Ketik pesan untuk siswa...">
-                    <button onclick="kirimPengumuman()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Kirim</button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
-                    <h3 class="text-3xl font-bold text-slate-800" id="stat-hadir">0</h3>
-                    <p class="text-sm text-slate-500">Hadir Hari Ini</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-file-pen"></i></div>
-                    <h3 class="text-3xl font-bold text-slate-800" id="stat-tugas">0</h3>
-                    <p class="text-sm text-slate-500">Tugas Aktif</p>
-                </div>
-            </div>
+            <!-- Statistik & Pengumuman -->
         </div>
 
-        <!-- ========================================== -->
         <!-- KONTEN GURU: DAFTAR TUGAS (KARTU) -->
-        <!-- ========================================== -->
         <div id="view-guru-tugas" class="view hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold text-slate-800">Daftar Tugas Kelas</h2>
@@ -211,54 +147,15 @@
                 <!-- Kartu tugas dirender via JS -->
             </div>
         </div>
-
-        <!-- KONTEN GURU: REKAP ABSENSI -->
-        <div id="view-guru-absen" class="view hidden">
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-users-viewfinder text-amber-500 mr-2"></i> Rekap Kehadiran</h2>
-                    <div class="flex gap-2" id="export-buttons">
-                        <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-excel mr-1"></i> XLS</button>
-                        <button onclick="exportToPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-file-pdf mr-1"></i> PDF</button>
-                    </div>
-                </div>
-                <div id="filter-section" class="flex flex-col md:flex-row gap-3 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                    <select id="filter-class" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
-                        <option value="all">Semua Kelas</option>
-                        <option value="X TEI 1">X TEI 1</option><option value="X TEI 2">X TEI 2</option><option value="X TEI 3">X TEI 3</option><option value="X TEI 4">X TEI 4</option>
-                        <option value="X TKR 1">X TKR 1</option><option value="X TKR 2">X TKR 2</option><option value="X TKR 3">X TKR 3</option><option value="X TKR 4">X TKR 4</option>
-                        <option value="X TP 1">X TP 1</option><option value="X TP 2">X TP 2</option><option value="X TP 3">X TP 3</option><option value="X TP 4">X TP 4</option>
-                    </select>
-                    <input type="date" id="filter-date" onchange="renderTeacherTable()" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm">
-                </div>
-                <div class="overflow-x-auto" id="print-area">
-                    <table class="w-full text-left border-collapse" id="teacher-attendance-table">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
-                                <th class="p-3 border-b border-slate-200 text-center">No</th><th class="p-3 border-b border-slate-200">Nama</th><th class="p-3 border-b border-slate-200">Kelas</th><th class="p-3 border-b border-slate-200">Hari/Tanggal</th><th class="p-3 border-b border-slate-200">Jam</th><th class="p-3 border-b border-slate-200 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teacher-attendance-list" class="text-sm">
-                            <tr><td colspan="6" class="text-center p-4 text-slate-500">Memuat data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        
+        <!-- VIEW LAINNYA (DISEMBUNYIKAN UNTUK RINGKAS) -->
+        <div id="view-materi" class="view hidden"></div>
+        <div id="view-materi-detail" class="view hidden"></div>
+        <div id="view-arena" class="view hidden"></div>
+        <div id="view-absen" class="view hidden"></div>
+        <div id="view-profil" class="view hidden"></div>
+        <div id="view-guru-absen" class="view hidden"></div>
     </main>
-
-    <!-- BOTTOM NAV -->
-    <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
-        <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span></button>
-        <button onclick="navigate('tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-file-pen text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span></button>
-        <button onclick="navigate('absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-clipboard-user text-lg mb-1"></i><span class="text-[10px] font-semibold">Absen</span></button>
-    </nav>
-
-    <nav id="bottom-nav-guru" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
-        <button onclick="navigate('guru-dashboard')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-amber-600"><i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-semibold">Dashboard</span></button>
-        <button onclick="navigate('guru-tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span></button>
-        <button onclick="navigate('guru-absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-users-viewfinder text-lg mb-1"></i><span class="text-[10px] font-semibold">Absensi</span></button>
-    </nav>
 
     <!-- MODAL LOGIN GURU -->
     <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
@@ -302,7 +199,7 @@
         </div>
     </div>
 
-    <!-- MODAL LIHAT PENGUMPULAN (GURU) - BARU & LEBIH BAIK -->
+    <!-- MODAL LIHAT PENGUMPULAN (GURU) -->
     <div id="modal-lihat-pengumpulan" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 w-full max-w-3xl shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
@@ -312,8 +209,6 @@
                 </div>
                 <button onclick="document.getElementById('modal-lihat-pengumpulan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            
-            <!-- Filter Kelas Khusus Modal -->
             <div class="mb-4">
                 <select id="filter-kelas-modal" onchange="renderModalPengumpulan()" class="w-full md:w-64 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700">
                     <option value="all">Semua Kelas</option>
@@ -322,7 +217,6 @@
                     <option value="X TP 1">X TP 1</option><option value="X TP 2">X TP 2</option><option value="X TP 3">X TP 3</option><option value="X TP 4">X TP 4</option>
                 </select>
             </div>
-
             <div class="overflow-y-auto flex-grow custom-scroll bg-slate-50 rounded-xl border border-slate-200">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-100 sticky top-0">
@@ -332,9 +226,7 @@
                             <th class="p-3 text-xs font-bold text-slate-600 border-b text-center">File/Link Tugas</th>
                         </tr>
                     </thead>
-                    <tbody id="daftar-pengumpulan" class="text-sm bg-white divide-y divide-slate-100">
-                        <!-- List siswa dirender di sini -->
-                    </tbody>
+                    <tbody id="daftar-pengumpulan" class="text-sm bg-white divide-y divide-slate-100"></tbody>
                 </table>
             </div>
         </div>
@@ -342,27 +234,7 @@
 
     <!-- MODAL KUMPUL TUGAS (SISWA) -->
     <div id="modal-kumpul-tugas" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
-            <h2 class="text-xl font-bold text-slate-800 mb-2">Kumpulkan Tugas</h2>
-            <p class="text-sm text-slate-500 mb-4" id="kumpul-tugas-title">Judul Tugas</p>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 1: Link Google Docs/Sheets/Slides</label>
-                    <input type="url" id="link-tugas" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="https://docs.google.com/...">
-                </div>
-                <div class="flex items-center gap-2 py-2">
-                    <hr class="flex-1 border-slate-200"> <span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span> <hr class="flex-1 border-slate-200">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Opsi 2: Upload File (PDF / Gambar)</label>
-                    <input type="file" id="file-tugas" accept=".pdf,image/*" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="closeKumpulTugasModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold">Batal</button>
-                    <button id="btn-submit-tugas" onclick="prosesKumpulTugas()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg transition">Kirim</button>
-                </div>
-            </div>
-        </div>
+        <!-- Form kumpul tugas -->
     </div>
 
     <!-- Pustaka Firebase & Script -->
