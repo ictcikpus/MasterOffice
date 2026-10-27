@@ -1,25 +1,20 @@
 // ==========================================
-// TASKS SYSTEM (Anti-Crash, Full Program)
-// Dibungkus dalam IIFE agar tidak bentrok dengan file lain
+// TASKS SYSTEM (Fixed Scoping Issue)
 // ==========================================
 
 (function() {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
-
-    // ⚠️ GANTI DENGAN ID FOLDER GOOGLE DRIVE ANDA ⚠️
     const FOLDER_ID = "1_K4XXQc4umLJPpKmnpwEUcIGX9ed7m6e";
 
     let allTasks = [];
     let allSubmissionsData = {}; 
     let allAttendanceToday = {}; 
 
-    // Nama variabel diganti agar tidak bentrok dengan attendance.js
     const todayStrTasks = new Date().toISOString().split('T')[0];
 
     document.addEventListener("DOMContentLoaded", () => {
         const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
 
-        // 1. LISTENER TUGAS
         db.ref('tasks').on('value', snap => {
             allTasks = [];
             snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
@@ -29,24 +24,22 @@
                 const statTugas = document.getElementById('stat-tugas');
                 if(statTugas) statTugas.innerText = allTasks.length;
                 if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-                    renderRekapTugasGuru();
+                    window.renderRekapTugasGuru();
                 }
             } else {
                 renderSiswaTugas();
             }
         });
 
-        // 2. LISTENER PENGUMPULAN TUGAS
         db.ref('submissions').on('value', snap => {
             allSubmissionsData = snap.val() || {};
             if (isTeacher && document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-                renderRekapTugasGuru();
+                window.renderRekapTugasGuru();
             } else if (!isTeacher) {
                 renderSiswaTugas(); 
             }
         });
 
-        // 3. LISTENER ABSENSI (Untuk Guru)
         if (isTeacher) {
             db.ref(`attendance/${todayStrTasks}`).on('value', snap => {
                 allAttendanceToday = snap.val() || {};
@@ -57,15 +50,13 @@
                 const statHadir = document.getElementById('stat-hadir');
                 if(statHadir) statHadir.innerText = count;
                 if (document.getElementById('view-guru-tugas') && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
-                    renderRekapTugasGuru();
+                    window.renderRekapTugasGuru();
                 }
             });
         }
     });
 
-    // ==========================================
-    // FUNGSI GENERATE TUGAS DEFAULT
-    // ==========================================
+    // --- FUNGSI GLOBAL (Didaftarkan ke window) ---
     window.generateDefaultTasks = function() {
         if (!confirm("Ini akan menambahkan 3 Tugas Default ke dalam daftar. Lanjutkan?")) return;
 
@@ -78,13 +69,10 @@
         const promises = defaultTasks.map(t => db.ref('tasks').push({ ...t, timestamp: firebase.database.ServerValue.TIMESTAMP }));
         
         Promise.all(promises).then(() => {
-            alert("✅ 3 Tugas Default berhasil ditambahkan! Silakan cek tabel di bawah.");
+            alert("✅ 3 Tugas Default berhasil ditambahkan!");
         }).catch(err => alert("Gagal membuat tugas default: " + err.message));
     };
 
-    // ==========================================
-    // FUNGSI GURU
-    // ==========================================
     window.openBuatTugasModal = function() { document.getElementById('modal-buat-tugas').classList.remove('hidden'); };
     window.closeBuatTugasModal = function() { document.getElementById('modal-buat-tugas').classList.add('hidden'); };
 
@@ -99,11 +87,11 @@
             title: title, desc: desc, deadline: deadline, timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => {
             alert("✅ Tugas berhasil dibuat!");
-            closeBuatTugasModal();
+            window.closeBuatTugasModal();
         }).catch(err => alert("Gagal membuat tugas: " + err.message));
     };
 
-    function renderRekapTugasGuru() {
+    window.renderRekapTugasGuru = function() {
         const filterKelasEl = document.getElementById('filter-kelas-tugas');
         const tbody = document.getElementById('body-rekap-tugas');
         
@@ -113,14 +101,7 @@
         tbody.innerHTML = '';
 
         if (allTasks.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i>
-                        <span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>
-                        <span class="text-sm">Silakan klik tombol <b>"Generate 3 Tugas Awal"</b> di atas untuk membuat tugas baru.</span>
-                    </td>
-                </tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span><br><span class="text-sm">Silakan klik tombol <b>"Generate 3 Tugas Awal"</b> di atas untuk membuat tugas baru.</span></td></tr>`;
             return;
         }
 
@@ -162,15 +143,9 @@
                 const isSubmitted = allSubmissionsData[student.class]?.[student.name]?.[task.id];
                 
                 if (isSubmitted) {
-                    statusTugasHtml += `
-                        <a href="${isSubmitted.link}" target="_blank" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300 px-2 py-1 rounded text-xs font-bold transition flex items-center gap-1" title="Sudah Dikumpulkan">
-                            <i class="fa-solid fa-check-circle"></i> Tugas ${index+1}
-                        </a>`;
+                    statusTugasHtml += `<a href="${isSubmitted.link}" target="_blank" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300 px-2 py-1 rounded text-xs font-bold transition flex items-center gap-1" title="Sudah Dikumpulkan"><i class="fa-solid fa-check-circle"></i> Tugas ${index+1}</a>`;
                 } else {
-                    statusTugasHtml += `
-                        <span class="bg-slate-100 text-slate-400 border border-slate-200 px-2 py-1 rounded text-xs font-bold flex items-center gap-1" title="Belum Dikumpulkan">
-                            <i class="fa-solid fa-times-circle"></i> Tugas ${index+1}
-                        </span>`;
+                    statusTugasHtml += `<span class="bg-slate-100 text-slate-400 border border-slate-200 px-2 py-1 rounded text-xs font-bold flex items-center gap-1" title="Belum Dikumpulkan"><i class="fa-solid fa-times-circle"></i> Tugas ${index+1}</span>`;
                 }
             });
             
@@ -184,11 +159,9 @@
                 </tr>
             `;
         });
-    }
+    };
 
-    // ==========================================
-    // FUNGSI SISWA
-    // ==========================================
+    // --- FUNGSI SISWA ---
     function renderSiswaTugas() {
         const container = document.getElementById('siswa-tugas-list');
         if(!container) return;
@@ -197,25 +170,14 @@
         const studentClass = localStorage.getItem("student_class");
 
         if(!studentName || !studentClass) {
-            container.innerHTML = `
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
-                    <i class="fa-solid fa-user-slash text-4xl text-amber-500 mb-3"></i>
-                    <p class="text-amber-700 font-bold mb-2">Profil Tidak Ditemukan</p>
-                    <p class="text-sm text-slate-600 mb-4">Sepertinya Anda belum mengisi nama atau kelas, atau data browser terhapus.</p>
-                    <button onclick="location.reload()" class="bg-amber-500 text-white px-5 py-2 rounded-lg font-bold">Muat Ulang Halaman</button>
-                </div>
-            `;
+            container.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center"><i class="fa-solid fa-user-slash text-4xl text-amber-500 mb-3"></i><p class="text-amber-700 font-bold mb-2">Profil Tidak Ditemukan</p><button onclick="location.reload()" class="bg-amber-500 text-white px-5 py-2 rounded-lg font-bold">Muat Ulang</button></div>`;
             return;
         }
 
         container.innerHTML = '';
 
         if (allTasks.length === 0) {
-            container.innerHTML = `
-                <div class="text-center p-8 bg-white rounded-2xl border border-slate-200">
-                    <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
-                    <p class="text-slate-500 font-bold">Belum ada tugas dari Guru.</p>
-                </div>`;
+            container.innerHTML = `<div class="text-center p-8 bg-white rounded-2xl border border-slate-200"><i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i><p class="text-slate-500 font-bold">Belum ada tugas dari Guru.</p></div>`;
             return;
         }
 
@@ -303,7 +265,7 @@
             const filename = `${studentName}_${Date.now()}_${file.name}`;
 
             if (FOLDER_ID === "GANTI_DENGAN_ID_FOLDER_DRIVE_ANDA") {
-                alert("⚠️ ID Folder Google Drive belum diatur di tasks.js. Hubungi Guru.");
+                alert("⚠️ ID Folder Google Drive belum diatur.");
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 return;
@@ -313,12 +275,7 @@
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ 
-                        file: base64Data, 
-                        filename: filename, 
-                        mimeType: mimeType,
-                        folderId: FOLDER_ID 
-                    })
+                    body: JSON.stringify({ file: base64Data, filename: filename, mimeType: mimeType, folderId: FOLDER_ID })
                 });
                 const result = await response.json();
                 if (result.status === 'success' && result.url) {
@@ -344,11 +301,11 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => {
             alert("✅ Tugas berhasil dikumpulkan!");
-            closeKumpulTugasModal();
+            window.closeKumpulTugasModal();
             document.getElementById('btn-submit-tugas').disabled = false;
             document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
         }).catch(err => {
-            alert("Gagal menyimpan link ke database: " + err.message);
+            alert("Gagal menyimpan link: " + err.message);
             document.getElementById('btn-submit-tugas').disabled = false;
             document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
         });
