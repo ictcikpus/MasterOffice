@@ -6,15 +6,10 @@ let currentMateriId = null;
 let currentSlideIndex = 0;
 
 function chooseRole(role) {
-    const roleModal = document.getElementById('role-selection-modal');
-    roleModal.classList.add('hidden');
-
+    document.getElementById('role-selection-modal').classList.add('hidden');
     if (role === 'siswa') {
-        if (localStorage.getItem('student_name')) {
-            applyStudentUI();
-        } else {
-            document.getElementById('profile-modal').classList.remove('hidden');
-        }
+        if (localStorage.getItem('student_name')) applyStudentUI();
+        else document.getElementById('profile-modal').classList.remove('hidden');
     } else if (role === 'guru') {
         document.getElementById('login-modal').classList.remove('hidden');
     }
@@ -28,14 +23,11 @@ function backToRoleSelection() {
 function applyStudentUI() {
     document.getElementById('nav-siswa').classList.remove('hidden');
     document.getElementById('bottom-nav-siswa').classList.remove('hidden');
-    
     const name = localStorage.getItem("student_name");
     document.getElementById('dashboard-player-name').innerText = name;
     document.getElementById('mobile-player-name').innerText = name.split(' ')[0];
-    
     let score = parseInt(localStorage.getItem("student_score")) || 0;
     if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = score;
-    
     renderMateri();
     navigate('home');
 }
@@ -44,10 +36,8 @@ function saveProfile() {
     const name = document.getElementById('setup-name').value.trim();
     const cls = document.getElementById('setup-class').value;
     if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
-    
     localStorage.setItem("student_name", name);
     localStorage.setItem("student_class", cls);
-    
     document.getElementById('profile-modal').classList.add('hidden');
     applyStudentUI();
 }
@@ -73,13 +63,10 @@ function navigate(viewId) {
         else activeNav.classList.add('text-emerald-600', 'bg-emerald-50');
     }
     
-    if (viewId === 'profil' && typeof renderProfile === 'function') {
-        renderProfile();
-    }
-    
-    if (viewId === 'guru-tugas' && typeof window.renderRekapTugasGuru === 'function') {
-        window.renderRekapTugasGuru();
-    }
+    // Pemicu Render saat Pindah Tab
+    if (viewId === 'profil' && typeof renderProfile === 'function') renderProfile();
+    if (viewId === 'guru-tugas' && typeof window.renderGuruTugasList === 'function') window.renderGuruTugasList();
+    if (viewId === 'guru-absen' && typeof window.renderTeacherTable === 'function') window.renderTeacherTable();
 
     window.scrollTo(0, 0);
 }
@@ -105,30 +92,21 @@ function renderMateri() {
 // (Fungsi openMateriDetail, loadSlide, checkSlideQuiz, changeSlide tetap sama seperti sebelumnya)
 
 function logoutApp() {
-    if(confirm("Yakin ingin keluar dari aplikasi?")) {
+    if(confirm("Yakin ingin keluar?")) {
         sessionStorage.removeItem('is_teacher');
         location.reload(); 
     }
 }
 
-// 🔥 INISIALISASI SAAT REFRESH 🔥
 document.addEventListener('DOMContentLoaded', function() {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    
     if (isTeacher) {
-        // JIKA SUDAH LOGIN SEBAGAI GURU & REFRESH
         document.getElementById('role-selection-modal').classList.add('hidden');
         document.getElementById('nav-guru').classList.remove('hidden');
         document.getElementById('bottom-nav-guru').classList.remove('hidden');
         document.getElementById('mobile-player-name').innerText = "Guru";
-        
-        // Tarik data Firebase
         if (typeof window.initTeacherAttendance === 'function') window.initTeacherAttendance();
         if (typeof window.initTeacherTasks === 'function') window.initTeacherTasks();
-        
         navigate('guru-dashboard');
-    } else {
-        // JIKA BELUM LOGIN, TAMPILKAN PILIHAN PERAN
-        // (Modal role-selection sudah otomatis muncul dari HTML)
     }
 });
