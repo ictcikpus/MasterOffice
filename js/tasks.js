@@ -1,6 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FULL PROGRAM & ANTI-CRASH LOOP)
-// Master Office LMS
+// TASKS SYSTEM (FULL PROGRAM & VALIDASI LINK)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -14,7 +13,7 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi pembersih HTML (mencegah crash jika deskripsi berisi tag aneh)
+// Fungsi pembersih HTML
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -30,24 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
-    // Listener Tugas
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => {
-            // Pastikan data yang masuk memiliki ID
-            allTasks.push({ id: child.key, ...child.val() });
-        });
-        allTasks.reverse(); // Urutkan dari yang terbaru
+        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
+        allTasks.reverse(); 
         
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
         forceRender();
-    }, error => {
-        console.error("Error baca tugas:", error);
     });
 
-    // Listener Pengumpulan
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
         forceRender();
@@ -55,12 +47,8 @@ function listenToFirebaseData() {
 }
 
 function forceRender() {
-    if (document.getElementById('guru-tugas-list')) {
-        window.renderGuruTugasList();
-    }
-    if (document.getElementById('siswa-tugas-list')) {
-        renderSiswaTugas();
-    }
+    if (document.getElementById('guru-tugas-list')) window.renderGuruTugasList();
+    if (document.getElementById('siswa-tugas-list')) renderSiswaTugas();
 }
 
 // ==========================================
@@ -144,14 +132,13 @@ window.renderGuruTugasList = function() {
     container.innerHTML = '';
 
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span></div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>Silakan klik "Buat Tugas Baru".</div>`;
         return;
     }
 
     let htmlString = "";
 
     allTasks.forEach(t => {
-        // ANTI-CRASH: Gunakan try-catch untuk setiap tugas
         try {
             let submittedCount = 0;
             for (const cls in allSubmissionsData) {
@@ -160,7 +147,6 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            // Nilai Default (Cadangan) jika data kosong
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
@@ -191,8 +177,7 @@ window.renderGuruTugasList = function() {
                 </div>
             `;
         } catch (err) {
-            // Jika satu tugas error, lanjut ke tugas berikutnya tanpa menghentikan seluruh proses
-            console.error("Gagal merender satu tugas guru:", err, t);
+            console.error("Gagal render tugas guru:", err, t);
         }
     });
 
@@ -213,7 +198,6 @@ window.renderModalPengumpulan = function() {
     tbody.innerHTML = '';
 
     let found = false;
-    
     for (const cls in allSubmissionsData) {
         if (filterKelas !== 'all' && filterKelas !== cls) continue;
         for (const name in allSubmissionsData[cls]) {
@@ -240,7 +224,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (MELIHAT & KUMPUL TUGAS)
+// 3. FUNGSI SISWA (VALIDASI & UPLOAD)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -282,7 +266,7 @@ function renderSiswaTugas() {
                 </div>
             `;
         } catch (err) {
-            console.error("Gagal merender satu tugas siswa:", err, t);
+            console.error("Gagal render tugas siswa:", err, t);
         }
     });
 
@@ -312,16 +296,47 @@ window.openKumpulTugasModal = function(taskId, title) {
 
 window.closeKumpulTugasModal = function() { document.getElementById('modal-kumpul-tugas').classList.add('hidden'); };
 
+// FUNGSI VALIDASI LINK GOOGLE DRIVE / DOCS / SHEETS / SLIDES
+function isValidGoogleLink(url) {
+    const regex = /(docs\.google\.com\/(document|spreadsheets|presentation)\/d\/|drive\.google\.com\/file\/d\/)/;
+    return regex.test(url);
+}
+
 window.prosesKumpulTugas = async function() {
     const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
     const file = fileInput.files[0];
+
     if (!linkInput && !file) return alert("Masukkan Link ATAU Upload File.");
-    if (linkInput && !linkInput.includes('http')) return alert("Format link salah.");
+    
+    // Jika menggunakan Link (Bukan File)
+    if (linkInput) {
+        if (!linkInput.includes('http')) return alert("Format link tidak valid (harus diawali http/https).");
+        
+        if (!isValidGoogleLink(linkInput)) {
+            return alert("⚠️ Link tidak valid!\n\nHarap gunakan link dari Google Docs, Google Sheets, Google Slides, atau Google Drive.");
+        }
+
+        // VALIDASI IZIN AKSES
+        const konfirmasiIzin = confirm("PENTING: Apakah Anda sudah mengatur akses file menjadi 'Anyone with the link' (Siapa saja yang memiliki link)?\n\nJika belum, Guru tidak akan bisa membuka file Anda.\n\nKlik OK jika sudah, atau Batal untuk memperbaikinya.");
+        
+        if (!konfirmasiIzin) {
+            return; // Hentikan proses jika siswa belum yakin
+        }
+    }
+
     const btn = document.getElementById('btn-submit-tugas');
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-    if (linkInput) saveSubmissionToFirebase(linkInput);
-    else if (file) uploadFileToDrive(file);
+    
+    if (linkInput) {
+        saveSubmissionToFirebase(linkInput);
+    } else if (file) {
+        if (file.size > 5 * 1024 * 1024) { 
+            alert("❌ Ukuran file maksimal 5MB."); 
+            btn.disabled = false; btn.innerHTML = 'Kirim'; return; 
+        }
+        uploadFileToDrive(file);
+    }
 };
 
 function uploadFileToDrive(file) {
