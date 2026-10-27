@@ -1,5 +1,5 @@
 // ==========================================
-// MAIN APP LOGIC (Fixed Null References)
+// MAIN APP LOGIC (Database Sync Enabled)
 // ==========================================
 
 let currentMateriId = null;
@@ -10,9 +10,11 @@ function chooseRole(role) {
     if(roleModal) roleModal.classList.add('hidden');
 
     if (role === 'siswa') {
-        if (localStorage.getItem('student_name')) {
+        // Cek apakah siswa sudah punya nama di localStorage
+        if (localStorage.getItem('student_name') && localStorage.getItem('student_class')) {
             applyStudentUI();
         } else {
+            // Jika belum, minta isi form
             document.getElementById('profile-modal').classList.remove('hidden');
         }
     } else if (role === 'guru') {
@@ -23,7 +25,6 @@ function chooseRole(role) {
 function backToRoleSelection() {
     const loginModal = document.getElementById('login-modal');
     if(loginModal) loginModal.classList.add('hidden');
-    
     const roleModal = document.getElementById('role-selection-modal');
     if(roleModal) roleModal.classList.remove('hidden');
 }
@@ -35,9 +36,11 @@ function applyStudentUI() {
     if(bottomNavSiswa) bottomNavSiswa.classList.remove('hidden');
     
     const name = localStorage.getItem("student_name");
+    const cls = localStorage.getItem("student_class");
+    
+    // Update UI Dashboard
     const dashName = document.getElementById('dashboard-player-name');
     const mobName = document.getElementById('mobile-player-name');
-    
     if(dashName) dashName.innerText = name;
     if(mobName) mobName.innerText = name.split(' ')[0];
     
@@ -49,15 +52,40 @@ function applyStudentUI() {
 }
 
 function saveProfile() {
-    const name = document.getElementById('setup-name').value.trim();
-    const cls = document.getElementById('setup-class').value;
+    const nameInput = document.getElementById('setup-name');
+    const classInput = document.getElementById('setup-class');
+    const btn = document.querySelector('#profile-modal button[onclick="saveProfile()"]');
+    
+    const name = nameInput.value.trim();
+    const cls = classInput.value;
+
     if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
     
-    localStorage.setItem("student_name", name);
-    localStorage.setItem("student_class", cls);
-    
-    document.getElementById('profile-modal').classList.add('hidden');
-    applyStudentUI();
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+    // 🔥 SIMPAN PROFIL SISWA KE DATABASE FIREBASE 🔥
+    // Menggunakan format students/KELAS/NAMA
+    db.ref(`students/${cls}/${name}`).set({
+        name: name,
+        class: cls,
+        lastLogin: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        // Simpan di localStorage sebagai "sesi login" agar tidak input ulang
+        localStorage.setItem("student_name", name);
+        localStorage.setItem("student_class", cls);
+        
+        document.getElementById('profile-modal').classList.add('hidden');
+        applyStudentUI();
+        
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }).catch(err => {
+        alert("Gagal menyimpan profil ke database: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
 }
 
 function navigate(viewId) {
@@ -106,7 +134,6 @@ function renderMateri() {
     });
 }
 
-// (Fungsi openMateriDetail, loadSlide, checkSlideQuiz, changeSlide tetap sama seperti sebelumnya)
 function openMateriDetail(id) {
     const materi = materiData.find(m => m.id === id);
     if(!materi) return;
@@ -194,6 +221,7 @@ function changeSlide(direction) {
 function logoutApp() {
     if(confirm("Yakin ingin keluar dari aplikasi?")) {
         sessionStorage.removeItem('is_teacher');
+        // Hapus localStorage agar kembali ke pilihan peran, tapi tidak menghapus data di database
         location.reload(); 
     }
 }
