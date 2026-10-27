@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (Firebase + Google Apps Script)
+// TASKS SYSTEM (Anti-Crash & Clear UI States)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const statTugas = document.getElementById('stat-tugas');
             if(statTugas) statTugas.innerText = allTasks.length;
             
+            // Render jika sedang di halaman kelola tugas
             if (!document.getElementById('view-guru-tugas').classList.contains('hidden')) {
                 renderRekapTugasGuru();
             }
@@ -37,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isTeacher && !document.getElementById('view-guru-tugas').classList.contains('hidden')) {
             renderRekapTugasGuru();
         } else if (!isTeacher) {
-            // Trigger re-render untuk siswa agar status "Sudah Dikumpulkan" terupdate
             renderSiswaTugas(); 
         }
     });
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// FUNGSI GENERATE TUGAS DEFAULT
+// FUNGSI GENERATE TUGAS DEFAULT (DARI GURU)
 // ==========================================
 function generateDefaultTasks() {
     if (!confirm("Ini akan menambahkan 3 Tugas Default ke dalam daftar. Lanjutkan?")) return;
@@ -75,12 +75,12 @@ function generateDefaultTasks() {
     const promises = defaultTasks.map(t => db.ref('tasks').push({ ...t, timestamp: firebase.database.ServerValue.TIMESTAMP }));
     
     Promise.all(promises).then(() => {
-        alert("✅ 3 Tugas Default berhasil ditambahkan!");
+        alert("✅ 3 Tugas Default berhasil ditambahkan! Silakan cek tabel di bawah.");
     }).catch(err => alert("Gagal membuat tugas default: " + err.message));
 }
 
 // ==========================================
-// LOGIKA GURU
+// LOGIKA GURU (ANTI CRASH)
 // ==========================================
 function openBuatTugasModal() { document.getElementById('modal-buat-tugas').classList.remove('hidden'); }
 function closeBuatTugasModal() { document.getElementById('modal-buat-tugas').classList.add('hidden'); }
@@ -101,14 +101,31 @@ function simpanTugas() {
 }
 
 function renderRekapTugasGuru() {
-    const filterKelas = document.getElementById('filter-kelas-tugas').value;
+    const filterKelasEl = document.getElementById('filter-kelas-tugas');
     const tbody = document.getElementById('body-rekap-tugas');
-    if(!tbody) return;
     
+    // JIKA ELEMEN HTML TIDAK DITEMUKAN, HENTIKAN (Mencegah Crash)
+    if(!tbody || !filterKelasEl) return;
+    
+    const filterKelas = filterKelasEl.value;
     tbody.innerHTML = '';
 
-    // Kumpulkan nama siswa dari 2 sumber: yang pernah kumpul tugas ATAU yang absen hari ini
+    // JIKA TUGAS KOSONG, TAMPILKAN PERINGATAN
+    if (allTasks.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i>
+                    <span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>
+                    <span class="text-sm">Silakan klik tombol <b>"Generate 3 Tugas Awal"</b> di atas untuk membuat tugas baru.</span>
+                </td>
+            </tr>`;
+        return;
+    }
+
+    // Kumpulkan nama siswa dari 2 sumber (Pengumpulan & Absensi)
     let studentList = [];
+    
     if (allSubmissionsData) {
         for (const cls in allSubmissionsData) {
             if (filterKelas === 'all' || filterKelas === cls) {
@@ -118,6 +135,7 @@ function renderRekapTugasGuru() {
             }
         }
     }
+    
     if (allAttendanceToday) {
         for (const cls in allAttendanceToday) {
             if (filterKelas === 'all' || filterKelas === cls) {
@@ -130,8 +148,9 @@ function renderRekapTugasGuru() {
         }
     }
 
+    // Jika tidak ada siswa yang absen maupun kumpul tugas
     if (studentList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada data siswa untuk filter ini.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang absen atau mengumpulkan tugas untuk filter ini.</td></tr>`;
         return;
     }
 
@@ -168,9 +187,8 @@ function renderRekapTugasGuru() {
     });
 }
 
-
 // ==========================================
-// LOGIKA SISWA (VALIDASI ABSEN SAAT KLIK KUMPUL)
+// LOGIKA SISWA (ANTI STUCK)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -179,11 +197,28 @@ function renderSiswaTugas() {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
-    if(!studentName) return; 
+    // JIKA PROFIL HILANG (Misal cache terhapus), MUNCULKAN PESAN
+    if(!studentName || !studentClass) {
+        container.innerHTML = `
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+                <i class="fa-solid fa-user-slash text-4xl text-amber-500 mb-3"></i>
+                <p class="text-amber-700 font-bold mb-2">Profil Tidak Ditemukan</p>
+                <p class="text-sm text-slate-600 mb-4">Sepertinya Anda belum mengisi nama atau kelas, atau data browser terhapus.</p>
+                <button onclick="location.reload()" class="bg-amber-500 text-white px-5 py-2 rounded-lg font-bold">Muat Ulang Halaman</button>
+            </div>
+        `;
+        return;
+    }
 
     container.innerHTML = '';
+
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="text-center p-8 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500">Belum ada tugas dari Guru.</p></div>`;
+        container.innerHTML = `
+            <div class="text-center p-8 bg-white rounded-2xl border border-slate-200">
+                <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
+                <p class="text-slate-500 font-bold">Belum ada tugas dari Guru.</p>
+                <p class="text-xs text-slate-400">Silakan cek kembali nanti.</p>
+            </div>`;
         return;
     }
 
@@ -213,7 +248,6 @@ function openKumpulTugasModal(taskId, title) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
 
-    // Tampilkan loading di tombol sebentar
     const btn = event.target.closest('button');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cek...';
