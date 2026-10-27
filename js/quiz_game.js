@@ -2,15 +2,23 @@
 // ARENA LATIHAN (SHORTCUT & KUIS MATERI)
 // ==========================================
 
+// 1. GAME SHORTCUT
 var shortcutData = [
-    { question: "Copy (Salin)", answer: ["Ctrl", "C"] }, { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
-    { question: "Cut (Potong)", answer: ["Ctrl", "X"] }, { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
-    { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] }, { question: "Save (Simpan)", answer: ["Ctrl", "S"] }
+    { question: "Copy (Salin)", answer: ["Ctrl", "C"] }, 
+    { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
+    { question: "Cut (Potong)", answer: ["Ctrl", "X"] }, 
+    { question: "Undo (Batal)", answer: ["Ctrl", "Z"] },
+    { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] }, 
+    { question: "Save (Simpan)", answer: ["Ctrl", "S"] },
+    { question: "Print (Cetak)", answer: ["Ctrl", "P"] },
+    { question: "Find (Cari)", answer: ["Ctrl", "F"] }
 ];
-var currentShortcutIndex = 0; var shortcutScore = 0; var userKeysPressed = [];
+var currentShortcutIndex = 0; 
+var shortcutScore = 0; 
+var userKeysPressed = [];
 
 function startShortcutGame() {
-    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
+    document.body.classList.add('hide-nav');
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
     document.getElementById('typing-game-container').classList.add('hidden');
@@ -18,26 +26,8 @@ function startShortcutGame() {
     
     currentShortcutIndex = 0; shortcutScore = 0;
     document.getElementById('shortcut-score').innerText = shortcutScore;
-    loadShortcutQuestion();
-}
-
-function loadShortcutQuestion() {
-    if (currentShortcutIndex >= shortcutData.length) {
-        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
-        document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Game: ${shortcutScore}</span>`;
-        addGlobalScore(shortcutScore); 
-        return;
-    }
-    var currentQ = shortcutData[currentShortcutIndex];
-    document.getElementById('shortcut-question').innerText = currentQ.question;
-    document.getElementById('shortcut-q-count').innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
-    document.getElementById('shortcut-feedback').innerHTML = "";
-    userKeysPressed = [];
-    document.querySelectorAll('#shortcut-keyboard .key').forEach(k => k.classList.remove('pressed'));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Render Virtual Keyboard Shortcut
+    
+    // Render Virtual Keyboard secara dinamis
     const kbContainer = document.getElementById('shortcut-keyboard');
     if(kbContainer) {
         kbContainer.innerHTML = `
@@ -46,11 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="flex justify-center gap-1 mb-1"><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd></div>
             <div class="flex justify-center gap-1"><kbd class="key w-16" data-key="Ctrl">Ctrl</kbd><kbd class="key w-12" data-key="Alt">Alt</kbd><kbd class="key w-32" data-key="Space">Space</kbd><kbd class="key w-14" data-key="Shift">Shift</kbd><kbd class="key w-16" data-key="Enter">Enter</kbd></div>
         `;
-
+        
+        // Event listener untuk keyboard
         document.querySelectorAll('#shortcut-keyboard .key').forEach(key => {
             key.addEventListener('click', (e) => {
                 var keyValue = e.target.getAttribute('data-key');
-                if (!keyValue || document.getElementById('shortcut-game-container').classList.contains('hidden') || currentShortcutIndex >= shortcutData.length) return;
+                if (!keyValue || currentShortcutIndex >= shortcutData.length) return;
                 
                 e.target.classList.add('pressed');
                 setTimeout(() => e.target.classList.remove('pressed'), 150);
@@ -77,20 +68,43 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-});
 
-// 2. KUIS MATERI INTERAKTIF
+    loadShortcutQuestion();
+}
+
+function loadShortcutQuestion() {
+    if (currentShortcutIndex >= shortcutData.length) {
+        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
+        document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Game: ${shortcutScore}</span>`;
+        addGlobalScore(shortcutScore); 
+        return;
+    }
+    var currentQ = shortcutData[currentShortcutIndex];
+    document.getElementById('shortcut-question').innerText = currentQ.question;
+    document.getElementById('shortcut-q-count').innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
+    document.getElementById('shortcut-feedback').innerHTML = "";
+    userKeysPressed = [];
+    document.querySelectorAll('#shortcut-keyboard .key').forEach(k => k.classList.remove('pressed'));
+}
+
+
+// 2. KUIS MATERI INTERAKTIF (SOAL DIPERBANYAK)
 const quizData = [
     { type: "multiple", question: "Apa ekstensi file Microsoft Word yang bisa diedit?", options: [".pdf", ".docx", ".exe", ".jpg"], correct: 1 },
     { type: "typing", question: "Ketikkan rumus Excel untuk menjumlahkan A1 sampai A5", answer: "=sum(a1:a5)" },
     { type: "multiple", question: "Fitur untuk mengunci baris di Excel disebut...", options: ["Freeze Panes", "Lock Cell", "Protect Sheet", "Merge"], correct: 0 },
     { type: "typing", question: "Apa nama menu yang berisi ikon Home, Insert, Design di Word?", answer: "ribbon" },
-    { type: "multiple", question: "Fitur di Google Docs untuk merevisi tanpa menghapus teks asli adalah...", options: ["Editing", "Suggestion", "Viewing", "Sharing"], correct: 1 }
+    { type: "multiple", question: "Fitur di Google Docs untuk merevisi tanpa menghapus teks asli adalah...", options: ["Editing", "Suggestion", "Viewing", "Sharing"], correct: 1 },
+    { type: "multiple", question: "Fungsi Excel untuk mencari nilai rata-rata adalah...", options: ["SUM", "MAX", "MIN", "AVERAGE"], correct: 3 },
+    { type: "typing", question: "Shortcut keyboard untuk menyimpan dokumen adalah...", answer: "ctrl+s" },
+    { type: "multiple", question: "Efek perpindahan antar slide di PowerPoint disebut...", options: ["Animation", "Transition", "Motion Path", "Slide Master"], correct: 1 },
+    { type: "multiple", question: "Aplikasi Google yang digunakan untuk membuat spreadsheet adalah...", options: ["Google Docs", "Google Slides", "Google Sheets", "Google Drive"], correct: 2 },
+    { type: "typing", question: "Ketikkan rumus Excel untuk mencari nilai tertinggi dari A1 sampai A10", answer: "=max(a1:a10)" }
 ];
 let currentQuizIndex = 0; let quizScore = 0;
 
 function startMateriQuiz() {
-    document.body.classList.add('hide-nav'); // SEMBUNYIKAN NAVIGASI
+    document.body.classList.add('hide-nav');
     document.getElementById('arena-menu').classList.add('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
     document.getElementById('typing-game-container').classList.add('hidden');
@@ -190,8 +204,9 @@ function checkQuizTyping() {
     setTimeout(loadQuizQuestion, 2500); 
 }
 
+// 3. FUNGSI GLOBAL ARENA
 function closeGame() {
-    document.body.classList.remove('hide-nav'); // MUNCULKAN NAVIGASI KEMBALI
+    document.body.classList.remove('hide-nav');
     document.getElementById('arena-menu').classList.remove('hidden');
     document.getElementById('shortcut-game-container').classList.add('hidden');
     document.getElementById('quiz-game-container').classList.add('hidden');
