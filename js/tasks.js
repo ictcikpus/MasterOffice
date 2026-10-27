@@ -1,5 +1,6 @@
 // ==========================================
-// TASKS SYSTEM (Robust & Force Render)
+// TASKS SYSTEM (FULL PROGRAM & ANTI-CRASH LOOP)
+// Master Office LMS
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,48 +14,58 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
+// Fungsi pembersih HTML (mencegah crash jika deskripsi berisi tag aneh)
 function stripHtml(html) {
+    if (!html) return "";
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
-// 1. INISIALISASI
+// ==========================================
+// 1. INISIALISASI & LISTENER FIREBASE
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
 });
 
 function listenToFirebaseData() {
+    // Listener Tugas
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
-        allTasks.reverse(); 
+        snap.forEach(child => {
+            // Pastikan data yang masuk memiliki ID
+            allTasks.push({ id: child.key, ...child.val() });
+        });
+        allTasks.reverse(); // Urutkan dari yang terbaru
         
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
-        forceRender(); // Paksa gambar ulang ke layar
+        forceRender();
+    }, error => {
+        console.error("Error baca tugas:", error);
     });
 
+    // Listener Pengumpulan
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        forceRender(); // Paksa gambar ulang ke layar
+        forceRender();
     });
 }
 
-// 2. FUNGSI FORCE RENDER (Anti Gagal)
 function forceRender() {
-    // Render ke wadah Guru JIKA wadahnya ada di DOM
     if (document.getElementById('guru-tugas-list')) {
         window.renderGuruTugasList();
     }
-    // Render ke wadah Siswa JIKA wadahnya ada di DOM
     if (document.getElementById('siswa-tugas-list')) {
         renderSiswaTugas();
     }
 }
 
-// 3. FUNGSI GURU (CRUD)
+// ==========================================
+// 2. FUNGSI GURU (RENDER KARTU & CRUD)
+// ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
 window.openBuatTugasModal = function() {
@@ -73,9 +84,9 @@ window.editTugas = function(id) {
     if(!task) return;
     currentEditTaskId = id;
     document.getElementById('modal-tugas-title').innerText = "Edit Tugas";
-    document.getElementById('tugas-title').value = task.title;
-    document.getElementById('tugas-desc').value = task.desc;
-    document.getElementById('tugas-deadline').value = task.deadline;
+    document.getElementById('tugas-title').value = task.title || "";
+    document.getElementById('tugas-desc').value = task.desc || "";
+    document.getElementById('tugas-deadline').value = task.deadline || "";
     document.getElementById('modal-buat-tugas').classList.remove('hidden');
 };
 
@@ -137,42 +148,100 @@ window.renderGuruTugasList = function() {
         return;
     }
 
+    let htmlString = "";
+
     allTasks.forEach(t => {
-        let submittedCount = 0;
-        for (const cls in allSubmissionsData) {
-            for (const name in allSubmissionsData[cls]) {
-                if (allSubmissionsData[cls][name][t.id]) submittedCount++;
+        // ANTI-CRASH: Gunakan try-catch untuk setiap tugas
+        try {
+            let submittedCount = 0;
+            for (const cls in allSubmissionsData) {
+                for (const name in allSubmissionsData[cls]) {
+                    if (allSubmissionsData[cls][name] && allSubmissionsData[cls][name][t.id]) submittedCount++;
+                }
             }
+
+            // Nilai Default (Cadangan) jika data kosong
+            const taskId = t.id || "unknown";
+            const title = t.title || "Tanpa Judul";
+            const deadline = t.deadline || "-";
+            const desc = t.desc || "Tidak ada instruksi.";
+            
+            let cleanDesc = stripHtml(desc);
+            if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
+
+            htmlString += `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${title}</h3>
+                            <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="text-sm font-bold text-emerald-600">
+                            <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editTugas('${taskId}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="hapusTugas('${taskId}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="openLihatPengumpulan('${taskId}', '${title.replace(/'/g, "\\'")}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            // Jika satu tugas error, lanjut ke tugas berikutnya tanpa menghentikan seluruh proses
+            console.error("Gagal merender satu tugas guru:", err, t);
         }
-
-        let cleanDesc = stripHtml(t.desc);
-        if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
-
-        container.innerHTML += `
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
-                <div>
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${t.title}</h3>
-                        <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${t.deadline}</span>
-                    </div>
-                    <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div class="text-sm font-bold text-emerald-600">
-                        <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editTugas('${t.id}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="hapusTugas('${t.id}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas"><i class="fa-solid fa-trash"></i></button>
-                        <button onclick="openLihatPengumpulan('${t.id}', '${t.title}')" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
-                    </div>
-                </div>
-            </div>
-        `;
     });
+
+    container.innerHTML = htmlString;
 };
 
-// 4. FUNGSI SISWA
+window.openLihatPengumpulan = function(taskId, title) {
+    currentViewingTaskId = taskId;
+    document.getElementById('lihat-pengumpulan-title').innerText = title;
+    document.getElementById('filter-kelas-modal').value = 'all';
+    document.getElementById('modal-lihat-pengumpulan').classList.remove('hidden');
+    window.renderModalPengumpulan();
+};
+
+window.renderModalPengumpulan = function() {
+    const filterKelas = document.getElementById('filter-kelas-modal').value;
+    const tbody = document.getElementById('daftar-pengumpulan');
+    tbody.innerHTML = '';
+
+    let found = false;
+    
+    for (const cls in allSubmissionsData) {
+        if (filterKelas !== 'all' && filterKelas !== cls) continue;
+        for (const name in allSubmissionsData[cls]) {
+            const sub = allSubmissionsData[cls][name][currentViewingTaskId];
+            if (sub) {
+                found = true;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 font-medium text-slate-700">${name}</td>
+                        <td class="p-3 text-sky-600 font-bold">${cls}</td>
+                        <td class="p-3 text-center">
+                            <a href="${sub.link}" target="_blank" class="inline-block bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition">
+                                <i class="fa-solid fa-external-link-alt mr-1"></i> Buka
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    }
+    if (!found) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan tugas ini.</td></tr>`;
+    }
+};
+
+// ==========================================
+// 3. FUNGSI SISWA (MELIHAT & KUMPUL TUGAS)
+// ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
     if(!container) return;
@@ -189,27 +258,37 @@ function renderSiswaTugas() {
     }
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
+    let htmlString = "";
 
     allTasks.forEach(t => {
-        const isSubmitted = mySubmissions[t.id];
-        let statusHtml = isSubmitted 
-            ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
-            : `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
+        try {
+            const isSubmitted = mySubmissions[t.id];
+            let statusHtml = isSubmitted 
+                ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
+                : `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
 
-        container.innerHTML += `
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
-                    <h3 class="font-bold text-xl text-slate-800 pr-2">${t.title}</h3>
-                    <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${t.deadline}</span>
+            const title = t.title || "Tanpa Judul";
+            const deadline = t.deadline || "-";
+            const desc = t.desc || "Tidak ada instruksi.";
+
+            htmlString += `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-xl text-slate-800 pr-2">${title}</h3>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
+                    </div>
+                    <div class="text-slate-600 mb-5 overflow-hidden">${desc}</div>
+                    <div class="flex justify-end">${statusHtml}</div>
                 </div>
-                <div class="text-slate-600 mb-5 overflow-hidden">${t.desc}</div>
-                <div class="flex justify-end">${statusHtml}</div>
-            </div>
-        `;
+            `;
+        } catch (err) {
+            console.error("Gagal merender satu tugas siswa:", err, t);
+        }
     });
+
+    container.innerHTML = htmlString;
 }
 
-// Lanjutan fungsi Modal (Open, Close, Proses, Upload, Simpan) tetap sama
 window.openKumpulTugasModal = function(taskId, title) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
@@ -230,7 +309,9 @@ window.openKumpulTugasModal = function(taskId, title) {
         document.getElementById('modal-kumpul-tugas').classList.remove('hidden');
     });
 };
+
 window.closeKumpulTugasModal = function() { document.getElementById('modal-kumpul-tugas').classList.add('hidden'); };
+
 window.prosesKumpulTugas = async function() {
     const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
@@ -242,6 +323,7 @@ window.prosesKumpulTugas = async function() {
     if (linkInput) saveSubmissionToFirebase(linkInput);
     else if (file) uploadFileToDrive(file);
 };
+
 function uploadFileToDrive(file) {
     const btn = document.getElementById('btn-submit-tugas');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
@@ -261,6 +343,7 @@ function uploadFileToDrive(file) {
     };
     reader.readAsDataURL(file);
 }
+
 function saveSubmissionToFirebase(submissionUrl) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
@@ -270,34 +353,3 @@ function saveSubmissionToFirebase(submissionUrl) {
         document.getElementById('btn-submit-tugas').disabled = false; document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
     });
 }
-window.openLihatPengumpulan = function(taskId, title) {
-    currentViewingTaskId = taskId;
-    document.getElementById('lihat-pengumpulan-title').innerText = title;
-    document.getElementById('filter-kelas-modal').value = 'all';
-    document.getElementById('modal-lihat-pengumpulan').classList.remove('hidden');
-    window.renderModalPengumpulan();
-};
-window.renderModalPengumpulan = function() {
-    const filterKelas = document.getElementById('filter-kelas-modal').value;
-    const tbody = document.getElementById('daftar-pengumpulan');
-    tbody.innerHTML = '';
-    let found = false;
-    for (const cls in allSubmissionsData) {
-        if (filterKelas !== 'all' && filterKelas !== cls) continue;
-        for (const name in allSubmissionsData[cls]) {
-            const sub = allSubmissionsData[cls][name][currentViewingTaskId];
-            if (sub) {
-                found = true;
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 font-medium text-slate-700">${name}</td>
-                        <td class="p-3 text-sky-600 font-bold">${cls}</td>
-                        <td class="p-3 text-center">
-                            <a href="${sub.link}" target="_blank" class="inline-block bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition">Buka</a>
-                        </td>
-                    </tr>`;
-            }
-        }
-    }
-    if (!found) tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-500">Belum ada siswa yang mengumpulkan.</td></tr>`;
-};
