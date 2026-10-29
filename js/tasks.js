@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FULL PROGRAM - BULLETPROOF)
+// TASKS SYSTEM (FULL PROGRAM - DOM API SAFE)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -12,18 +12,6 @@ let currentViewingTaskId = null;
 let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
-
-// Fungsi untuk MENGUBAH HTML APAPUN MENJADI TEKS BIASA
-// Ini mencegah tag rusak seperti <div> atau <b> merusak tampilan (layout break)
-function forcePlainText(htmlString) {
-    if (!htmlString) return "";
-    // Membuat elemen tiruan (tidak dimasukkan ke DOM)
-    let tempDiv = document.createElement("div");
-    // Memasukkan teks HTML
-    tempDiv.innerHTML = htmlString;
-    // Mengambil teks murninya saja (menghapus semua tag HTML)
-    return tempDiv.textContent || tempDiv.innerText || "";
-}
 
 // 1. INISIALISASI
 document.addEventListener("DOMContentLoaded", () => {
@@ -56,7 +44,7 @@ function forceRender() {
 }
 
 // ==========================================
-// 2. FUNGSI GURU
+// 2. FUNGSI GURU (DOM API SAFE)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
@@ -77,7 +65,6 @@ window.editTugas = function(id) {
     currentEditTaskId = id;
     document.getElementById('modal-tugas-title').innerText = "Edit Tugas";
     document.getElementById('tugas-title').value = task.title || "";
-    // Saat diedit, tampilkan teks aslinya (jika ada HTML)
     document.getElementById('tugas-desc').value = task.desc || "";
     document.getElementById('tugas-deadline').value = task.deadline || "";
     document.getElementById('modal-buat-tugas').classList.remove('hidden');
@@ -144,17 +131,17 @@ window.renderGuruTugasList = function() {
         return;
     }
 
-    let htmlString = "";
-
-    for (let i = 0; i < allTasks.length; i++) {
-        const t = allTasks[i];
+    // MENGGUNAKAN DOM API AGAR 100% AMAN DARI KARAKTER ANEH
+    allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // 🔥 KUNCI PERBAIKAN: Paksa jadi teks biasa
-            let cleanDesc = forcePlainText(t.desc);
+            // Bersihkan deskripsi dari HTML
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = t.desc || "";
+            let cleanDesc = tempDiv.textContent || tempDiv.innerText || "";
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
 
             let submittedCount = 0;
@@ -166,33 +153,60 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            htmlString += `
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${title}</h3>
-                            <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
-                        </div>
-                        <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
+            // Buat elemen div (Card)
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
+            
+            card.innerHTML = `
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2 title-target"></h3>
+                        <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <div class="text-sm font-bold text-emerald-600">
-                            <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editTugas('${taskId}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="hapusTugas('${taskId}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas"><i class="fa-solid fa-trash"></i></button>
-                            <button data-taskid="${taskId}" data-title="${title.replace(/"/g, '&quot;')}" onclick="window.openLihatPengumpulan(this.dataset.taskid, this.dataset.title)" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
-                        </div>
+                    <p class="text-sm text-slate-500 mt-2 desc-target"></p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div class="text-sm font-bold text-emerald-600">
+                        <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
                     </div>
+                    <div class="flex gap-2 action-target"></div>
                 </div>
             `;
-        } catch (err) {
-            console.error(`❌ GAGAL MERENDER TUGAS KE-${i + 1}:`, err);
-        }
-    }
 
-    container.innerHTML = htmlString;
+            // Masukkan Judul & Deskripsi menggunakan textContent (Anti-XSS & Anti-Syntax Error)
+            card.querySelector('.title-target').textContent = title;
+            card.querySelector('.desc-target').textContent = cleanDesc;
+
+            // Buat Tombol Aksi
+            const actionContainer = card.querySelector('.action-target');
+            
+            // Tombol Edit
+            const btnEdit = document.createElement('button');
+            btnEdit.className = "bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition";
+            btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            btnEdit.onclick = () => window.editTugas(taskId);
+            actionContainer.appendChild(btnEdit);
+
+            // Tombol Hapus
+            const btnHapus = document.createElement('button');
+            btnHapus.className = "bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition";
+            btnHapus.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            btnHapus.onclick = () => window.hapusTugas(taskId);
+            actionContainer.appendChild(btnHapus);
+
+            // Tombol Rekap
+            const btnRekap = document.createElement('button');
+            btnRekap.className = "bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition";
+            btnRekap.innerHTML = 'Rekap <i class="fa-solid fa-arrow-right ml-1"></i>';
+            btnRekap.onclick = () => window.openLihatPengumpulan(taskId, title);
+            actionContainer.appendChild(btnRekap);
+
+            container.appendChild(card);
+
+        } catch (err) {
+            console.error(`❌ GAGAL MERENDER TUGAS GURU KE-${index + 1}:`, err);
+        }
+    });
 };
 
 window.openLihatPengumpulan = function(taskId, title) {
@@ -235,7 +249,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA
+// 3. FUNGSI SISWA (DOM API SAFE)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -253,58 +267,65 @@ function renderSiswaTugas() {
     }
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
-    let htmlString = "";
 
-    for (let i = 0; i < allTasks.length; i++) {
-        const t = allTasks[i];
+    allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // 🔥 KUNCI PERBAIKAN: Siswa melihat instruksi sebagai teks biasa agar layout tidak rusak
-            const desc = forcePlainText(t.desc || "Tidak ada instruksi.");
+            // Bersihkan deskripsi
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = t.desc || "";
+            const cleanDesc = tempDiv.textContent || tempDiv.innerText || "Tidak ada instruksi.";
             
             const isSubmitted = mySubmissions[taskId];
-            let statusHtml = "";
 
+            // Buat Card
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden";
+            
+            card.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-xl text-slate-800 pr-2 title-target"></h3>
+                    <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
+                </div>
+                <div class="text-slate-600 mb-5 whitespace-pre-wrap desc-target"></div>
+                <div class="flex justify-end action-target"></div>
+            `;
+
+            card.querySelector('.title-target').textContent = title;
+            card.querySelector('.desc-target').textContent = cleanDesc;
+
+            const actionContainer = card.querySelector('.action-target');
+            
             if (isSubmitted && typeof isSubmitted === 'object') {
                 const submittedLink = isSubmitted.link || "";
                 
-                statusHtml = `
-                    <div class="flex flex-wrap items-center justify-end gap-2">
-                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
-                        <button data-taskid="${taskId}" data-title="${title.replace(/"/g, '&quot;')}" data-link="${submittedLink.replace(/"/g, '&quot;')}" onclick="window.openKumpulTugasModal(this.dataset.taskid, this.dataset.title, this.dataset.link)" class="bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition">
-                            <i class="fa-solid fa-pen mr-1"></i> Edit Tugas
-                        </button>
-                    </div>
-                `;
+                const statusSpan = document.createElement('span');
+                statusSpan.className = "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold mr-2";
+                statusSpan.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan';
+                actionContainer.appendChild(statusSpan);
+
+                const btnEdit = document.createElement('button');
+                btnEdit.className = "bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition";
+                btnEdit.innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Edit Tugas';
+                btnEdit.onclick = () => window.openKumpulTugasModal(taskId, title, submittedLink);
+                actionContainer.appendChild(btnEdit);
             } else {
-                statusHtml = `
-                    <div class="flex flex-wrap items-center justify-end gap-2">
-                        <button data-taskid="${taskId}" data-title="${title.replace(/"/g, '&quot;')}" onclick="window.openKumpulTugasModal(this.dataset.taskid, this.dataset.title, '')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition">
-                            <i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas
-                        </button>
-                    </div>
-                `;
+                const btnKumpul = document.createElement('button');
+                btnKumpul.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition";
+                btnKumpul.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas';
+                btnKumpul.onclick = () => window.openKumpulTugasModal(taskId, title, '');
+                actionContainer.appendChild(btnKumpul);
             }
 
-            htmlString += `
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
-                        <h3 class="font-bold text-xl text-slate-800 pr-2">${title}</h3>
-                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
-                    </div>
-                    <div class="text-slate-600 mb-5 whitespace-pre-wrap">${desc}</div>
-                    <div class="flex justify-end">${statusHtml}</div>
-                </div>
-            `;
-        } catch (err) {
-            console.error(`❌ GAGAL MERENDER TUGAS SISWA KE-${i + 1}:`, err);
-        }
-    }
+            container.appendChild(card);
 
-    container.innerHTML = htmlString;
+        } catch (err) {
+            console.error(`❌ GAGAL MERENDER TUGAS SISWA KE-${index + 1}:`, err);
+        }
+    });
 }
 
 window.openKumpulTugasModal = function(taskId, title, existingLink = '') {
