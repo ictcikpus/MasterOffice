@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FORCE DISPLAY VERSION)
+// TASKS SYSTEM (ULTIMATE DEBUGGING & RENDER)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,18 +13,21 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
+// Fungsi membersihkan teks
+function cleanText(html) {
+    if (!html) return "";
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
+
 // 1. INISIALISASI
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
-    // Event Delegation untuk Tombol
     document.body.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-edit-guru')) {
-            window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
-        }
-        if (e.target.closest('.btn-hapus-guru')) {
-            window.hapusTugas(e.target.closest('.btn-hapus-guru').dataset.id);
-        }
+        if (e.target.closest('.btn-edit-guru')) window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
+        if (e.target.closest('.btn-hapus-guru')) window.hapusTugas(e.target.closest('.btn-hapus-guru').dataset.id);
         if (e.target.closest('.btn-rekap-guru')) {
             const btn = e.target.closest('.btn-rekap-guru');
             window.openLihatPengumpulan(btn.dataset.id, btn.dataset.title);
@@ -37,24 +40,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
+    console.log("⏳ Menarik data Tugas...");
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
+        snap.forEach(child => {
+            allTasks.push({ id: child.key, ...child.val() });
+        });
         allTasks.reverse(); 
         
+        // 🔥 LOG PENTING: Lihat Console untuk angka ini!
+        console.log(`✅ Berhasil menarik ${allTasks.length} Tugas dari Firebase.`);
+        
+        // Update angka di Dashboard
         try {
             const statTugas = document.getElementById('stat-tugas');
             if(statTugas) statTugas.innerText = allTasks.length;
         } catch (e) {}
 
-        // Beri jeda sedikit agar DOM siap
-        setTimeout(() => { forceRender(); }, 100);
-        
+        forceRender();
     }, error => console.error("❌ Error Firebase Tasks:", error));
 
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        setTimeout(() => { forceRender(); }, 100);
+        forceRender(); 
     });
 }
 
@@ -63,23 +71,15 @@ function forceRender() {
     if (document.getElementById('siswa-tugas-list')) renderSiswaTugas();
 }
 
-// Fungsi pembersih HTML
-function cleanText(html) {
-    if (!html) return "";
-    let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    let text = tempDiv.textContent || tempDiv.innerText || "";
-    // Ganti karakter khusus agar tidak merusak HTML
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
 // ==========================================
-// 2. FUNGSI GURU (FORCE DISPLAY)
+// 2. FUNGSI GURU
 // ==========================================
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
     if(!container) return;
-    container.innerHTML = ''; // Bersihkan wadah
+    
+    // Kosongkan container setiap kali render
+    container.innerHTML = '';
 
     if (allTasks.length === 0) {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
@@ -89,25 +89,27 @@ window.renderGuruTugasList = function() {
         return;
     }
 
-    // LOOPING SATU PER SATU (PAKSA TAMPIL)
+    // Array untuk menampung semua kartu HTML
+    let cardsHTML = [];
+
     allTasks.forEach((t, index) => {
         try {
-            const taskId = t.id || "unknown_" + index;
+            const taskId = t.id || "unknown";
             const title = cleanText(t.title || "Tanpa Judul");
             const deadline = cleanText(t.deadline || "-");
-            
-            let cleanDesc = cleanText(t.desc);
-            if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
+            let desc = cleanText(t.desc || "");
+            if(desc.length > 100) desc = desc.substring(0, 100) + "...";
 
             let submittedCount = 0;
             for (const cls in allSubmissionsData) {
                 for (const name in allSubmissionsData[cls]) {
-                    if (allSubmissionsData[cls] && allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
+                    if (allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
                         submittedCount++;
                     }
                 }
             }
 
+            // Buat HTML per kartu
             let cardHTML = `
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
                     <div>
@@ -115,7 +117,7 @@ window.renderGuruTugasList = function() {
                             <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${title}</h3>
                             <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
                         </div>
-                        <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
+                        <p class="text-sm text-slate-500 mt-2">${desc}</p>
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                         <div class="text-sm font-bold text-emerald-600">
@@ -129,18 +131,20 @@ window.renderGuruTugasList = function() {
                     </div>
                 </div>
             `;
-            
-            // INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar
-            container.insertAdjacentHTML('beforeend', cardHTML);
 
+            cardsHTML.push(cardHTML); // Masukkan ke array
+            
         } catch (err) {
             console.error(`❌ Gagal render tugas guru ke-${index + 1}:`, err);
         }
     });
+
+    // Gabungkan semua kartu menjadi satu dan masukkan ke layar
+    container.innerHTML = cardsHTML.join('');
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (FORCE DISPLAY)
+// 3. FUNGSI SISWA
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -158,10 +162,11 @@ function renderSiswaTugas() {
     }
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
+    let cardsHTML = [];
 
     allTasks.forEach((t, index) => {
         try {
-            const taskId = t.id || "unknown_" + index;
+            const taskId = t.id || "unknown";
             const title = cleanText(t.title || "Tanpa Judul");
             const deadline = cleanText(t.deadline || "-");
             const desc = cleanText(t.desc || "Tidak ada instruksi.");
@@ -171,7 +176,6 @@ function renderSiswaTugas() {
 
             if (isSubmitted && typeof isSubmitted === 'object') {
                 const submittedLink = isSubmitted.link || "";
-                
                 statusHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2">
                         <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
@@ -200,18 +204,19 @@ function renderSiswaTugas() {
                     <div class="flex justify-end">${statusHtml}</div>
                 </div>
             `;
-
-            // INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar
-            container.insertAdjacentHTML('beforeend', cardHTML);
+            
+            cardsHTML.push(cardHTML);
 
         } catch (err) {
             console.error(`❌ Gagal render tugas siswa ke-${index + 1}:`, err);
         }
     });
+
+    container.innerHTML = cardsHTML.join('');
 }
 
 // ==========================================
-// 4. FUNGSI LAINNYA
+// 4. FUNGSI LAINNYA (Modal, Edit, Hapus, Kumpul)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
