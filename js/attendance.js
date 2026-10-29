@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + Selfie + Dashboard Sync)
+// ATTENDANCE SYSTEM (Absensi + Selfie + Dashboard Sync + PDF Kop Surat)
 // ==========================================
 
 let allAttendanceData = [];
@@ -10,7 +10,6 @@ let isTeacherAttListenerAttached = false;
 
 document.addEventListener("DOMContentLoaded", () => {
     const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    
     if (!isTeacher) {
         initStudentAttendance();
     }
@@ -200,10 +199,9 @@ window.initTeacherAttendance = function() {
     if (isTeacherAttListenerAttached) return;
     isTeacherAttListenerAttached = true;
 
-    // Listener ini menarik SEMUA data absensi dari Firebase
     db.ref('attendance').on('value', (snapshot) => {
         allAttendanceData = [];
-        let todayCount = 0; // Variabel untuk menyimpan jumlah hadir hari ini
+        let todayCount = 0; 
         
         snapshot.forEach((dateNode) => {
             const date = dateNode.key;
@@ -215,7 +213,6 @@ window.initTeacherAttendance = function() {
                         ...studentNode.val()
                     });
                     
-                    // 🔥 PERBAIKAN: Hitung jika tanggal absen sama dengan hari ini
                     if (date === todayStrAttendance) {
                         todayCount++;
                     }
@@ -225,13 +222,11 @@ window.initTeacherAttendance = function() {
         
         allAttendanceData.sort((a, b) => b.timestamp - a.timestamp);
         
-        // 🔥 PERBAIKAN: Update angka di Dashboard Guru secara otomatis
         const statHadir = document.getElementById('stat-hadir');
         if (statHadir) {
             statHadir.innerText = todayCount;
         }
 
-        // Render tabel jika sedang membuka menu Rekap Absensi
         if (document.getElementById('teacher-attendance-list')) {
             window.renderTeacherTable();
         }
@@ -289,23 +284,91 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
+// PDF EXPORT WITH KOP SURAT & TANDA TANGAN
 window.exportToPDF = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
-    const element = document.getElementById("print-area");
+
+    const filterClass = document.getElementById('filter-class').value;
+    const filterDate = document.getElementById('filter-date').value;
+    
+    let infoText = "Semua Kelas";
+    if (filterClass !== "all") infoText = `Kelas: ${filterClass}`;
+    if (filterDate) {
+        const dateObj = new Date(filterDate);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        infoText += ` | Tanggal: ${dateObj.toLocaleDateString('id-ID', options)}`;
+    }
+
+    // Clone tabel untuk dimanipulasi di PDF
+    const tableClone = table.cloneNode(true);
+    // Hapus kolom aksi (kolom terakhir) agar rapi saat dicetak
+    tableClone.querySelectorAll('tr').forEach(row => {
+        const lastCell = row.querySelector('td:last-child, th:last-child');
+        if (lastCell) lastCell.remove();
+    });
+
+    // Buat elemen pembungkus sementara untuk PDF
+    const element = document.createElement('div');
+    element.style.padding = '20px';
+    element.style.fontFamily = 'Arial, sans-serif';
+    element.style.color = '#000';
+    
+    // Desain Kop Surat
+    element.innerHTML = `
+        <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
+            <div style="width: 80px; text-align: center;">
+                <!-- Placeholder Logo (Bisa diganti img src) -->
+                <div style="font-size: 40px; font-weight: bold; color: #1e293b;">MO</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <h2 style="margin: 0; font-size: 16px; font-weight: normal;">YAYASAN PENDIDIKAN TEKNOLOGI INFORMASI</h2>
+                <h1 style="margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 1px;">SMK MASTER OFFICE</h1>
+                <p style="margin: 0; font-size: 11px; font-style: italic;">Jl. Pendidikan No. 123, Kota Anda, Provinsi Anda | Telp: (021) 1234567 | Email: info@masteroffice.sch.id</p>
+            </div>
+        </div>
+        
+        <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 16px;">REKAPITULASI KEHADIRAN SISWA</h3>
+        <p style="text-align: center; margin-bottom: 20px; font-size: 12px;">${infoText}</p>
+    `;
+
+    // Beri styling pada tabel clone agar muncul garis hitam di PDF
+    tableClone.setAttribute('border', '1');
+    tableClone.style.width = '100%';
+    tableClone.style.borderCollapse = 'collapse';
+    tableClone.style.fontSize = '11px';
+    tableClone.style.textAlign = 'left';
+    tableClone.querySelectorAll('th, td').forEach(cell => {
+        cell.style.border = '1px solid #000';
+        cell.style.padding = '6px';
+    });
+    tableClone.querySelectorAll('th').forEach(th => {
+        th.style.backgroundColor = '#f3f4f6';
+        th.style.textAlign = 'center';
+    });
+
+    element.appendChild(tableClone);
+
+    // Desain Tanda Tangan
+    element.innerHTML += `
+        <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+            <div style="text-align: center; width: 250px;">
+                <p style="margin: 0; font-size: 12px;">Kota Anda, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p style="margin: 0; font-size: 12px;">Guru Pengajar,</p>
+                <div style="height: 60px;"></div>
+                <p style="margin: 0; font-size: 12px; font-weight: bold; text-decoration: underline;">Otib Subagja, S.Kom</p>
+                <p style="margin: 0; font-size: 12px;">NIP. 199302102025211112</p>
+            </div>
+        </div>
+    `;
+
     const opt = {
-        margin:       10,
+        margin:       15, 
         filename:     `Rekap_Absensi_${todayStrAttendance}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-    const filterSection = document.getElementById('filter-section');
-    const exportButtons = document.getElementById('export-buttons');
-    if(filterSection) filterSection.style.display = 'none';
-    if(exportButtons) exportButtons.style.display = 'none';
-    html2pdf().set(opt).from(element).save().then(() => {
-        if(filterSection) filterSection.style.display = 'flex';
-        if(exportButtons) exportButtons.style.display = 'flex';
-    });
+
+    html2pdf().set(opt).from(element).save();
 };
