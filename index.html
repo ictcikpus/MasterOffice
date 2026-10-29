@@ -176,8 +176,9 @@
             </div>
         </div>
 
-        <!-- VIEW SISWA: ARENA LATIHAN -->
+        <!-- VIEW SISWA: ARENA LATIHAN (LENGKAP) -->
         <div id="view-arena" class="view hidden">
+            <!-- Menu Pilihan -->
             <div id="arena-menu">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Pilih Arena Latihan</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -198,9 +199,61 @@
                     </div>
                 </div>
             </div>
-            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto"></div>
-            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto"></div>
-            <div id="typing-game-container" class="hidden max-w-3xl mx-auto"></div>
+            
+            <!-- Container Game Shortcut (WAJIB ADA) -->
+            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Latihan Shortcut</h2>
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span></div>
+                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="shortcut-q-count">1/5</span></div>
+                    </div>
+                    <div class="mb-8">
+                        <p class="text-xs font-bold text-emerald-500 mb-2 uppercase tracking-wide">Apa shortcut untuk:</p>
+                        <h3 class="text-2xl font-extrabold text-slate-800" id="shortcut-question">Copy</h3>
+                        <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none" id="shortcut-keyboard"></div>
+                </div>
+            </div>
+
+            <!-- Container Game Kuis (WAJIB ADA) -->
+            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="quiz-score">0</span></div>
+                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
+                    </div>
+                    <div id="quiz-content"></div>
+                </div>
+            </div>
+
+            <!-- Container Game Typing (WAJIB ADA) -->
+            <div id="typing-game-container" class="hidden max-w-3xl mx-auto">
+                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
+                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Waktu</span><span class="text-xl font-bold text-rose-600" id="typing-time">60s</span></div>
+                        <div class="text-center"><span class="block text-xs font-bold text-slate-400 uppercase">WPM</span><span class="text-xl font-bold text-sky-600" id="typing-wpm">0</span></div>
+                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Akurasi</span><span class="text-xl font-bold text-emerald-600" id="typing-acc">100%</span></div>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-xl mb-6 text-lg font-mono leading-relaxed" id="typing-text-display"></div>
+                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6 opacity-0 absolute -z-10" autocomplete="off">
+                    <div class="bg-slate-800 p-2 rounded-2xl shadow-inner w-full overflow-x-auto custom-scroll">
+                        <!-- Keyboard Layout US -->
+                        <div class="flex flex-col gap-1 items-center min-w-[600px]">
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key" data-key="`">~</kbd><kbd class="key" data-key="1">1</kbd><kbd class="key" data-key="2">2</kbd><kbd class="key" data-key="3">3</kbd><kbd class="key" data-key="4">4</kbd><kbd class="key" data-key="5">5</kbd><kbd class="key" data-key="6">6</kbd><kbd class="key" data-key="7">7</kbd><kbd class="key" data-key="8">8</kbd><kbd class="key" data-key="9">9</kbd><kbd class="key" data-key="0">0</kbd><kbd class="key" data-key="-">-</kbd><kbd class="key" data-key="=">=</kbd><kbd class="key w-16" data-key="Backspace">Backspace</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-14" data-key="Tab">Tab</kbd><kbd class="key" data-key="Q">Q</kbd><kbd class="key" data-key="W">W</kbd><kbd class="key" data-key="E">E</kbd><kbd class="key" data-key="R">R</kbd><kbd class="key" data-key="T">T</kbd><kbd class="key" data-key="Y">Y</kbd><kbd class="key" data-key="U">U</kbd><kbd class="key" data-key="I">I</kbd><kbd class="key" data-key="O">O</kbd><kbd class="key" data-key="P">P</kbd><kbd class="key" data-key="[">[</kbd><kbd class="key" data-key="]">]</kbd><kbd class="key w-14" data-key="\">\</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-20" data-key="CapsLock">Caps</kbd><kbd class="key" data-key="A">A</kbd><kbd class="key" data-key="S">S</kbd><kbd class="key" data-key="D">D</kbd><kbd class="key" data-key="F">F</kbd><kbd class="key" data-key="G">G</kbd><kbd class="key" data-key="H">H</kbd><kbd class="key" data-key="J">J</kbd><kbd class="key" data-key="K">K</kbd><kbd class="key" data-key="L">L</kbd><kbd class="key" data-key=";">;</kbd><kbd class="key" data-key="'">'</kbd><kbd class="key w-20" data-key="Enter">Enter</kbd></div>
+                            <div class="flex gap-1 w-full justify-center"><kbd class="key w-24" data-key="ShiftLeft">Shift</kbd><kbd class="key" data-key="Z">Z</kbd><kbd class="key" data-key="X">X</kbd><kbd class="key" data-key="C">C</kbd><kbd class="key" data-key="V">V</kbd><kbd class="key" data-key="B">B</kbd><kbd class="key" data-key="N">N</kbd><kbd class="key" data-key="M">M</kbd><kbd class="key" data-key=",">,</kbd><kbd class="key" data-key=".">.</kbd><kbd class="key" data-key="/">/</kbd><kbd class="key w-24" data-key="ShiftRight">Shift</kbd></div>
+                            <div class="flex gap-1 w-full justify-center mt-1"><kbd class="key w-full max-w-sm" data-key=" ">Space</kbd></div>
+                        </div>
+                    </div>
+                    <button onclick="startTypingGame()" class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold shadow-lg transition">Mulai Ulang Latihan</button>
+                </div>
+            </div>
         </div>
 
         <!-- VIEW SISWA: TUGAS -->
@@ -324,7 +377,6 @@
     </main>
 
     <!-- 6. BOTTOM NAV (MOBILE) -->
-    <!-- 🔥 PERBAIKAN: Menu Absen dimunculkan kembali -->
     <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
         <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600">
             <i class="fa-solid fa-house text-base mb-1"></i><span class="text-[9px] font-semibold">Home</span>
