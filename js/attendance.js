@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Local Base64 Logo)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + QR Verifikasi)
 // ==========================================
 
 let allAttendanceData = [];
@@ -21,22 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
 function getLocalImageAsBase64(imagePath) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'Anonymous'; // Tetap gunakan ini untuk keamanan
+        img.crossOrigin = 'Anonymous';
         img.onload = function() {
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
-            // Konversi ke Base64
             const dataURL = canvas.toDataURL('image/png');
             resolve(dataURL);
         };
         img.onerror = function() {
             console.error("Gagal memuat gambar lokal:", imagePath);
-            resolve(null); // Jika gagal, kembalikan null agar PDF tetap bisa dibuat
+            resolve(null); 
         };
-        // Arahkan ke file lokal di folder assets
         img.src = imagePath; 
     });
 }
@@ -310,7 +308,7 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT DENGAN SORT A-Z, JUDUL BARU, & LOCAL BASE64 LOGO
+// PDF EXPORT DENGAN SORT A-Z, LOGO, DAN QR CODE VERIFIKASI
 window.exportToPDF = async function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
@@ -332,7 +330,7 @@ window.exportToPDF = async function() {
         infoText += ` | Tanggal: ${dateObj.toLocaleDateString('id-ID', options)}`;
     }
 
-    // 🔥 PERBAIKAN: Ambil data terfilter dan URUTKAN A-Z BERDASARKAN NAMA
+    // Ambil data terfilter dan URUTKAN A-Z BERDASARKAN NAMA
     let filteredData = allAttendanceData;
     if (filterClass !== "all") filteredData = filteredData.filter(item => item.class === filterClass);
     if (filterDate) filteredData = filteredData.filter(item => item.date === filterDate);
@@ -368,20 +366,21 @@ window.exportToPDF = async function() {
     });
     tableHTML += `</tbody></table>`;
 
-    // 🔥 KONVERSI LOGO LOKAL KE BASE64
-    // Pastikan gambar sudah disimpan di folder assets/logo-sekolah.png
+    // Konversi logo lokal ke Base64
     const localLogoPath = "assets/logo-sekolah.png";
     const base64Logo = await getLocalImageAsBase64(localLogoPath);
-
-    // Gunakan base64 jika berhasil, jika gagal (null) biarkan kosong
     const logoHtml = base64Logo ? `<img src="${base64Logo}" style="max-height: 80px; max-width: 80px; object-fit: contain;">` : '';
+
+    // 🔥 BUAT QR CODE VERIFIKASI
+    const verificationData = `Dokumen Asli Master Office | Rekap Absensi | ${infoText} | Dicetak: ${new Date().toLocaleString('id-ID')}`;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verificationData)}`;
 
     const element = document.createElement('div');
     element.style.padding = '15px'; 
     element.style.fontFamily = 'Arial, sans-serif';
     element.style.color = '#000';
     
-    // Desain Kop Surat & Judul Baru
+    // Desain Kop Surat & Judul
     element.innerHTML = `
         <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
             <div style="width: 90px; text-align: center;">
@@ -396,17 +395,24 @@ window.exportToPDF = async function() {
             </div>
         </div>
         
-        <!-- JUDUL BARU -->
         <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 14px;">Rekapitulasi Absensi Siswa Modul Master Office</h3>
         <p style="text-align: center; margin-bottom: 15px; font-size: 11px;">Mata Pelajaran: Informatika | ${infoText}</p>
     `;
 
-    // Sisipkan Tabel yang sudah di-sort A-Z
+    // Sisipkan Tabel
     element.innerHTML += tableHTML;
 
-    // Tanda Tangan
+    // 🔥 FOOTER: QR CODE (KIRI) & TANDA TANGAN (KANAN)
     element.innerHTML += `
-        <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
+        <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px;">
+            
+            <!-- QR Code Verifikasi -->
+            <div style="text-align: center;">
+                <img src="${qrCodeUrl}" style="width: 80px; height: 80px;" crossorigin="anonymous">
+                <p style="margin: 5px 0 0 0; font-size: 9px; color: #555;">Scan Verifikasi Dokumen</p>
+            </div>
+
+            <!-- Tanda Tangan -->
             <div style="text-align: center; width: 220px;">
                 <p style="margin: 0; font-size: 11px;">Bekasi, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 <p style="margin: 0; font-size: 11px;">Guru Pengajar,</p>
