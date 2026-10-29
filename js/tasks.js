@@ -1,6 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (Full Program with Edit Feature)
-// Master Office LMS
+// TASKS SYSTEM (Full Program + Debugging)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -27,15 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
+    // 🔥 TAMBAHAN: Console log untuk melihat apakah data ditarik dari Firebase
+    console.log("⏳ Mencoba menarik data Tugas dari Firebase...");
+    
     db.ref('tasks').on('value', snap => {
         allTasks = [];
         snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
         allTasks.reverse(); 
         
+        console.log(`✅ BERHASIL MENARIK DATA! Total ada ${allTasks.length} Tugas di database.`);
+        console.log(allTasks); // Tampilkan isi tugas di console
+
         const statTugas = document.getElementById('stat-tugas');
         if(statTugas) statTugas.innerText = allTasks.length;
         
         forceRender();
+    }, error => {
+        console.error("❌ GAGAL MENARIK DATA TUGAS:", error);
     });
 
     db.ref('submissions').on('value', snap => {
@@ -130,7 +137,11 @@ window.renderGuruTugasList = function() {
     container.innerHTML = '';
 
     if (allTasks.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i><span class="font-bold text-lg">Daftar Tugas Kosong!</span></div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
+            <i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i>
+            <span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>
+            <span class="text-sm">Data mungkin terhapus di Firebase atau belum dibuat. Silakan klik "Buat Tugas Baru".</span>
+        </div>`;
         return;
     }
 
@@ -222,7 +233,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (MELIHAT, KUMPUL, & EDIT TUGAS)
+// 3. FUNGSI SISWA
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -248,7 +259,6 @@ function renderSiswaTugas() {
             let statusHtml = "";
 
             if (isSubmitted) {
-                // 🔥 TOMBOL EDIT TUGAS DITAMBAHKAN DI SINI
                 statusHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2">
                         <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
@@ -310,11 +320,9 @@ window.openKumpulTugasModal = function(taskId, title, existingLink = '') {
         currentSelectedTaskId = taskId;
         document.getElementById('kumpul-tugas-title').innerText = "Tugas: " + title;
         
-        // 🔥 ISI OTOMATIS LINK LAMA JIKA SEDANG MENGEDIT
         document.getElementById('link-tugas').value = existingLink || "";
         document.getElementById('file-tugas').value = "";
         
-        // 🔥 UBAH TEKS TOMBOL JIKA MENGEDIT
         const btnSubmit = document.getElementById('btn-submit-tugas');
         if (existingLink) {
             btnSubmit.innerHTML = 'Perbarui Tugas';
@@ -380,7 +388,6 @@ function saveSubmissionToFirebase(submissionUrl) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
     
-    // .set() disini berfungsi untuk menimpa data lama jika siswa mengedit tugas
     db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({ 
         link: submissionUrl, 
         timestamp: firebase.database.ServerValue.TIMESTAMP 
