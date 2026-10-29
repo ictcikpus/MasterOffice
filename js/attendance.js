@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Base64 Logo)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Local Base64 Logo)
 // ==========================================
 
 let allAttendanceData = [];
@@ -16,22 +16,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// FUNGSI KONVERSI GAMBAR KE BASE64 (ANTI CORS)
+// FUNGSI KONVERSI GAMBAR LOKAL KE BASE64 (ANTI CORS)
 // ==========================================
-async function getBase64ImageFromUrl(imageUrl) {
-    try {
-        const res = await fetch(imageUrl, { mode: 'cors' });
-        const blob = await res.blob();
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    } catch (error) {
-        console.error("Gagal memuat logo sebagai Base64:", error);
-        return null; // Kembalikan null jika gagal, logo tidak akan muncul tapi PDF tetap jalan
-    }
+function getLocalImageAsBase64(imagePath) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous'; // Tetap gunakan ini untuk keamanan
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            // Konversi ke Base64
+            const dataURL = canvas.toDataURL('image/png');
+            resolve(dataURL);
+        };
+        img.onerror = function() {
+            console.error("Gagal memuat gambar lokal:", imagePath);
+            resolve(null); // Jika gagal, kembalikan null agar PDF tetap bisa dibuat
+        };
+        // Arahkan ke file lokal di folder assets
+        img.src = imagePath; 
+    });
 }
 
 // ==========================================
@@ -303,7 +310,7 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT DENGAN SORT A-Z, JUDUL BARU, & BASE64 LOGO
+// PDF EXPORT DENGAN SORT A-Z, JUDUL BARU, & LOCAL BASE64 LOGO
 window.exportToPDF = async function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
@@ -361,9 +368,10 @@ window.exportToPDF = async function() {
     });
     tableHTML += `</tbody></table>`;
 
-    // 🔥 KONVERSI LOGO KE BASE64
-    const logoUrl = "https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png";
-    const base64Logo = await getBase64ImageFromUrl(logoUrl);
+    // 🔥 KONVERSI LOGO LOKAL KE BASE64
+    // Pastikan gambar sudah disimpan di folder assets/logo-sekolah.png
+    const localLogoPath = "assets/logo-sekolah.png";
+    const base64Logo = await getLocalImageAsBase64(localLogoPath);
 
     // Gunakan base64 jika berhasil, jika gagal (null) biarkan kosong
     const logoHtml = base64Logo ? `<img src="${base64Logo}" style="max-height: 80px; max-width: 80px; object-fit: contain;">` : '';
