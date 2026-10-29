@@ -2,7 +2,7 @@
 // CERTIFICATE GENERATOR (PREMIUM DESIGN)
 // ==========================================
 
-window.generateCertificate = function(name, className, score, date) {
+window.generateCertificate = function(name, className, score, date, isPreview = false) {
     const certWindow = window.open('', '_blank');
     
     const today = date || new Date().toLocaleDateString('id-ID', { 
@@ -186,15 +186,19 @@ window.generateCertificate = function(name, className, score, date) {
                             <p>NIP. 199302102025211112</p>
                         </div>
                         <div class="signature">
-                            <p class="title">Dicetak pada:</p>
+                            <p class="title">Bekasi, ${today}</p>
                             <div class="signature-line" style="margin-top: 40px; margin-bottom: 10px;"></div>
-                            <p>${today}</p>
+                            <p>Kepala Sekolah</p>
                         </div>
                     </div>
                 </div>
             </div>
             <script>
-                window.onload = function() { window.print(); }
+                window.onload = function() { 
+                    if (!${isPreview}) {
+                        window.print(); 
+                    }
+                }
             </script>
         </body>
         </html>
@@ -202,4 +206,10 @@ window.generateCertificate = function(name, className, score, date) {
 
     certWindow.document.write(certHTML);
     certWindow.document.close();
+};
+
+// Fungsi Tambahan untuk Preview dari Guru
+window.previewCertificate = function() {
+    // Memanggil fungsi generateCertificate dengan data contoh (Dummy) dan mode Preview = true
+    window.generateCertificate('Nama Siswa (Contoh)', 'Kelas (Contoh)', 1500, new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }), true);
 };
