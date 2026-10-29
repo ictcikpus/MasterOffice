@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FIXED MOBILE TEXT FORMATTING)
+// TASKS SYSTEM (FINAL - ANTI HILANG & RAPI)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,7 +13,7 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi Sanitasi: Menjaga format HTML aman, membuang script berbahaya
+// Fungsi Sanitasi: Menjaga format HTML aman (paragraf, list), membuang script berbahaya
 function sanitizeHTML(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -31,7 +31,7 @@ function sanitizeHTML(html) {
     return tempDiv.innerHTML;
 }
 
-// Fungsi untuk preview singkat di Dashboard Guru
+// Fungsi untuk preview singkat di Dashboard Guru (Teks murni)
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -104,7 +104,6 @@ window.renderGuruTugasList = function() {
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // Guru hanya butuh teks singkat untuk preview
             let cleanDesc = stripHtml(t.desc);
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
 
@@ -117,6 +116,7 @@ window.renderGuruTugasList = function() {
                 }
             }
 
+            // 🔥 MENGGUNAKAN document.createElement (100% ANTI HILANG)
             const card = document.createElement('div');
             card.className = "bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
             
@@ -194,11 +194,12 @@ function renderSiswaTugas() {
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // Menggunakan Sanitasi HTML agar format dari Guru tetap terjaga
+            // Ambil teks asli dari database
             const formattedDesc = sanitizeHTML(t.desc || "Tidak ada instruksi.");
             
             const isSubmitted = mySubmissions[taskId];
 
+            // 🔥 MENGGUNAKAN document.createElement (100% ANTI HILANG)
             const card = document.createElement('div');
             card.className = "bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden";
             
@@ -208,7 +209,7 @@ function renderSiswaTugas() {
                     <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
                 </div>
                 
-                <!-- 🔥 KUNCI PERBAIKAN: Tambah class text-left, text-sm, leading-relaxed, dan styling list -->
+                <!-- Teks dirapikan rata kiri, jarak baris lega, ukuran pas di HP -->
                 <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-5 overflow-hidden desc-target task-content"></div>
                 
                 <div class="flex justify-end action-target"></div>
@@ -216,11 +217,11 @@ function renderSiswaTugas() {
 
             card.querySelector('.title-target').textContent = title;
             
-            // Masukkan HTML yang sudah disanitasi
+            // Masukkan teks HTML yang sudah rapi
             const descTarget = card.querySelector('.desc-target');
             descTarget.innerHTML = formattedDesc;
             
-            // Tambahkan styling CSS internal untuk list agar rapi
+            // Styling untuk format list / daftar angka
             descTarget.querySelectorAll('ul').forEach(ul => ul.style.listStyleType = 'disc');
             descTarget.querySelectorAll('ol').forEach(ol => ol.style.listStyleType = 'decimal');
             descTarget.querySelectorAll('ul, ol').forEach(list => {
