@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (Full Program - Super Safe Event)
+// TASKS SYSTEM (FULL PROGRAM - BULLETPROOF)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,17 +13,15 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-function sanitizeHTML(str) {
-    if (!str) return "";
-    let clean = str.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "");
-    clean = clean.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, "");
-    return clean;
-}
-
-function stripHtml(html) {
-    if (!html) return "";
+// Fungsi untuk MENGUBAH HTML APAPUN MENJADI TEKS BIASA
+// Ini mencegah tag rusak seperti <div> atau <b> merusak tampilan (layout break)
+function forcePlainText(htmlString) {
+    if (!htmlString) return "";
+    // Membuat elemen tiruan (tidak dimasukkan ke DOM)
     let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = sanitizeHTML(html);
+    // Memasukkan teks HTML
+    tempDiv.innerHTML = htmlString;
+    // Mengambil teks murninya saja (menghapus semua tag HTML)
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
@@ -79,6 +77,7 @@ window.editTugas = function(id) {
     currentEditTaskId = id;
     document.getElementById('modal-tugas-title').innerText = "Edit Tugas";
     document.getElementById('tugas-title').value = task.title || "";
+    // Saat diedit, tampilkan teks aslinya (jika ada HTML)
     document.getElementById('tugas-desc').value = task.desc || "";
     document.getElementById('tugas-deadline').value = task.deadline || "";
     document.getElementById('modal-buat-tugas').classList.remove('hidden');
@@ -153,9 +152,9 @@ window.renderGuruTugasList = function() {
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
-            const desc = t.desc || "Tidak ada instruksi.";
             
-            let cleanDesc = stripHtml(desc);
+            // 🔥 KUNCI PERBAIKAN: Paksa jadi teks biasa
+            let cleanDesc = forcePlainText(t.desc);
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
 
             let submittedCount = 0;
@@ -183,7 +182,6 @@ window.renderGuruTugasList = function() {
                         <div class="flex gap-2">
                             <button onclick="editTugas('${taskId}')" class="bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit Tugas"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="hapusTugas('${taskId}')" class="bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus Tugas"><i class="fa-solid fa-trash"></i></button>
-                            <!-- Ganti onclick dengan atribut data agar aman -->
                             <button data-taskid="${taskId}" data-title="${title.replace(/"/g, '&quot;')}" onclick="window.openLihatPengumpulan(this.dataset.taskid, this.dataset.title)" class="bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
@@ -237,7 +235,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (DENGAN TOMBOL EDIT YANG PASTI MUNCUL)
+// 3. FUNGSI SISWA
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -263,16 +261,16 @@ function renderSiswaTugas() {
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
-            const desc = sanitizeHTML(t.desc || "Tidak ada instruksi.");
+            
+            // 🔥 KUNCI PERBAIKAN: Siswa melihat instruksi sebagai teks biasa agar layout tidak rusak
+            const desc = forcePlainText(t.desc || "Tidak ada instruksi.");
             
             const isSubmitted = mySubmissions[taskId];
             let statusHtml = "";
 
-            // Cek dengan ketat apakah data submission ada dan memiliki link
             if (isSubmitted && typeof isSubmitted === 'object') {
                 const submittedLink = isSubmitted.link || "";
                 
-                // Gunakan atribut data untuk menghindari error karakter khusus di onclick
                 statusHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2">
                         <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
@@ -297,7 +295,7 @@ function renderSiswaTugas() {
                         <h3 class="font-bold text-xl text-slate-800 pr-2">${title}</h3>
                         <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
                     </div>
-                    <div class="text-slate-600 mb-5 overflow-hidden">${desc}</div>
+                    <div class="text-slate-600 mb-5 whitespace-pre-wrap">${desc}</div>
                     <div class="flex justify-end">${statusHtml}</div>
                 </div>
             `;
