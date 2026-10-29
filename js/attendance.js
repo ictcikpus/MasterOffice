@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi)
 // ==========================================
 
 let allAttendanceData = [];
@@ -284,7 +284,7 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT WITH KOP SURAT & TANDA TANGAN (FIX 40 ROWS)
+// PDF EXPORT WITH KOP SURAT RESMI SMKN 1 CIKARANG PUSAT
 window.exportToPDF = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
@@ -315,15 +315,18 @@ window.exportToPDF = function() {
     tableClone.style.fontSize = '10px'; 
     tableClone.style.fontFamily = 'Arial, sans-serif';
     
+    // Paksa semua teks menjadi hitam dan rata kiri (termasuk kolom kelas)
     tableClone.querySelectorAll('th, td').forEach(cell => {
         cell.style.border = '1px solid #000';
         cell.style.padding = '3px 5px'; // Padding super ketat
         cell.style.textAlign = 'left';
+        cell.style.color = '#000'; // Warna hitam mutlak
+        cell.style.fontWeight = 'normal'; // Hapus efek tebal
     });
     tableClone.querySelectorAll('th').forEach(th => {
         th.style.backgroundColor = '#f3f4f6';
         th.style.textAlign = 'center';
-        th.style.fontWeight = 'bold';
+        th.style.fontWeight = 'bold'; // Header tetap tebal
     });
 
     const element = document.createElement('div');
@@ -331,18 +334,19 @@ window.exportToPDF = function() {
     element.style.fontFamily = 'Arial, sans-serif';
     element.style.color = '#000';
     
-    // Desain Kop Surat SMKN 1 CIKARANG PUSAT
+    // Desain Kop Surat SMKN 1 CIKARANG PUSAT + LOGO & ALAMAT BARU
     element.innerHTML = `
-        <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+        <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
             <!-- Logo Sekolah -->
-            <div style="width: 70px; text-align: center;">
-                <div style="font-size: 35px; font-weight: bold; color: #1e293b;">SMK</div>
+            <div style="width: 90px; text-align: center;">
+                <img src="https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png" style="max-height: 80px; max-width: 80px; object-fit: contain;">
             </div>
             <div style="flex: 1; text-align: center;">
-                <h2 style="margin: 0; font-size: 13px; font-weight: normal; font-family: Arial;">PEMERINTAH PROVINSI JAWA BARAT</h2>
-                <h2 style="margin: 0; font-size: 13px; font-weight: normal; font-family: Arial;">DINAS PENDIDIKAN</h2>
-                <h1 style="margin: 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; font-family: Arial;">SMK NEGERI 1 CIKARANG PUSAT</h1>
-                <p style="margin: 0; font-size: 9px; font-style: italic;">Jl. Raya Cikarang Pusat No. 1, Kab. Bekasi | Email: info@smkn1cikarangpusat.sch.id</p>
+                <h2 style="margin: 0; font-size: 14px; font-weight: normal; font-family: Arial;">PEMERINTAH PROVINSI JAWA BARAT</h2>
+                <h2 style="margin: 0; font-size: 14px; font-weight: normal; font-family: Arial;">DINAS PENDIDIKAN</h2>
+                <h1 style="margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 1px; font-family: Arial;">SMK NEGERI 1 CIKARANG PUSAT</h1>
+                <p style="margin: 0; font-size: 10px; font-family: Arial;">Jl. Pasrirranji Desa Pasrirranji Kec. Cikarang Pusat Kab. Bekasi 17530</p>
+                <p style="margin: 0; font-size: 10px; font-family: Arial;">Website: www.smkn1cikarangpusat.sch.id</p>
             </div>
         </div>
         
@@ -371,7 +375,7 @@ window.exportToPDF = function() {
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Otomatis ke halaman 2 jika lebih
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } 
     };
 
     html2pdf().set(opt).from(element).save();
