@@ -15,11 +15,11 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
         <head>
             <title>Sertifikat Kelulusan - ${name}</title>
             <style>
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600&display=swap');
                 
                 body { 
                     font-family: 'Poppins', sans-serif; 
-                    background-color: #1e293b; 
+                    background-color: #0f172a; /* Latar belakang gelap untuk estetika preview */
                     padding: 20px; 
                     margin: 0;
                     display: flex;
@@ -27,168 +27,187 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     align-items: center;
                     min-height: 100vh;
                 }
+                
                 .certificate-wrapper {
-                    background-color: white;
-                    padding: 15px;
-                    border-radius: 10px;
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-                    max-width: 900px;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 4px;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    max-width: 950px;
                     width: 100%;
+                    aspect-ratio: 1.414 / 1; /* Standar Kertas A4 Landscape */
+                    position: relative;
                 }
-                .certificate-container { 
+
+                .certificate-inner { 
                     border: 2px solid #0f172a; 
-                    padding: 50px 30px; 
-                    background-color: #fdfbf7;
+                    padding: 40px; 
+                    background-color: #fcfcfc;
                     position: relative;
                     text-align: center;
-                    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-                    background-size: 20px 20px;
+                    height: 100%;
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M10 10 L90 10 L90 90 L10 90 Z" fill="none" stroke="%23f1f5f9" stroke-width="1"/%3E%3C/svg%3E');
                 }
-                /* Bingkai Emas */
-                .border-inner {
+                
+                /* Bingkai Emas Elegan */
+                .border-gold {
                     position: absolute;
-                    top: 15px; left: 15px; right: 15px; bottom: 15px;
-                    border: 3px solid #d4af37;
+                    top: 10px; left: 10px; right: 10px; bottom: 10px;
+                    border: 2px solid #d4af37;
                     pointer-events: none;
                 }
-                .border-outer {
+                .border-gold-inner {
                     position: absolute;
-                    top: 5px; left: 5px; right: 5px; bottom: 5px;
+                    top: 14px; left: 14px; right: 14px; bottom: 14px;
                     border: 1px solid #d4af37;
                     pointer-events: none;
                 }
                 
-                .logo {
-                    width: 80px;
-                    height: 80px;
-                    background-color: #10b981;
-                    color: white;
-                    border-radius: 20px;
-                    display: inline-flex;
-                    justify-content: center;
+                /* Bagian Header */
+                .header-section {
+                    display: flex;
+                    flex-direction: column;
                     align-items: center;
-                    font-size: 40px;
-                    font-weight: bold;
-                    margin-bottom: 20px;
-                    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+                    margin-bottom: 10px;
+                }
+                .logo {
+                    max-height: 85px;
+                    object-fit: contain;
+                    margin-bottom: 15px;
                 }
 
                 h1 { 
                     font-family: 'Playfair Display', serif;
-                    color: #1e293b; 
-                    font-size: 3em; 
-                    margin: 0 0 10px 0; 
-                    letter-spacing: 2px;
+                    color: #0f172a; 
+                    font-size: 2.8em; 
+                    margin: 0; 
+                    letter-spacing: 4px;
+                    text-transform: uppercase;
                 }
                 .subtitle {
-                    font-size: 1.1em;
+                    font-size: 0.9em;
                     color: #64748b;
-                    margin-bottom: 40px;
+                    letter-spacing: 2px;
                     text-transform: uppercase;
-                    letter-spacing: 3px;
+                    font-weight: 500;
                 }
                 
+                /* Bagian Nama */
+                .name-section {
+                    margin: 20px 0;
+                }
                 .name { 
                     font-family: 'Playfair Display', serif;
-                    font-size: 3em; 
-                    font-weight: bold; 
+                    font-size: 3.2em; 
+                    font-weight: 700; 
                     color: #0f172a; 
-                    margin: 10px 0; 
+                    margin: 5px 0; 
                     border-bottom: 2px solid #d4af37;
                     display: inline-block;
                     padding-bottom: 5px;
-                    padding-left: 20px;
-                    padding-right: 20px;
+                    padding-left: 30px;
+                    padding-right: 30px;
+                    line-height: 1.2;
                 }
                 .class-info {
-                    font-size: 1.2em;
+                    font-size: 1.1em;
                     color: #475569;
-                    margin-bottom: 40px;
-                    font-weight: 600;
+                    font-weight: 500;
                 }
                 
+                /* Bagian Deskripsi */
                 .description {
-                    font-size: 1em;
+                    font-size: 0.95em;
                     color: #334155;
-                    line-height: 1.8;
-                    max-width: 600px;
-                    margin: 0 auto 40px auto;
+                    line-height: 1.7;
+                    max-width: 70%;
+                    margin: 0 auto;
                 }
                 
+                /* Bagian Skor */
                 .score { 
-                    font-size: 1.5em; 
-                    font-weight: bold; 
-                    color: #d97706; 
-                    margin-bottom: 50px;
+                    font-size: 1.3em; 
+                    font-weight: 700; 
+                    color: #b45309; 
                     background-color: #fef3c7;
                     display: inline-block;
-                    padding: 10px 30px;
+                    padding: 8px 35px;
                     border-radius: 50px;
                     border: 1px solid #fcd34d;
+                    margin-top: 15px;
                 }
                 
-                .footer {
+                /* Bagian Tanda Tangan */
+                .footer-section {
                     display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top: 50px;
-                    padding: 0 50px;
+                    justify-content: flex-end;
+                    margin-top: 20px;
+                    padding-right: 50px;
                 }
                 .signature {
                     text-align: center;
-                }
-                .signature-line {
-                    width: 200px;
-                    border-bottom: 1px solid #94a3b8;
-                    margin-bottom: 10px;
+                    position: relative;
                 }
                 .signature p {
-                    margin: 5px 0;
+                    margin: 3px 0;
                     color: #475569;
                     font-size: 0.9em;
                 }
                 .signature .title {
-                    font-weight: bold;
-                    color: #1e293b;
+                    font-weight: 500;
+                }
+                .signature-name {
+                    font-weight: 700;
+                    color: #0f172a;
+                    font-size: 1.1em;
+                    margin-top: 60px !important; /* Ruang untuk tanda tangan basah */
+                    text-decoration: underline;
                 }
 
                 @media print {
-                    body { background-color: white; padding: 0; }
-                    .certificate-wrapper { box-shadow: none; padding: 0; }
+                    body { background-color: white; padding: 0; margin: 0; }
+                    .certificate-wrapper { box-shadow: none; padding: 0; max-width: 100%; aspect-ratio: auto; }
+                    .certificate-inner { border: none; }
                 }
             </style>
         </head>
         <body>
             <div class="certificate-wrapper">
-                <div class="certificate-container">
-                    <div class="border-outer"></div>
-                    <div class="border-inner"></div>
+                <div class="certificate-inner">
+                    <div class="border-gold"></div>
+                    <div class="border-gold-inner"></div>
                     
-                    <div class="logo">M</div>
-                    <h1>SERTIFIKAT KELULUSAN</h1>
-                    <p class="subtitle">Master Office LMS</p>
+                    <div class="header-section">
+                        <!-- LOGO SEKOLAH -->
+                        <img src="https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png" class="logo" alt="Logo SMKN 1 Cikarang Pusat">
+                        <h1>SERTIFIKAT</h1>
+                        <p class="subtitle">Penghargaan Kelulusan</p>
+                    </div>
                     
-                    <p style="color: #64748b; margin-bottom: 5px;">Diberikan dengan bangga kepada:</p>
-                    <div class="name">${name}</div>
-                    <p class="class-info">Kelas: ${className}</p>
+                    <div class="name-section">
+                        <p style="color: #64748b; margin: 0; font-size: 0.9em;">Diberikan dengan bangga kepada:</p>
+                        <div class="name">${name}</div>
+                        <p class="class-info">Kelas: ${className}</p>
+                    </div>
                     
                     <p class="description">
-                        Atas dedikasi, ketekunan, dan keberhasilannya telah menyelesaikan seluruh modul pembelajaran Microsoft Office & Google Workspace serta menyelesaikan semua tugas praktik yang diberikan.
+                        Atas dedikasi, ketekunan, dan keberhasilannya telah menyelesaikan seluruh modul pembelajaran Microsoft Office & Google Workspace serta menyelesaikan semua tugas praktik dengan sangat baik.
                     </p>
                     
-                    <div class="score">Skor Akhir: ${score} Poin</div>
+                    <div>
+                        <div class="score">Skor Akhir: ${score} Poin</div>
+                    </div>
                     
-                    <div class="footer">
+                    <div class="footer-section">
                         <div class="signature">
+                            <p style="margin-bottom: 5px;">Bekasi, ${today}</p>
                             <p class="title">Guru Pengajar,</p>
-                            <div class="signature-line" style="margin-top: 40px; margin-bottom: 10px;"></div>
-                            <p style="font-weight: bold; color: #0f172a; font-size: 1.1em;">Otib Subagja, S.Kom</p>
-                            <p>NIP. 199302102025211112</p>
-                        </div>
-                        <div class="signature">
-                            <p class="title">Bekasi, ${today}</p>
-                            <div class="signature-line" style="margin-top: 40px; margin-bottom: 10px;"></div>
-                            <p>Kepala Sekolah</p>
+                            <p class="signature-name">Otib Subagja, S.Kom</p>
+                            <p style="font-size: 0.8em;">NIP. 199302102025211112</p>
                         </div>
                     </div>
                 </div>
