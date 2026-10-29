@@ -1,5 +1,5 @@
 // ==========================================
-// CERTIFICATE GENERATOR (PREMIUM DESIGN)
+// CERTIFICATE GENERATOR (PREMIUM DESIGN + QR CODE)
 // ==========================================
 
 window.generateCertificate = function(name, className, score, date, isPreview = false) {
@@ -8,6 +8,12 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
     const today = date || new Date().toLocaleDateString('id-ID', { 
         year: 'numeric', month: 'long', day: 'numeric' 
     });
+
+    // Data yang akan dimasukkan ke dalam QR Code untuk verifikasi keaslian
+    const verificationData = `Master Office | Nama: ${name} | Kelas: ${className} | Skor: ${score} | Tanggal: ${today}`;
+    
+    // Menggunakan API publik untuk membuat QR Code
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationData)}`;
 
     const certHTML = `
         <!DOCTYPE html>
@@ -19,7 +25,7 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                 
                 body { 
                     font-family: 'Poppins', sans-serif; 
-                    background-color: #0f172a; /* Latar belakang gelap untuk estetika preview */
+                    background-color: #0f172a; 
                     padding: 20px; 
                     margin: 0;
                     display: flex;
@@ -35,22 +41,21 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
                     max-width: 950px;
                     width: 100%;
-                    aspect-ratio: 1.414 / 1; /* Standar Kertas A4 Landscape */
                     position: relative;
                 }
 
                 .certificate-inner { 
                     border: 2px solid #0f172a; 
-                    padding: 40px; 
+                    padding: 40px 40px 60px 40px; /* Padding bawah diperbesar agar tidak terpotong */
                     background-color: #fcfcfc;
                     position: relative;
                     text-align: center;
-                    height: 100%;
                     box-sizing: border-box;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
-                    background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M10 10 L90 10 L90 90 L10 90 Z" fill="none" stroke="%23f1f5f9" stroke-width="1"/%3E%3C/svg%3E');
+                    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+                    background-size: 20px 20px;
                 }
                 
                 /* Bingkai Emas Elegan */
@@ -72,7 +77,7 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    margin-bottom: 10px;
+                    margin-bottom: 20px;
                 }
                 .logo {
                     max-height: 85px;
@@ -83,17 +88,18 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                 h1 { 
                     font-family: 'Playfair Display', serif;
                     color: #0f172a; 
-                    font-size: 2.8em; 
+                    font-size: 2.6em; 
                     margin: 0; 
                     letter-spacing: 4px;
                     text-transform: uppercase;
                 }
                 .subtitle {
-                    font-size: 0.9em;
+                    font-size: 1.1em;
                     color: #64748b;
                     letter-spacing: 2px;
                     text-transform: uppercase;
-                    font-weight: 500;
+                    font-weight: 600;
+                    margin-top: 5px;
                 }
                 
                 /* Bagian Nama */
@@ -138,16 +144,41 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     padding: 8px 35px;
                     border-radius: 50px;
                     border: 1px solid #fcd34d;
-                    margin-top: 15px;
+                    margin-top: 20px;
                 }
                 
-                /* Bagian Tanda Tangan */
+                /* Bagian Bawah (QR & Tanda Tangan) */
                 .footer-section {
                     display: flex;
-                    justify-content: flex-end;
-                    margin-top: 20px;
-                    padding-right: 50px;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-top: 40px;
+                    padding: 0 20px;
                 }
+
+                /* Gaya untuk QR Code */
+                .qr-container {
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .qr-container img {
+                    width: 90px;
+                    height: 90px;
+                    border: 1px solid #cbd5e1;
+                    padding: 4px;
+                    border-radius: 8px;
+                }
+                .qr-text {
+                    font-size: 0.65em;
+                    color: #64748b;
+                    margin-top: 5px;
+                    max-width: 100px;
+                    line-height: 1.2;
+                }
+
+                /* Gaya untuk Tanda Tangan */
                 .signature {
                     text-align: center;
                     position: relative;
@@ -164,13 +195,13 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     font-weight: 700;
                     color: #0f172a;
                     font-size: 1.1em;
-                    margin-top: 60px !important; /* Ruang untuk tanda tangan basah */
+                    margin-top: 60px !important; 
                     text-decoration: underline;
                 }
 
                 @media print {
                     body { background-color: white; padding: 0; margin: 0; }
-                    .certificate-wrapper { box-shadow: none; padding: 0; max-width: 100%; aspect-ratio: auto; }
+                    .certificate-wrapper { box-shadow: none; padding: 0; max-width: 100%; }
                     .certificate-inner { border: none; }
                 }
             </style>
@@ -184,8 +215,10 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                     <div class="header-section">
                         <!-- LOGO SEKOLAH -->
                         <img src="https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png" class="logo" alt="Logo SMKN 1 Cikarang Pusat">
-                        <h1>SERTIFIKAT</h1>
-                        <p class="subtitle">Penghargaan Kelulusan</p>
+                        
+                        <!-- JUDUL BARU -->
+                        <h1>SERTIFIKAT KELULUSAN</h1>
+                        <p class="subtitle">Modul Master Office</p>
                     </div>
                     
                     <div class="name-section">
@@ -202,7 +235,16 @@ window.generateCertificate = function(name, className, score, date, isPreview = 
                         <div class="score">Skor Akhir: ${score} Poin</div>
                     </div>
                     
+                    <!-- FOOTER: QR CODE & TANDA TANGAN -->
                     <div class="footer-section">
+                        
+                        <!-- QR Code Kiri -->
+                        <div class="qr-container">
+                            <img src="${qrCodeUrl}" alt="QR Code Verifikasi" crossorigin="anonymous">
+                            <div class="qr-text">Scan untuk verifikasi keaslian sertifikat</div>
+                        </div>
+
+                        <!-- Tanda Tangan Kanan -->
                         <div class="signature">
                             <p style="margin-bottom: 5px;">Bekasi, ${today}</p>
                             <p class="title">Guru Pengajar,</p>
