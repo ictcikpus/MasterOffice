@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Sort A-Z)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Base64 Logo)
 // ==========================================
 
 let allAttendanceData = [];
@@ -14,6 +14,25 @@ document.addEventListener("DOMContentLoaded", () => {
         initStudentAttendance();
     }
 });
+
+// ==========================================
+// FUNGSI KONVERSI GAMBAR KE BASE64 (ANTI CORS)
+// ==========================================
+async function getBase64ImageFromUrl(imageUrl) {
+    try {
+        const res = await fetch(imageUrl, { mode: 'cors' });
+        const blob = await res.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error("Gagal memuat logo sebagai Base64:", error);
+        return null; // Kembalikan null jika gagal, logo tidak akan muncul tapi PDF tetap jalan
+    }
+}
 
 // ==========================================
 // 1. FUNGSI SISWA (ABSENSI MANDIRI)
@@ -220,7 +239,6 @@ window.initTeacherAttendance = function() {
             });
         });
         
-        // Tampilan di layar Guru tetap urut berdasarkan waktu terbaru
         allAttendanceData.sort((a, b) => b.timestamp - a.timestamp);
         
         const statHadir = document.getElementById('stat-hadir');
@@ -285,10 +303,16 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT DENGAN SORT A-Z & JUDUL BARU
-window.exportToPDF = function() {
+// PDF EXPORT DENGAN SORT A-Z, JUDUL BARU, & BASE64 LOGO
+window.exportToPDF = async function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
+
+    // Tampilkan loading
+    const btnExport = document.querySelector('button[onclick="exportToPDF()"]');
+    const originalText = btnExport.innerHTML;
+    btnExport.disabled = true;
+    btnExport.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat...';
 
     const filterClass = document.getElementById('filter-class').value;
     const filterDate = document.getElementById('filter-date').value;
@@ -306,7 +330,7 @@ window.exportToPDF = function() {
     if (filterClass !== "all") filteredData = filteredData.filter(item => item.class === filterClass);
     if (filterDate) filteredData = filteredData.filter(item => item.date === filterDate);
     
-    // Sort A-Z menggunakan localeCompare
+    // Sort A-Z
     filteredData.sort((a, b) => a.name.localeCompare(b.name, 'id', { sensitivity: 'base' }));
 
     // Buat HTML Tabel Manual agar urutannya pasti sesuai array yang sudah disortir
@@ -337,6 +361,13 @@ window.exportToPDF = function() {
     });
     tableHTML += `</tbody></table>`;
 
+    // 🔥 KONVERSI LOGO KE BASE64
+    const logoUrl = "https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png";
+    const base64Logo = await getBase64ImageFromUrl(logoUrl);
+
+    // Gunakan base64 jika berhasil, jika gagal (null) biarkan kosong
+    const logoHtml = base64Logo ? `<img src="${base64Logo}" style="max-height: 80px; max-width: 80px; object-fit: contain;">` : '';
+
     const element = document.createElement('div');
     element.style.padding = '15px'; 
     element.style.fontFamily = 'Arial, sans-serif';
@@ -346,7 +377,7 @@ window.exportToPDF = function() {
     element.innerHTML = `
         <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
             <div style="width: 90px; text-align: center;">
-                <img src="https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png" style="max-height: 80px; max-width: 80px; object-fit: contain;">
+                ${logoHtml}
             </div>
             <div style="flex: 1; text-align: center;">
                 <h2 style="margin: 0; font-size: 14px; font-weight: normal;">PEMERINTAH PROVINSI JAWA BARAT</h2>
@@ -387,5 +418,10 @@ window.exportToPDF = function() {
         pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } 
     };
 
-    html2pdf().set(opt).from(element).save();
+    // Proses PDF
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Kembalikan tombol setelah selesai
+        btnExport.disabled = false;
+        btnExport.innerHTML = originalText;
+    });
 };
