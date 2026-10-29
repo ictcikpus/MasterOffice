@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat Resmi + Sort A-Z)
 // ==========================================
 
 let allAttendanceData = [];
@@ -220,6 +220,7 @@ window.initTeacherAttendance = function() {
             });
         });
         
+        // Tampilan di layar Guru tetap urut berdasarkan waktu terbaru
         allAttendanceData.sort((a, b) => b.timestamp - a.timestamp);
         
         const statHadir = document.getElementById('stat-hadir');
@@ -284,7 +285,7 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT WITH KOP SURAT RESMI SMKN 1 CIKARANG PUSAT
+// PDF EXPORT DENGAN SORT A-Z & JUDUL BARU
 window.exportToPDF = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
@@ -300,63 +301,71 @@ window.exportToPDF = function() {
         infoText += ` | Tanggal: ${dateObj.toLocaleDateString('id-ID', options)}`;
     }
 
-    // Clone tabel
-    const tableClone = table.cloneNode(true);
+    // 🔥 PERBAIKAN: Ambil data terfilter dan URUTKAN A-Z BERDASARKAN NAMA
+    let filteredData = allAttendanceData;
+    if (filterClass !== "all") filteredData = filteredData.filter(item => item.class === filterClass);
+    if (filterDate) filteredData = filteredData.filter(item => item.date === filterDate);
     
-    // Hapus kolom aksi
-    tableClone.querySelectorAll('tr').forEach(row => {
-        const lastCell = row.querySelector('td:last-child, th:last-child');
-        if (lastCell) lastCell.remove();
-    });
+    // Sort A-Z menggunakan localeCompare
+    filteredData.sort((a, b) => a.name.localeCompare(b.name, 'id', { sensitivity: 'base' }));
 
-    // Persempit padding & font agar muat 40 baris di 1 lembar A4
-    tableClone.style.width = '100%';
-    tableClone.style.borderCollapse = 'collapse';
-    tableClone.style.fontSize = '10px'; 
-    tableClone.style.fontFamily = 'Arial, sans-serif';
-    
-    // Paksa semua teks menjadi hitam dan rata kiri (termasuk kolom kelas)
-    tableClone.querySelectorAll('th, td').forEach(cell => {
-        cell.style.border = '1px solid #000';
-        cell.style.padding = '3px 5px'; // Padding super ketat
-        cell.style.textAlign = 'left';
-        cell.style.color = '#000'; // Warna hitam mutlak
-        cell.style.fontWeight = 'normal'; // Hapus efek tebal
+    // Buat HTML Tabel Manual agar urutannya pasti sesuai array yang sudah disortir
+    let tableHTML = `
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px; font-family: Arial, sans-serif;">
+            <thead>
+                <tr style="background-color: #f3f4f6; text-align: center; font-weight: bold;">
+                    <th style="border: 1px solid #000; padding: 4px; width: 30px;">No</th>
+                    <th style="border: 1px solid #000; padding: 4px;">Nama Siswa</th>
+                    <th style="border: 1px solid #000; padding: 4px;">Kelas</th>
+                    <th style="border: 1px solid #000; padding: 4px;">Hari / Tanggal</th>
+                    <th style="border: 1px solid #000; padding: 4px;">Jam</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    filteredData.forEach((data, index) => {
+        tableHTML += `
+            <tr>
+                <td style="border: 1px solid #000; padding: 4px; text-align: center;">${index + 1}</td>
+                <td style="border: 1px solid #000; padding: 4px;">${data.name}</td>
+                <td style="border: 1px solid #000; padding: 4px;">${data.class}</td>
+                <td style="border: 1px solid #000; padding: 4px;">${data.day}, ${data.date}</td>
+                <td style="border: 1px solid #000; padding: 4px;">${data.time}</td>
+            </tr>
+        `;
     });
-    tableClone.querySelectorAll('th').forEach(th => {
-        th.style.backgroundColor = '#f3f4f6';
-        th.style.textAlign = 'center';
-        th.style.fontWeight = 'bold'; // Header tetap tebal
-    });
+    tableHTML += `</tbody></table>`;
 
     const element = document.createElement('div');
-    element.style.padding = '15px'; // Margin kertas
+    element.style.padding = '15px'; 
     element.style.fontFamily = 'Arial, sans-serif';
     element.style.color = '#000';
     
-    // Desain Kop Surat SMKN 1 CIKARANG PUSAT + LOGO & ALAMAT BARU
+    // Desain Kop Surat & Judul Baru
     element.innerHTML = `
         <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
-            <!-- Logo Sekolah -->
             <div style="width: 90px; text-align: center;">
                 <img src="https://www.smkn1cikarangpusat.sch.id/upload/picture/721842logo1000pxl.png" style="max-height: 80px; max-width: 80px; object-fit: contain;">
             </div>
             <div style="flex: 1; text-align: center;">
-                <h2 style="margin: 0; font-size: 14px; font-weight: normal; font-family: Arial;">PEMERINTAH PROVINSI JAWA BARAT</h2>
-                <h2 style="margin: 0; font-size: 14px; font-weight: normal; font-family: Arial;">DINAS PENDIDIKAN</h2>
-                <h1 style="margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 1px; font-family: Arial;">SMK NEGERI 1 CIKARANG PUSAT</h1>
-                <p style="margin: 0; font-size: 10px; font-family: Arial;">Jl. Pasrirranji Desa Pasrirranji Kec. Cikarang Pusat Kab. Bekasi 17530</p>
-                <p style="margin: 0; font-size: 10px; font-family: Arial;">Website: www.smkn1cikarangpusat.sch.id</p>
+                <h2 style="margin: 0; font-size: 14px; font-weight: normal;">PEMERINTAH PROVINSI JAWA BARAT</h2>
+                <h2 style="margin: 0; font-size: 14px; font-weight: normal;">DINAS PENDIDIKAN</h2>
+                <h1 style="margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 1px;">SMK NEGERI 1 CIKARANG PUSAT</h1>
+                <p style="margin: 0; font-size: 10px;">Jl. Pasrirranji Desa Pasrirranji Kec. Cikarang Pusat Kab. Bekasi 17530</p>
+                <p style="margin: 0; font-size: 10px;">Website: www.smkn1cikarangpusat.sch.id</p>
             </div>
         </div>
         
-        <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 14px;">REKAPITULASI KEHADIRAN SISWA</h3>
+        <!-- JUDUL BARU -->
+        <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 14px;">Rekapitulasi Absensi Siswa Modul Master Office</h3>
         <p style="text-align: center; margin-bottom: 15px; font-size: 11px;">Mata Pelajaran: Informatika | ${infoText}</p>
     `;
 
-    element.appendChild(tableClone);
+    // Sisipkan Tabel yang sudah di-sort A-Z
+    element.innerHTML += tableHTML;
 
-    // Desain Tanda Tangan (Bekasi)
+    // Tanda Tangan
     element.innerHTML += `
         <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
             <div style="text-align: center; width: 220px;">
