@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FINAL - ANTI HILANG & RAPI)
+// TASKS SYSTEM (PURE FORCE DISPLAY - ANTI HILANG)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,25 +13,31 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi Sanitasi: Menjaga format HTML aman (paragraf, list), membuang script berbahaya
-function sanitizeHTML(html) {
-    if (!html) return "";
+// Fungsi pembersih teks (Hanya buang tag berbahaya, pertahankan format rapi)
+function cleanHTML(html) {
+    if (!html) return "Tidak ada instruksi.";
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     
-    // Hapus tag berbahaya
+    // Buang script dan atribut berbahaya
     tempDiv.querySelectorAll('script, style, iframe, object, embed').forEach(el => el.remove());
-    // Hapus atribut event (onclick, onerror, dll)
     tempDiv.querySelectorAll('*').forEach(el => {
         Array.from(el.attributes).forEach(attr => {
             if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
         });
     });
     
-    return tempDiv.innerHTML;
+    // Style paksa agar rata kiri dan rapi di HP
+    let clean = tempDiv.innerHTML;
+    clean = clean.replace(/<p>/g, '<p style="margin-bottom: 8px; text-align: left;">');
+    clean = clean.replace(/<ul>/g, '<ul style="list-style-type: disc; padding-left: 20px; margin-bottom: 8px; text-align: left;">');
+    clean = clean.replace(/<ol>/g, '<ol style="list-style-type: decimal; padding-left: 20px; margin-bottom: 8px; text-align: left;">');
+    clean = clean.replace(/<li>/g, '<li style="margin-bottom: 4px;">');
+    
+    return clean;
 }
 
-// Fungsi untuk preview singkat di Dashboard Guru (Teks murni)
+// Teks murni untuk preview di Dashboard Guru
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -43,6 +49,7 @@ function stripHtml(html) {
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
+    // Event Delegation untuk Tombol
     document.body.addEventListener('click', function(e) {
         if (e.target.closest('.btn-edit-guru')) window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
         if (e.target.closest('.btn-hapus-guru')) window.hapusTugas(e.target.closest('.btn-hapus-guru').dataset.id);
@@ -83,12 +90,13 @@ function forceRender() {
 }
 
 // ==========================================
-// 2. FUNGSI GURU (TAMPILAN KARTU)
+// 2. FUNGSI GURU (FORCE DISPLAY)
 // ==========================================
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
     if(!container) return;
-    container.innerHTML = '';
+    
+    container.innerHTML = ''; // Kosongkan wadah awal
 
     if (allTasks.length === 0) {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
@@ -98,6 +106,7 @@ window.renderGuruTugasList = function() {
         return;
     }
 
+    // LOOPING & PAKSA TAMPIL SATU PER SATU
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
@@ -116,51 +125,30 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            // 🔥 MENGGUNAKAN document.createElement (100% ANTI HILANG)
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
-            
-            card.innerHTML = `
-                <div>
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2 title-target"></h3>
-                        <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
+            let cardHTML = `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${title}</h3>
+                            <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
                     </div>
-                    <p class="text-sm text-slate-500 mt-2 desc-target"></p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div class="text-sm font-bold text-emerald-600">
-                        <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="text-sm font-bold text-emerald-600">
+                            <i class="fa-solid fa-users mr-1"></i> ${submittedCount} Kumpul
+                        </div>
+                        <div class="flex gap-2">
+                            <button data-id="${taskId}" class="btn-edit-guru bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                            <button data-id="${taskId}" class="btn-hapus-guru bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                            <button data-id="${taskId}" data-title="${title}" class="btn-rekap-guru bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition">Rekap <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                        </div>
                     </div>
-                    <div class="flex gap-2 action-target"></div>
                 </div>
             `;
-
-            card.querySelector('.title-target').textContent = title;
-            card.querySelector('.desc-target').textContent = cleanDesc;
-
-            const actionContainer = card.querySelector('.action-target');
             
-            const btnEdit = document.createElement('button');
-            btnEdit.className = "btn-edit-guru bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white p-2 rounded-lg transition";
-            btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
-            btnEdit.dataset.id = taskId;
-            actionContainer.appendChild(btnEdit);
-
-            const btnHapus = document.createElement('button');
-            btnHapus.className = "btn-hapus-guru bg-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white p-2 rounded-lg transition";
-            btnHapus.innerHTML = '<i class="fa-solid fa-trash"></i>';
-            btnHapus.dataset.id = taskId;
-            actionContainer.appendChild(btnHapus);
-
-            const btnRekap = document.createElement('button');
-            btnRekap.className = "btn-rekap-guru bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition";
-            btnRekap.innerHTML = 'Rekap <i class="fa-solid fa-arrow-right ml-1"></i>';
-            btnRekap.dataset.id = taskId;
-            btnRekap.dataset.title = title;
-            actionContainer.appendChild(btnRekap);
-
-            container.appendChild(card);
+            // 🔥 PAKSA TAMPIL: Langsung tempel ke layar
+            container.insertAdjacentHTML('beforeend', cardHTML);
 
         } catch (err) {
             console.error(`❌ Gagal render tugas guru ke-${index + 1}:`, err);
@@ -169,7 +157,7 @@ window.renderGuruTugasList = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (RAPI & NYAMAN DIBACA)
+// 3. FUNGSI SISWA (FORCE DISPLAY & RAPI)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -188,77 +176,57 @@ function renderSiswaTugas() {
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
 
+    // LOOPING & PAKSA TAMPIL SATU PER SATU
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // Ambil teks asli dari database
-            const formattedDesc = sanitizeHTML(t.desc || "Tidak ada instruksi.");
+            // Ambil teks asli dan format rapi
+            const formattedDesc = cleanHTML(t.desc);
             
             const isSubmitted = mySubmissions[taskId];
+            let statusHtml = "";
 
-            // 🔥 MENGGUNAKAN document.createElement (100% ANTI HILANG)
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden";
-            
-            card.innerHTML = `
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
-                    <h3 class="font-bold text-lg md:text-xl text-slate-800 pr-2 title-target"></h3>
-                    <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
-                </div>
-                
-                <!-- Teks dirapikan rata kiri, jarak baris lega, ukuran pas di HP -->
-                <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-5 overflow-hidden desc-target task-content"></div>
-                
-                <div class="flex justify-end action-target"></div>
-            `;
-
-            card.querySelector('.title-target').textContent = title;
-            
-            // Masukkan teks HTML yang sudah rapi
-            const descTarget = card.querySelector('.desc-target');
-            descTarget.innerHTML = formattedDesc;
-            
-            // Styling untuk format list / daftar angka
-            descTarget.querySelectorAll('ul').forEach(ul => ul.style.listStyleType = 'disc');
-            descTarget.querySelectorAll('ol').forEach(ol => ol.style.listStyleType = 'decimal');
-            descTarget.querySelectorAll('ul, ol').forEach(list => {
-                list.style.paddingLeft = '1.5rem';
-                list.style.marginTop = '0.5rem';
-                list.style.marginBottom = '0.5rem';
-            });
-            descTarget.querySelectorAll('p').forEach(p => p.style.marginBottom = '0.75rem');
-            descTarget.querySelectorAll('br').forEach(br => br.style.display = 'block');
-
-            const actionContainer = card.querySelector('.action-target');
-            
             if (isSubmitted && typeof isSubmitted === 'object') {
                 const submittedLink = isSubmitted.link || "";
-                
-                const statusSpan = document.createElement('span');
-                statusSpan.className = "bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold mr-2";
-                statusSpan.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan';
-                actionContainer.appendChild(statusSpan);
-
-                const btnEdit = document.createElement('button');
-                btnEdit.className = "btn-kumpul-siswa bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition";
-                btnEdit.innerHTML = '<i class="fa-solid fa-pen mr-1"></i> Edit Tugas';
-                btnEdit.dataset.id = taskId;
-                btnEdit.dataset.title = title;
-                btnEdit.dataset.link = submittedLink;
-                actionContainer.appendChild(btnEdit);
+                statusHtml = `
+                    <div class="flex flex-wrap items-center justify-end gap-2 mt-4">
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
+                        <button data-id="${taskId}" data-title="${title}" data-link="${submittedLink}" class="btn-kumpul-siswa bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition">
+                            <i class="fa-solid fa-pen mr-1"></i> Edit Tugas
+                        </button>
+                    </div>
+                `;
             } else {
-                const btnKumpul = document.createElement('button');
-                btnKumpul.className = "btn-kumpul-siswa bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition";
-                btnKumpul.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas';
-                btnKumpul.dataset.id = taskId;
-                btnKumpul.dataset.title = title;
-                actionContainer.appendChild(btnKumpul);
+                statusHtml = `
+                    <div class="flex flex-wrap items-center justify-end gap-2 mt-4">
+                        <button data-id="${taskId}" data-title="${title}" class="btn-kumpul-siswa bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas
+                        </button>
+                    </div>
+                `;
             }
 
-            container.appendChild(card);
+            let cardHTML = `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-lg md:text-xl text-slate-800 pr-2">${title}</h3>
+                        <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
+                    </div>
+                    
+                    <!-- Teks Rapi Rata Kiri -->
+                    <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-2 overflow-hidden">
+                        ${formattedDesc}
+                    </div>
+                    
+                    ${statusHtml}
+                </div>
+            `;
+
+            // 🔥 PAKSA TAMPIL: Langsung tempel ke layar
+            container.insertAdjacentHTML('beforeend', cardHTML);
 
         } catch (err) {
             console.error(`❌ Gagal render tugas siswa ke-${index + 1}:`, err);
