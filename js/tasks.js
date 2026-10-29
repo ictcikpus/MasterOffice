@@ -1,5 +1,6 @@
 // ==========================================
-// TASKS SYSTEM (Full Program with Link Validation)
+// TASKS SYSTEM (Full Program with Edit Feature)
+// Master Office LMS
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,7 +14,6 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Pembersih HTML untuk preview card
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -21,35 +21,7 @@ function stripHtml(html) {
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
-// ==========================================
-// FUNGSI VALIDASI LINK GOOGLE DRIVE/DOCS
-// ==========================================
-async function validateGoogleLink(url) {
-    // Regex untuk mengambil ID file dari berbagai format link Google
-    const regex = /(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/)([a-zA-Z0-9_-]{25,})/;
-    const match = url.match(regex);
-
-    // Jika bukan link Google Drive/Docs yang valid, biarkan (mungkin link lain)
-    if (!match) return { valid: true };
-
-    const fileId = match[1];
-    // Gunakan endpoint thumbnail untuk mengecek akses tanpa API
-    const testUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w100`;
-
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve({ valid: true }); // Link bisa diakses publik
-        img.onerror = () => resolve({ 
-            valid: false, 
-            message: "File ini bersifat PRIVAT. Buka file Anda, klik 'Share', dan ubah akses menjadi 'Anyone with the link'." 
-        });
-        img.src = testUrl;
-    });
-}
-
-// ==========================================
-// INISIALISASI & LISTENER FIREBASE
-// ==========================================
+// 1. INISIALISASI & LISTENER FIREBASE
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
 });
@@ -57,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function listenToFirebaseData() {
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => {
-            allTasks.push({ id: child.key, ...child.val() });
-        });
+        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
         allTasks.reverse(); 
         
         const statTugas = document.getElementById('stat-tugas');
@@ -70,7 +40,7 @@ function listenToFirebaseData() {
 
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        forceRender();
+        forceRender(); 
     });
 }
 
@@ -80,7 +50,7 @@ function forceRender() {
 }
 
 // ==========================================
-// FUNGSI GURU (CRUD)
+// 2. FUNGSI GURU (CRUD)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
@@ -252,7 +222,7 @@ window.renderModalPengumpulan = function() {
 };
 
 // ==========================================
-// FUNGSI SISWA (DENGAN VALIDASI LINK)
+// 3. FUNGSI SISWA (MELIHAT, KUMPUL, & EDIT TUGAS)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -275,9 +245,21 @@ function renderSiswaTugas() {
     allTasks.forEach(t => {
         try {
             const isSubmitted = mySubmissions[t.id];
-            let statusHtml = isSubmitted 
-                ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>`
-                : `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
+            let statusHtml = "";
+
+            if (isSubmitted) {
+                // 🔥 TOMBOL EDIT TUGAS DITAMBAHKAN DI SINI
+                statusHtml = `
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
+                        <button onclick="window.openKumpulTugasModal('${t.id}', '${t.title.replace(/'/g, "\\'")}', '${isSubmitted.link}')" class="bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition">
+                            <i class="fa-solid fa-pen mr-1"></i> Edit Tugas
+                        </button>
+                    </div>
+                `;
+            } else {
+                statusHtml = `<button onclick="window.openKumpulTugasModal('${t.id}', '${t.title.replace(/'/g, "\\'")}', '')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition"><i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas</button>`;
+            }
 
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
@@ -301,66 +283,78 @@ function renderSiswaTugas() {
     container.innerHTML = htmlString;
 }
 
-window.openKumpulTugasModal = function(taskId, title) {
+window.openKumpulTugasModal = function(taskId, title, existingLink = '') {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
+    
     const btn = event ? event.target.closest('button') : null;
-    if(btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cek...'; btn.disabled = true; }
+    let originalText = "";
+    if(btn) {
+        originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cek...';
+        btn.disabled = true;
+    }
 
     db.ref(`attendance/${todayStrTasks}/${studentClass}/${studentName}`).once('value').then(snap => {
-        if(btn) { btn.innerHTML = 'Kumpulkan Tugas'; btn.disabled = false; }
+        if(btn) {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+
         if (!snap.exists()) {
-            alert("⚠️ ANDA BELUM ABSEN HARI INI!\n\nSilakan isi kehadiran di menu 'Absensi'.");
+            alert("⚠️ ANDA BELUM ABSEN HARI INI!\n\nAnda harus mengisi kehadiran di menu 'Absensi' terlebih dahulu.");
             if(typeof navigate === 'function') navigate('absen');
             return;
         }
+
         currentSelectedTaskId = taskId;
         document.getElementById('kumpul-tugas-title').innerText = "Tugas: " + title;
-        document.getElementById('link-tugas').value = "";
+        
+        // 🔥 ISI OTOMATIS LINK LAMA JIKA SEDANG MENGEDIT
+        document.getElementById('link-tugas').value = existingLink || "";
         document.getElementById('file-tugas').value = "";
+        
+        // 🔥 UBAH TEKS TOMBOL JIKA MENGEDIT
+        const btnSubmit = document.getElementById('btn-submit-tugas');
+        if (existingLink) {
+            btnSubmit.innerHTML = 'Perbarui Tugas';
+        } else {
+            btnSubmit.innerHTML = 'Kirim';
+        }
+
         document.getElementById('modal-kumpul-tugas').classList.remove('hidden');
     });
 };
 
 window.closeKumpulTugasModal = function() { document.getElementById('modal-kumpul-tugas').classList.add('hidden'); };
 
-// FUNGSI PROSES KUMPUL (DENGAN VALIDASI)
 window.prosesKumpulTugas = async function() {
     const linkInput = document.getElementById('link-tugas').value.trim();
     const fileInput = document.getElementById('file-tugas');
     const file = fileInput.files[0];
-    
+
     if (!linkInput && !file) return alert("Masukkan Link ATAU Upload File.");
     if (linkInput && !linkInput.includes('http')) return alert("Format link salah.");
 
     const btn = document.getElementById('btn-submit-tugas');
     const originalText = btn.innerHTML;
-
+    btn.disabled = true; 
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+    
     if (linkInput) {
-        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Validasi Link...';
-        
-        // VALIDASI LINK GOOGLE
-        const check = await validateGoogleLink(linkInput);
-        if (!check.valid) {
-            alert(`❌ LINK BELUM BISA DIAKSES!\n\n${check.message}`);
-            btn.disabled = false; btn.innerHTML = originalText;
-            return;
-        }
-        
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
         saveSubmissionToFirebase(linkInput);
     } else if (file) {
         if (file.size > 5 * 1024 * 1024) { 
             alert("❌ Ukuran file maksimal 5MB."); 
             btn.disabled = false; btn.innerHTML = originalText; return; 
         }
-        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
         uploadFileToDrive(file);
     }
 };
 
 function uploadFileToDrive(file) {
     const btn = document.getElementById('btn-submit-tugas');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah...';
     const reader = new FileReader();
     reader.onload = async function(e) {
         const base64Data = e.target.result.split(',')[1]; 
@@ -369,8 +363,11 @@ function uploadFileToDrive(file) {
         try {
             const response = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ file: base64Data, filename: filename, mimeType: file.type, folderId: FOLDER_ID }) });
             const result = await response.json();
-            if (result.status === 'success' && result.url) saveSubmissionToFirebase(result.url);
-            else throw new Error(result.message || "Gagal.");
+            if (result.status === 'success' && result.url) {
+                saveSubmissionToFirebase(result.url);
+            } else {
+                throw new Error(result.message || "Gagal.");
+            }
         } catch (error) {
             alert(`❌ Gagal: ${error.message}`); 
             btn.disabled = false; btn.innerHTML = 'Kirim';
@@ -382,15 +379,20 @@ function uploadFileToDrive(file) {
 function saveSubmissionToFirebase(submissionUrl) {
     const studentName = localStorage.getItem("student_name");
     const studentClass = localStorage.getItem("student_class");
-    db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({ link: submissionUrl, timestamp: firebase.database.ServerValue.TIMESTAMP })
+    
+    // .set() disini berfungsi untuk menimpa data lama jika siswa mengedit tugas
+    db.ref(`submissions/${studentClass}/${studentName}/${currentSelectedTaskId}`).set({ 
+        link: submissionUrl, 
+        timestamp: firebase.database.ServerValue.TIMESTAMP 
+    })
     .then(() => {
-        alert("✅ Tugas berhasil dikumpulkan!"); 
+        alert("✅ Tugas berhasil disimpan!"); 
         window.closeKumpulTugasModal();
         document.getElementById('btn-submit-tugas').disabled = false; 
         document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
     })
     .catch(err => {
-        alert("Gagal menyimpan: " + err.message);
+        alert("Gagal menyimpan: " + err.message); 
         document.getElementById('btn-submit-tugas').disabled = false; 
         document.getElementById('btn-submit-tugas').innerHTML = 'Kirim';
     });
