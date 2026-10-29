@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FULL PROGRAM - DEBUGGING MODE)
+// TASKS SYSTEM (FINAL VERSION - CLEAN CONSOLE)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,7 +13,6 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi membersihkan teks agar tidak merusak HTML (Anti-XSS)
 function escapeHTML(str) {
     if (!str) return "";
     return String(str)
@@ -24,7 +23,6 @@ function escapeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-// Fungsi menghapus tag HTML dari deskripsi (untuk preview)
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -36,24 +34,20 @@ function stripHtml(html) {
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
-    // EVENT DELEGATION UNTUK TOMBOL (Sangat Aman)
+    // EVENT DELEGATION UNTUK TOMBOL
     document.body.addEventListener('click', function(e) {
-        // Tombol Edit (Guru)
         if (e.target.closest('.btn-edit-guru')) {
             const id = e.target.closest('.btn-edit-guru').dataset.id;
             window.editTugas(id);
         }
-        // Tombol Hapus (Guru)
         if (e.target.closest('.btn-hapus-guru')) {
             const id = e.target.closest('.btn-hapus-guru').dataset.id;
             window.hapusTugas(id);
         }
-        // Tombol Rekap (Guru)
         if (e.target.closest('.btn-rekap-guru')) {
             const btn = e.target.closest('.btn-rekap-guru');
             window.openLihatPengumpulan(btn.dataset.id, btn.dataset.title);
         }
-        // Tombol Kumpul / Edit (Siswa)
         if (e.target.closest('.btn-kumpul-siswa')) {
             const btn = e.target.closest('.btn-kumpul-siswa');
             window.openKumpulTugasModal(btn.dataset.id, btn.dataset.title, btn.dataset.link || '');
@@ -62,16 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
-    console.log("⏳ Menarik data Tugas dari Firebase...");
-    
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => {
-            allTasks.push({ id: child.key, ...child.val() });
-        });
+        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
         allTasks.reverse(); 
-        
-        console.log(`✅ Data Tugas berhasil ditarik! Total: ${allTasks.length} tugas.`);
         
         try {
             const statTugas = document.getElementById('stat-tugas');
@@ -79,7 +67,7 @@ function listenToFirebaseData() {
         } catch (e) {}
 
         forceRender();
-    }, error => console.error("❌ Error Firebase:", error));
+    }, error => console.error("❌ Error Firebase Tasks:", error));
 
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
@@ -110,17 +98,12 @@ window.renderGuruTugasList = function() {
 
     let htmlString = "";
 
-    // LOOPING DENGAN PENGAMAN SUPER KETAT
     allTasks.forEach((t, index) => {
         try {
-            console.log(`Memproses Tugas Guru ke-${index + 1}:`, t.title);
-            
-            // Gunakan nilai default jika data tidak lengkap
             const taskId = t.id || "unknown_" + index;
             const title = escapeHTML(t.title || "Tanpa Judul");
             const deadline = escapeHTML(t.deadline || "-");
             
-            // Bersihkan deskripsi
             let cleanDesc = stripHtml(t.desc);
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
             cleanDesc = escapeHTML(cleanDesc);
@@ -134,7 +117,6 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            // Gunakan class sebagai penanda (bukan inline onclick) untuk menghindari error karakter
             htmlString += `
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
                     <div>
@@ -158,11 +140,10 @@ window.renderGuruTugasList = function() {
             `;
         } catch (err) {
             console.error(`❌ GAGAL MERENDER TUGAS GURU KE-${index + 1}:`, err, t);
-            // Jika gagal, tetap tampilkan kotak error agar tidak hilang begitu saja
             htmlString += `
                 <div class="bg-rose-50 rounded-2xl border border-rose-200 p-5 shadow-sm">
                     <p class="text-rose-600 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat Tugas ke-${index + 1}</p>
-                    <p class="text-xs text-rose-400 mt-1">Data tugas ini rusak atau tidak lengkap. Coba hapus di Firebase.</p>
+                    <p class="text-xs text-rose-400 mt-1">Data tugas ini rusak atau tidak lengkap.</p>
                 </div>
             `;
         }
@@ -194,8 +175,6 @@ function renderSiswaTugas() {
 
     allTasks.forEach((t, index) => {
         try {
-            console.log(`Memproses Tugas Siswa ke-${index + 1}:`, t.title);
-
             const taskId = t.id || "unknown_" + index;
             const title = escapeHTML(t.title || "Tanpa Judul");
             const deadline = escapeHTML(t.deadline || "-");
@@ -252,6 +231,7 @@ function renderSiswaTugas() {
 // 4. FUNGSI LAINNYA (Modal, Edit, Hapus, Kumpul)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
+
 window.openBuatTugasModal = function() {
     currentEditTaskId = null;
     document.getElementById('modal-tugas-title').innerText = "Buat Tugas Baru";
@@ -260,6 +240,7 @@ window.openBuatTugasModal = function() {
     document.getElementById('tugas-deadline').value = '';
     document.getElementById('modal-buat-tugas').classList.remove('hidden'); 
 };
+
 window.closeBuatTugasModal = function() { document.getElementById('modal-buat-tugas').classList.add('hidden'); };
 
 window.editTugas = function(id) {
