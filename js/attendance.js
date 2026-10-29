@@ -1,5 +1,5 @@
 // ==========================================
-// ATTENDANCE SYSTEM (Absensi + Selfie + Dashboard Sync + PDF Kop Surat)
+// ATTENDANCE SYSTEM (Absensi + PDF Kop Surat)
 // ==========================================
 
 let allAttendanceData = [];
@@ -284,7 +284,7 @@ window.exportToExcel = function() {
     XLSX.writeFile(wb, `Rekap_Absensi_${todayStrAttendance}.xlsx`);
 };
 
-// PDF EXPORT WITH KOP SURAT & TANDA TANGAN
+// PDF EXPORT WITH KOP SURAT & TANDA TANGAN (FIX 40 ROWS)
 window.exportToPDF = function() {
     const table = document.getElementById("teacher-attendance-table");
     if (table.rows.length <= 1) return alert("Tidak ada data untuk diexport.");
@@ -300,74 +300,78 @@ window.exportToPDF = function() {
         infoText += ` | Tanggal: ${dateObj.toLocaleDateString('id-ID', options)}`;
     }
 
-    // Clone tabel untuk dimanipulasi di PDF
+    // Clone tabel
     const tableClone = table.cloneNode(true);
-    // Hapus kolom aksi (kolom terakhir) agar rapi saat dicetak
+    
+    // Hapus kolom aksi
     tableClone.querySelectorAll('tr').forEach(row => {
         const lastCell = row.querySelector('td:last-child, th:last-child');
         if (lastCell) lastCell.remove();
     });
 
-    // Buat elemen pembungkus sementara untuk PDF
-    const element = document.createElement('div');
-    element.style.padding = '20px';
-    element.style.fontFamily = 'Arial, sans-serif';
-    element.style.color = '#000';
-    
-    // Desain Kop Surat
-    element.innerHTML = `
-        <div style="display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
-            <div style="width: 80px; text-align: center;">
-                <!-- Placeholder Logo (Bisa diganti img src) -->
-                <div style="font-size: 40px; font-weight: bold; color: #1e293b;">MO</div>
-            </div>
-            <div style="flex: 1; text-align: center;">
-                <h2 style="margin: 0; font-size: 16px; font-weight: normal;">YAYASAN PENDIDIKAN TEKNOLOGI INFORMASI</h2>
-                <h1 style="margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 1px;">SMK MASTER OFFICE</h1>
-                <p style="margin: 0; font-size: 11px; font-style: italic;">Jl. Pendidikan No. 123, Kota Anda, Provinsi Anda | Telp: (021) 1234567 | Email: info@masteroffice.sch.id</p>
-            </div>
-        </div>
-        
-        <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 16px;">REKAPITULASI KEHADIRAN SISWA</h3>
-        <p style="text-align: center; margin-bottom: 20px; font-size: 12px;">${infoText}</p>
-    `;
-
-    // Beri styling pada tabel clone agar muncul garis hitam di PDF
-    tableClone.setAttribute('border', '1');
+    // Persempit padding & font agar muat 40 baris di 1 lembar A4
     tableClone.style.width = '100%';
     tableClone.style.borderCollapse = 'collapse';
-    tableClone.style.fontSize = '11px';
-    tableClone.style.textAlign = 'left';
+    tableClone.style.fontSize = '10px'; 
+    tableClone.style.fontFamily = 'Arial, sans-serif';
+    
     tableClone.querySelectorAll('th, td').forEach(cell => {
         cell.style.border = '1px solid #000';
-        cell.style.padding = '6px';
+        cell.style.padding = '3px 5px'; // Padding super ketat
+        cell.style.textAlign = 'left';
     });
     tableClone.querySelectorAll('th').forEach(th => {
         th.style.backgroundColor = '#f3f4f6';
         th.style.textAlign = 'center';
+        th.style.fontWeight = 'bold';
     });
+
+    const element = document.createElement('div');
+    element.style.padding = '15px'; // Margin kertas
+    element.style.fontFamily = 'Arial, sans-serif';
+    element.style.color = '#000';
+    
+    // Desain Kop Surat SMKN 1 CIKARANG PUSAT
+    element.innerHTML = `
+        <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <!-- Logo Sekolah -->
+            <div style="width: 70px; text-align: center;">
+                <div style="font-size: 35px; font-weight: bold; color: #1e293b;">SMK</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <h2 style="margin: 0; font-size: 13px; font-weight: normal; font-family: Arial;">PEMERINTAH PROVINSI JAWA BARAT</h2>
+                <h2 style="margin: 0; font-size: 13px; font-weight: normal; font-family: Arial;">DINAS PENDIDIKAN</h2>
+                <h1 style="margin: 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; font-family: Arial;">SMK NEGERI 1 CIKARANG PUSAT</h1>
+                <p style="margin: 0; font-size: 9px; font-style: italic;">Jl. Raya Cikarang Pusat No. 1, Kab. Bekasi | Email: info@smkn1cikarangpusat.sch.id</p>
+            </div>
+        </div>
+        
+        <h3 style="text-align: center; text-decoration: underline; margin-bottom: 5px; font-size: 14px;">REKAPITULASI KEHADIRAN SISWA</h3>
+        <p style="text-align: center; margin-bottom: 15px; font-size: 11px;">Mata Pelajaran: Informatika | ${infoText}</p>
+    `;
 
     element.appendChild(tableClone);
 
-    // Desain Tanda Tangan
+    // Desain Tanda Tangan (Bekasi)
     element.innerHTML += `
-        <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-            <div style="text-align: center; width: 250px;">
-                <p style="margin: 0; font-size: 12px;">Kota Anda, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <p style="margin: 0; font-size: 12px;">Guru Pengajar,</p>
-                <div style="height: 60px;"></div>
-                <p style="margin: 0; font-size: 12px; font-weight: bold; text-decoration: underline;">Otib Subagja, S.Kom</p>
-                <p style="margin: 0; font-size: 12px;">NIP. 199302102025211112</p>
+        <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
+            <div style="text-align: center; width: 220px;">
+                <p style="margin: 0; font-size: 11px;">Bekasi, ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p style="margin: 0; font-size: 11px;">Guru Pengajar,</p>
+                <div style="height: 50px;"></div>
+                <p style="margin: 0; font-size: 11px; font-weight: bold; text-decoration: underline;">Otib Subagja, S.Kom</p>
+                <p style="margin: 0; font-size: 11px;">NIP. 199302102025211112</p>
             </div>
         </div>
     `;
 
     const opt = {
-        margin:       15, 
+        margin:       10, 
         filename:     `Rekap_Absensi_${todayStrAttendance}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Otomatis ke halaman 2 jika lebih
     };
 
     html2pdf().set(opt).from(element).save();
