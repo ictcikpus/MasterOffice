@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FINAL STABLE VERSION)
+// TASKS SYSTEM (FORCE DISPLAY VERSION)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,30 +13,11 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi pembersih HTML berbahaya
-function escapeHTML(str) {
-    if (!str) return "";
-    return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// Fungsi mengubah tag HTML jadi teks biasa
-function stripHtml(html) {
-    if (!html) return "";
-    let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || "";
-}
-
 // 1. INISIALISASI
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
-    // EVENT DELEGATION UNTUK TOMBOL
+    // Event Delegation untuk Tombol
     document.body.addEventListener('click', function(e) {
         if (e.target.closest('.btn-edit-guru')) {
             window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
@@ -66,12 +47,14 @@ function listenToFirebaseData() {
             if(statTugas) statTugas.innerText = allTasks.length;
         } catch (e) {}
 
-        forceRender();
+        // Beri jeda sedikit agar DOM siap
+        setTimeout(() => { forceRender(); }, 100);
+        
     }, error => console.error("❌ Error Firebase Tasks:", error));
 
     db.ref('submissions').on('value', snap => {
         allSubmissionsData = snap.val() || {};
-        forceRender(); 
+        setTimeout(() => { forceRender(); }, 100);
     });
 }
 
@@ -80,13 +63,23 @@ function forceRender() {
     if (document.getElementById('siswa-tugas-list')) renderSiswaTugas();
 }
 
+// Fungsi pembersih HTML
+function cleanText(html) {
+    if (!html) return "";
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    let text = tempDiv.textContent || tempDiv.innerText || "";
+    // Ganti karakter khusus agar tidak merusak HTML
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 // ==========================================
-// 2. FUNGSI GURU (TEMPLATE HTML DENGAN ESCAPE)
+// 2. FUNGSI GURU (FORCE DISPLAY)
 // ==========================================
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
     if(!container) return;
-    container.innerHTML = '';
+    container.innerHTML = ''; // Bersihkan wadah
 
     if (allTasks.length === 0) {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
@@ -96,17 +89,15 @@ window.renderGuruTugasList = function() {
         return;
     }
 
-    let htmlString = "";
-
+    // LOOPING SATU PER SATU (PAKSA TAMPIL)
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown_" + index;
-            const title = escapeHTML(t.title || "Tanpa Judul");
-            const deadline = escapeHTML(t.deadline || "-");
+            const title = cleanText(t.title || "Tanpa Judul");
+            const deadline = cleanText(t.deadline || "-");
             
-            let cleanDesc = stripHtml(t.desc);
+            let cleanDesc = cleanText(t.desc);
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
-            cleanDesc = escapeHTML(cleanDesc);
 
             let submittedCount = 0;
             for (const cls in allSubmissionsData) {
@@ -117,7 +108,7 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            htmlString += `
+            let cardHTML = `
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative">
                     <div>
                         <div class="flex justify-between items-start mb-2">
@@ -138,16 +129,18 @@ window.renderGuruTugasList = function() {
                     </div>
                 </div>
             `;
+            
+            // INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar
+            container.insertAdjacentHTML('beforeend', cardHTML);
+
         } catch (err) {
-            console.error(`❌ Gagal merender tugas guru ke-${index + 1}:`, err);
+            console.error(`❌ Gagal render tugas guru ke-${index + 1}:`, err);
         }
     });
-
-    container.innerHTML = htmlString;
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (TEMPLATE HTML DENGAN ESCAPE)
+// 3. FUNGSI SISWA (FORCE DISPLAY)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -165,20 +158,19 @@ function renderSiswaTugas() {
     }
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
-    let htmlString = "";
 
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown_" + index;
-            const title = escapeHTML(t.title || "Tanpa Judul");
-            const deadline = escapeHTML(t.deadline || "-");
-            const desc = escapeHTML(stripHtml(t.desc || "Tidak ada instruksi."));
+            const title = cleanText(t.title || "Tanpa Judul");
+            const deadline = cleanText(t.deadline || "-");
+            const desc = cleanText(t.desc || "Tidak ada instruksi.");
             
             const isSubmitted = mySubmissions[taskId];
             let statusHtml = "";
 
             if (isSubmitted && typeof isSubmitted === 'object') {
-                const submittedLink = escapeHTML(isSubmitted.link || "");
+                const submittedLink = isSubmitted.link || "";
                 
                 statusHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2">
@@ -198,7 +190,7 @@ function renderSiswaTugas() {
                 `;
             }
 
-            htmlString += `
+            let cardHTML = `
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
                         <h3 class="font-bold text-xl text-slate-800 pr-2">${title}</h3>
@@ -208,16 +200,18 @@ function renderSiswaTugas() {
                     <div class="flex justify-end">${statusHtml}</div>
                 </div>
             `;
+
+            // INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar
+            container.insertAdjacentHTML('beforeend', cardHTML);
+
         } catch (err) {
-            console.error(`❌ Gagal merender tugas siswa ke-${index + 1}:`, err);
+            console.error(`❌ Gagal render tugas siswa ke-${index + 1}:`, err);
         }
     });
-
-    container.innerHTML = htmlString;
 }
 
 // ==========================================
-// 4. FUNGSI LAINNYA (Modal, Edit, Hapus, Kumpul)
+// 4. FUNGSI LAINNYA
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
