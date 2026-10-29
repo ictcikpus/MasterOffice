@@ -180,13 +180,14 @@ window.generateCertificate = function(name, className, score, date) {
                     
                     <div class="footer">
                         <div class="signature">
-                            <p class="title">Master Office</p>
-                            <div class="signature-line"></div>
-                            <p>Administrator Sistem</p>
+                            <p class="title">Guru Pengajar,</p>
+                            <div class="signature-line" style="margin-top: 40px; margin-bottom: 10px;"></div>
+                            <p style="font-weight: bold; color: #0f172a; font-size: 1.1em;">Otib Subagja, S.Kom</p>
+                            <p>NIP. 199302102025211112</p>
                         </div>
                         <div class="signature">
                             <p class="title">Dicetak pada:</p>
-                            <div class="signature-line"></div>
+                            <div class="signature-line" style="margin-top: 40px; margin-bottom: 10px;"></div>
                             <p>${today}</p>
                         </div>
                     </div>
