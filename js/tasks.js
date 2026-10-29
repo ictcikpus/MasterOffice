@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (PURE FORCE DISPLAY - ANTI HILANG)
+// TASKS SYSTEM (PROVEN WORKING VERSION)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,31 +13,18 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi pembersih teks (Hanya buang tag berbahaya, pertahankan format rapi)
-function cleanHTML(html) {
-    if (!html) return "Tidak ada instruksi.";
-    let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    
-    // Buang script dan atribut berbahaya
-    tempDiv.querySelectorAll('script, style, iframe, object, embed').forEach(el => el.remove());
-    tempDiv.querySelectorAll('*').forEach(el => {
-        Array.from(el.attributes).forEach(attr => {
-            if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
-        });
-    });
-    
-    // Style paksa agar rata kiri dan rapi di HP
-    let clean = tempDiv.innerHTML;
-    clean = clean.replace(/<p>/g, '<p style="margin-bottom: 8px; text-align: left;">');
-    clean = clean.replace(/<ul>/g, '<ul style="list-style-type: disc; padding-left: 20px; margin-bottom: 8px; text-align: left;">');
-    clean = clean.replace(/<ol>/g, '<ol style="list-style-type: decimal; padding-left: 20px; margin-bottom: 8px; text-align: left;">');
-    clean = clean.replace(/<li>/g, '<li style="margin-bottom: 4px;">');
-    
-    return clean;
+// Fungsi escape untuk mencegah karakter aneh merusak HTML
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-// Teks murni untuk preview di Dashboard Guru
+// Fungsi memisahkan teks dari tag HTML (untuk preview)
 function stripHtml(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
@@ -90,7 +77,7 @@ function forceRender() {
 }
 
 // ==========================================
-// 2. FUNGSI GURU (FORCE DISPLAY)
+// 2. FUNGSI GURU (PAKSA TAMPIL)
 // ==========================================
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
@@ -110,16 +97,17 @@ window.renderGuruTugasList = function() {
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
-            const title = t.title || "Tanpa Judul";
-            const deadline = t.deadline || "-";
+            const title = escapeHTML(t.title || "Tanpa Judul");
+            const deadline = escapeHTML(t.deadline || "-");
             
             let cleanDesc = stripHtml(t.desc);
             if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
+            cleanDesc = escapeHTML(cleanDesc);
 
             let submittedCount = 0;
             for (const cls in allSubmissionsData) {
                 for (const name in allSubmissionsData[cls]) {
-                    if (allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
+                    if (allSubmissionsData[cls] && allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
                         submittedCount++;
                     }
                 }
@@ -147,7 +135,7 @@ window.renderGuruTugasList = function() {
                 </div>
             `;
             
-            // 🔥 PAKSA TAMPIL: Langsung tempel ke layar
+            // 🔥 INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar di dalam loop
             container.insertAdjacentHTML('beforeend', cardHTML);
 
         } catch (err) {
@@ -157,7 +145,7 @@ window.renderGuruTugasList = function() {
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (FORCE DISPLAY & RAPI)
+// 3. FUNGSI SISWA (PAKSA TAMPIL & RAPI)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -180,17 +168,18 @@ function renderSiswaTugas() {
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
-            const title = t.title || "Tanpa Judul";
-            const deadline = t.deadline || "-";
+            const title = escapeHTML(t.title || "Tanpa Judul");
+            const deadline = escapeHTML(t.deadline || "-");
             
-            // Ambil teks asli dan format rapi
-            const formattedDesc = cleanHTML(t.desc);
+            // Teks dirapikan rata kiri
+            const desc = escapeHTML(stripHtml(t.desc || "Tidak ada instruksi."));
             
             const isSubmitted = mySubmissions[taskId];
             let statusHtml = "";
 
             if (isSubmitted && typeof isSubmitted === 'object') {
-                const submittedLink = isSubmitted.link || "";
+                const submittedLink = escapeHTML(isSubmitted.link || "");
+                
                 statusHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2 mt-4">
                         <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
@@ -216,16 +205,14 @@ function renderSiswaTugas() {
                         <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
                     </div>
                     
-                    <!-- Teks Rapi Rata Kiri -->
-                    <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-2 overflow-hidden">
-                        ${formattedDesc}
-                    </div>
+                    <!-- Teks dirapikan -->
+                    <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-2 whitespace-pre-wrap">${desc}</div>
                     
                     ${statusHtml}
                 </div>
             `;
 
-            // 🔥 PAKSA TAMPIL: Langsung tempel ke layar
+            // 🔥 INI KUNCI "PAKSA TAMPIL"
             container.insertAdjacentHTML('beforeend', cardHTML);
 
         } catch (err) {
