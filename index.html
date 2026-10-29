@@ -309,9 +309,15 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="badges-container"></div>
         </div>
 
-        <!-- VIEW GURU: DASHBOARD -->
+                <!-- VIEW GURU: DASHBOARD -->
         <div id="view-guru-dashboard" class="view hidden">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Utama Guru</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-slate-800">Dashboard Utama Guru</h2>
+                <!-- TOMBOL PREVIEW SERTIFIKAT -->
+                <button onclick="previewCertificate()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition">
+                    <i class="fa-solid fa-award mr-1"></i> Preview Sertifikat
+                </button>
+            </div>
             
             <!-- Pengumuman -->
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-6">
