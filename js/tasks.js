@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (PROVEN WORKING VERSION)
+// TASKS SYSTEM (TEXT FORMATTING FIX)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -13,30 +13,53 @@ let currentEditTaskId = null;
 
 const todayStrTasks = new Date().toISOString().split('T')[0];
 
-// Fungsi escape untuk mencegah karakter aneh merusak HTML
-function escapeHTML(str) {
-    if (!str) return "";
-    return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// Fungsi memisahkan teks dari tag HTML (untuk preview)
-function stripHtml(html) {
+// Fungsi membersihkan teks (Tetap dipertahankan untuk Preview Guru)
+function cleanText(html) {
     if (!html) return "";
     let tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
+// 🔥 FUNGSI BARU: Merapikan teks Tugas Siswa (Rata Kiri, Jarak Pas)
+function formatTaskDesc(html) {
+    if (!html) return "Tidak ada instruksi.";
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+
+    // Hapus script berbahaya
+    tempDiv.querySelectorAll('script, style, iframe, object, embed').forEach(el => el.remove());
+    
+    // Paksa teks rata kiri dan beri jarak baris yang nyaman
+    tempDiv.style.textAlign = 'left';
+    tempDiv.style.lineHeight = '1.6';
+
+    // Beri jarak antar paragraf
+    tempDiv.querySelectorAll('p').forEach(p => {
+        p.style.marginBottom = '12px';
+    });
+
+    // Beri jarak dan format daftar (poin-poin / angka)
+    tempDiv.querySelectorAll('ul, ol').forEach(list => {
+        list.style.paddingLeft = '20px';
+        list.style.marginBottom = '12px';
+        list.style.textAlign = 'left';
+        if (list.tagName.toLowerCase() === 'ul') list.style.listStyleType = 'disc';
+        if (list.tagName.toLowerCase() === 'ol') list.style.listStyleType = 'decimal';
+    });
+
+    tempDiv.querySelectorAll('li').forEach(li => {
+        li.style.marginBottom = '4px';
+    });
+
+    return tempDiv.innerHTML;
+}
+
+
 // 1. INISIALISASI
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
-    // Event Delegation untuk Tombol
     document.body.addEventListener('click', function(e) {
         if (e.target.closest('.btn-edit-guru')) window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
         if (e.target.closest('.btn-hapus-guru')) window.hapusTugas(e.target.closest('.btn-hapus-guru').dataset.id);
@@ -52,10 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
+    console.log("⏳ Menarik data Tugas...");
     db.ref('tasks').on('value', snap => {
         allTasks = [];
-        snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
+        snap.forEach(child => {
+            allTasks.push({ id: child.key, ...child.val() });
+        });
         allTasks.reverse(); 
+        
+        console.log(`✅ Berhasil menarik ${allTasks.length} Tugas dari Firebase.`);
         
         try {
             const statTugas = document.getElementById('stat-tugas');
@@ -77,13 +105,13 @@ function forceRender() {
 }
 
 // ==========================================
-// 2. FUNGSI GURU (PAKSA TAMPIL)
+// 2. FUNGSI GURU (TAMPILAN KARTU)
 // ==========================================
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
     if(!container) return;
     
-    container.innerHTML = ''; // Kosongkan wadah awal
+    container.innerHTML = '';
 
     if (allTasks.length === 0) {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
@@ -93,21 +121,20 @@ window.renderGuruTugasList = function() {
         return;
     }
 
-    // LOOPING & PAKSA TAMPIL SATU PER SATU
+    let cardsHTML = [];
+
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
-            const title = escapeHTML(t.title || "Tanpa Judul");
-            const deadline = escapeHTML(t.deadline || "-");
-            
-            let cleanDesc = stripHtml(t.desc);
-            if(cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + "...";
-            cleanDesc = escapeHTML(cleanDesc);
+            const title = cleanText(t.title || "Tanpa Judul");
+            const deadline = cleanText(t.deadline || "-");
+            let desc = cleanText(t.desc || "");
+            if(desc.length > 100) desc = desc.substring(0, 100) + "...";
 
             let submittedCount = 0;
             for (const cls in allSubmissionsData) {
                 for (const name in allSubmissionsData[cls]) {
-                    if (allSubmissionsData[cls] && allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
+                    if (allSubmissionsData[cls][name] && allSubmissionsData[cls][name][taskId]) {
                         submittedCount++;
                     }
                 }
@@ -120,7 +147,7 @@ window.renderGuruTugasList = function() {
                             <h3 class="font-bold text-lg text-slate-800 leading-tight pr-2">${title}</h3>
                             <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${deadline}</span>
                         </div>
-                        <p class="text-sm text-slate-500 mt-2">${cleanDesc}</p>
+                        <p class="text-sm text-slate-500 mt-2">${desc}</p>
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
                         <div class="text-sm font-bold text-emerald-600">
@@ -134,18 +161,19 @@ window.renderGuruTugasList = function() {
                     </div>
                 </div>
             `;
-            
-            // 🔥 INI KUNCI "PAKSA TAMPIL": Langsung tempel ke layar di dalam loop
-            container.insertAdjacentHTML('beforeend', cardHTML);
 
+            cardsHTML.push(cardHTML); 
+            
         } catch (err) {
             console.error(`❌ Gagal render tugas guru ke-${index + 1}:`, err);
         }
     });
+
+    container.innerHTML = cardsHTML.join('');
 };
 
 // ==========================================
-// 3. FUNGSI SISWA (PAKSA TAMPIL & RAPI)
+// 3. FUNGSI SISWA (TAMPILAN DENGAN TEKS RAPI)
 // ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
@@ -163,25 +191,24 @@ function renderSiswaTugas() {
     }
 
     const mySubmissions = allSubmissionsData[studentClass]?.[studentName] || {};
+    let cardsHTML = [];
 
-    // LOOPING & PAKSA TAMPIL SATU PER SATU
     allTasks.forEach((t, index) => {
         try {
             const taskId = t.id || "unknown";
-            const title = escapeHTML(t.title || "Tanpa Judul");
-            const deadline = escapeHTML(t.deadline || "-");
+            const title = cleanText(t.title || "Tanpa Judul");
+            const deadline = cleanText(t.deadline || "-");
             
-            // Teks dirapikan rata kiri
-            const desc = escapeHTML(stripHtml(t.desc || "Tidak ada instruksi."));
+            // 🔥 MENGGUNAKAN FUNGSI FORMAT BARU
+            const desc = formatTaskDesc(t.desc);
             
             const isSubmitted = mySubmissions[taskId];
             let statusHtml = "";
 
             if (isSubmitted && typeof isSubmitted === 'object') {
-                const submittedLink = escapeHTML(isSubmitted.link || "");
-                
+                const submittedLink = isSubmitted.link || "";
                 statusHtml = `
-                    <div class="flex flex-wrap items-center justify-end gap-2 mt-4">
+                    <div class="flex flex-wrap items-center justify-end gap-2">
                         <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Sudah Dikumpulkan</span>
                         <button data-id="${taskId}" data-title="${title}" data-link="${submittedLink}" class="btn-kumpul-siswa bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition">
                             <i class="fa-solid fa-pen mr-1"></i> Edit Tugas
@@ -190,7 +217,7 @@ function renderSiswaTugas() {
                 `;
             } else {
                 statusHtml = `
-                    <div class="flex flex-wrap items-center justify-end gap-2 mt-4">
+                    <div class="flex flex-wrap items-center justify-end gap-2">
                         <button data-id="${taskId}" data-title="${title}" class="btn-kumpul-siswa bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition">
                             <i class="fa-solid fa-paper-plane mr-1"></i> Kumpulkan Tugas
                         </button>
@@ -198,27 +225,29 @@ function renderSiswaTugas() {
                 `;
             }
 
+            // 🔥 PENYESUAIAN KELAS CSS PADA DIV DESC
             let cardHTML = `
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm mb-4 overflow-hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 border-b border-slate-100 pb-3">
-                        <h3 class="font-bold text-lg md:text-xl text-slate-800 pr-2">${title}</h3>
+                        <h3 class="font-bold text-xl text-slate-800 pr-2">${title}</h3>
                         <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap"><i class="fa-regular fa-clock mr-1"></i> Tenggat: ${deadline}</span>
                     </div>
                     
-                    <!-- Teks dirapikan -->
-                    <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-2 whitespace-pre-wrap">${desc}</div>
+                    <!-- Teks deskripsi diubah menjadi text-left dan ukuran nyaman -->
+                    <div class="text-slate-700 text-sm md:text-base leading-relaxed text-left mb-5 overflow-hidden">${desc}</div>
                     
-                    ${statusHtml}
+                    <div class="flex justify-end">${statusHtml}</div>
                 </div>
             `;
-
-            // 🔥 INI KUNCI "PAKSA TAMPIL"
-            container.insertAdjacentHTML('beforeend', cardHTML);
+            
+            cardsHTML.push(cardHTML);
 
         } catch (err) {
             console.error(`❌ Gagal render tugas siswa ke-${index + 1}:`, err);
         }
     });
+
+    container.innerHTML = cardsHTML.join('');
 }
 
 // ==========================================
