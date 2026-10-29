@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (Full Program + Debugging)
+// TASKS SYSTEM (Full Program + Safe Stat Update)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -26,23 +26,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function listenToFirebaseData() {
-    // 🔥 TAMBAHAN: Console log untuk melihat apakah data ditarik dari Firebase
-    console.log("⏳ Mencoba menarik data Tugas dari Firebase...");
-    
     db.ref('tasks').on('value', snap => {
         allTasks = [];
         snap.forEach(child => allTasks.push({ id: child.key, ...child.val() }));
         allTasks.reverse(); 
         
-        console.log(`✅ BERHASIL MENARIK DATA! Total ada ${allTasks.length} Tugas di database.`);
-        console.log(allTasks); // Tampilkan isi tugas di console
+        console.log(`✅ Data Tugas diperbarui. Total: ${allTasks.length} tugas.`);
 
-        const statTugas = document.getElementById('stat-tugas');
-        if(statTugas) statTugas.innerText = allTasks.length;
+        // 🔥 PENGAMAN: Update angka statistik
+        try {
+            const statTugas = document.getElementById('stat-tugas');
+            if(statTugas) statTugas.innerText = allTasks.length;
+        } catch (e) {
+            console.error("Gagal update stat tugas:", e);
+        }
         
         forceRender();
     }, error => {
-        console.error("❌ GAGAL MENARIK DATA TUGAS:", error);
+        console.error("❌ Gagal membaca data Tugas:", error);
     });
 
     db.ref('submissions').on('value', snap => {
@@ -59,7 +60,10 @@ function forceRender() {
 // ==========================================
 // 2. FUNGSI GURU (CRUD)
 // ==========================================
-window.initTeacherTasks = function() { forceRender(); };
+window.initTeacherTasks = function() { 
+    // Fungsi ini dipanggil oleh auth.js saat login guru
+    forceRender(); 
+};
 
 window.openBuatTugasModal = function() {
     currentEditTaskId = null;
@@ -140,7 +144,7 @@ window.renderGuruTugasList = function() {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
             <i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i>
             <span class="font-bold text-lg">Daftar Tugas Kosong!</span><br>
-            <span class="text-sm">Data mungkin terhapus di Firebase atau belum dibuat. Silakan klik "Buat Tugas Baru".</span>
+            <span class="text-sm">Silakan klik tombol "Buat Tugas Baru" di atas.</span>
         </div>`;
         return;
     }
@@ -193,6 +197,7 @@ window.renderGuruTugasList = function() {
     container.innerHTML = htmlString;
 };
 
+// (Fungsi openLihatPengumpulan, renderModalPengumpulan, renderSiswaTugas, openKumpulTugasModal, prosesKumpulTugas, uploadFileToDrive, saveSubmissionToFirebase tetap SAMA seperti sebelumnya)
 window.openLihatPengumpulan = function(taskId, title) {
     currentViewingTaskId = taskId;
     document.getElementById('lihat-pengumpulan-title').innerText = title;
@@ -232,9 +237,6 @@ window.renderModalPengumpulan = function() {
     }
 };
 
-// ==========================================
-// 3. FUNGSI SISWA
-// ==========================================
 function renderSiswaTugas() {
     const container = document.getElementById('siswa-tugas-list');
     if(!container) return;
