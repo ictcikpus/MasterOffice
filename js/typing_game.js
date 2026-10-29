@@ -1,5 +1,5 @@
 // ==========================================
-// TYPING GAME 10 JARI (US Keyboard)
+// TYPING GAME 10 JARI (Responsive UI)
 // ==========================================
 
 const typingTexts = [
@@ -13,19 +13,22 @@ const typingTexts = [
 let typingTargetText = "";
 let typingTimer = null;
 let typingTimeLeft = 60;
-let typingStartTime = null;
 let typingErrors = 0;
 let typingTotalTyped = 0;
 let typingIsPlaying = false;
 
 function startTypingGame() {
     document.body.classList.add('hide-nav');
-    document.getElementById('arena-menu').classList.add('hidden');
-    document.getElementById('shortcut-game-container').classList.add('hidden');
-    document.getElementById('quiz-game-container').classList.add('hidden');
-    document.getElementById('typing-game-container').classList.remove('hidden');
+    const arenaMenu = document.getElementById('arena-menu');
+    const shortcutContainer = document.getElementById('shortcut-game-container');
+    const quizContainer = document.getElementById('quiz-game-container');
+    const typingContainer = document.getElementById('typing-game-container');
+    
+    if(arenaMenu) arenaMenu.classList.add('hidden');
+    if(shortcutContainer) shortcutContainer.classList.add('hidden');
+    if(quizContainer) quizContainer.classList.add('hidden');
+    if(typingContainer) typingContainer.classList.remove('hidden');
 
-    // Reset State
     typingTargetText = typingTexts[Math.floor(Math.random() * typingTexts.length)];
     typingTimeLeft = 60;
     typingErrors = 0;
@@ -38,27 +41,32 @@ function startTypingGame() {
     inputEl.value = "";
     inputEl.disabled = false;
     
-    // Render Teks Target
     const display = document.getElementById('typing-text-display');
-    display.innerHTML = "";
-    typingTargetText.split("").forEach((char, index) => {
-        const span = document.createElement('span');
-        span.innerText = char;
-        span.id = `char-${index}`;
-        span.className = "text-slate-500";
-        display.appendChild(span);
-    });
+    if(display) {
+        display.innerHTML = "";
+        typingTargetText.split("").forEach((char, index) => {
+            const span = document.createElement('span');
+            span.innerText = char;
+            span.id = `char-${index}`;
+            span.className = "text-slate-500";
+            display.appendChild(span);
+        });
+    }
 
-    document.getElementById('typing-time').innerText = `${typingTimeLeft}s`;
-    document.getElementById('typing-wpm').innerText = "0";
-    document.getElementById('typing-acc').innerText = "100%";
+    const timeEl = document.getElementById('typing-time');
+    const wpmEl = document.getElementById('typing-wpm');
+    const accEl = document.getElementById('typing-acc');
+    
+    if(timeEl) timeEl.innerText = `${typingTimeLeft}s`;
+    if(wpmEl) wpmEl.innerText = "0";
+    if(accEl) accEl.innerText = "100%";
     
     inputEl.focus();
     
     clearInterval(typingTimer);
     typingTimer = setInterval(() => {
         typingTimeLeft--;
-        document.getElementById('typing-time').innerText = `${typingTimeLeft}s`;
+        if(timeEl) timeEl.innerText = `${typingTimeLeft}s`;
         
         if (typingTimeLeft <= 0) {
             endTypingGame();
@@ -94,12 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const accuracy = typedText.length > 0 ? Math.round(((typedText.length - typingErrors) / typedText.length) * 100) : 100;
-            document.getElementById('typing-acc').innerText = `${accuracy}%`;
+            const accEl = document.getElementById('typing-acc');
+            if(accEl) accEl.innerText = `${accuracy}%`;
             
             const timeElapsedMins = (60 - typingTimeLeft) / 60;
             if (timeElapsedMins > 0.05) {
                 const wpm = Math.round((typedText.length / 5) / timeElapsedMins);
-                document.getElementById('typing-wpm').innerText = wpm;
+                const wpmEl = document.getElementById('typing-wpm');
+                if(wpmEl) wpmEl.innerText = wpm;
             }
 
             if (typedText === typingTargetText) {
@@ -108,23 +118,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event Listener Virtual Keyboard
     document.querySelectorAll('#typing-game-container .key').forEach(key => {
         key.addEventListener('click', (e) => {
             if (!typingIsPlaying) return;
             const keyValue = e.target.getAttribute('data-key');
-            const inputEl = document.getElementById('typing-input');
+            const inputEl2 = document.getElementById('typing-input');
+            if(!inputEl2) return;
             
             if (keyValue === "Backspace") {
-                inputEl.value = inputEl.value.slice(0, -1);
+                inputEl2.value = inputEl2.value.slice(0, -1);
             } else if (keyValue === " " || keyValue === "Space") {
-                inputEl.value += " ";
+                inputEl2.value += " ";
             } else if (keyValue.length === 1) {
-                inputEl.value += keyValue.toLowerCase(); 
+                inputEl2.value += keyValue.toLowerCase(); 
             }
             
-            inputEl.dispatchEvent(new Event('input'));
-            inputEl.focus();
+            inputEl2.dispatchEvent(new Event('input'));
+            inputEl2.focus();
         });
     });
 });
@@ -132,10 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function endTypingGame(isFinished = false) {
     typingIsPlaying = false;
     clearInterval(typingTimer);
-    document.getElementById('typing-input').disabled = true;
+    const inputEl = document.getElementById('typing-input');
+    if(inputEl) inputEl.disabled = true;
     
-    const finalWpm = parseInt(document.getElementById('typing-wpm').innerText) || 0;
-    const finalAcc = parseInt(document.getElementById('typing-acc').innerText) || 0;
+    const finalWpm = parseInt(document.getElementById('typing-wpm')?.innerText) || 0;
+    const finalAcc = parseInt(document.getElementById('typing-acc')?.innerText) || 0;
 
     if (isFinished) {
         alert(`🎉 Luar Biasa! Anda menyelesaikan teks ini.\n\nKecepatan: ${finalWpm} WPM\nAkurasi: ${finalAcc}%`);
