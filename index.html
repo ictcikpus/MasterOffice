@@ -25,14 +25,6 @@
         body.hide-nav header { display: none !important; }
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        
-        /* CSS Khusus untuk Typing Game */
-        .typing-text-area { cursor: text; }
-        .typing-text-area:focus { outline: none; }
-        .virtual-keyboard { display: none; } /* Sembunyikan di mobile */
-        @media (min-width: 768px) {
-            .virtual-keyboard { display: block; } /* Munculkan di desktop */
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-20 md:pb-0 md:pl-64 transition-all duration-300">
@@ -206,70 +198,9 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- GAME SHORTCUT -->
-            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl text-center relative overflow-hidden">
-                    <h2 class="text-xl font-bold text-slate-800 mb-2">Latihan Shortcut</h2>
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="shortcut-score">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="shortcut-q-count">1/5</span></div>
-                    </div>
-                    <div class="mb-8">
-                        <p class="text-xs font-bold text-emerald-500 mb-2 uppercase tracking-wide">Apa shortcut untuk:</p>
-                        <h3 class="text-2xl font-extrabold text-slate-800" id="shortcut-question">Copy</h3>
-                        <div id="shortcut-feedback" class="mt-2 h-6 text-sm font-bold"></div>
-                    </div>
-                    <div class="bg-slate-800 p-3 rounded-2xl shadow-inner inline-block w-full select-none" id="shortcut-keyboard"></div>
-                </div>
-            </div>
-
-            <!-- GAME KUIS -->
-            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-6 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Skor</span><span class="text-xl font-bold text-emerald-600" id="quiz-score">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Soal</span><span class="text-xl font-bold text-slate-700" id="quiz-q-count">1/5</span></div>
-                    </div>
-                    <div id="quiz-content"></div>
-                </div>
-            </div>
-
-            <!-- GAME TYPING (RESPONSIVE) -->
-            <div id="typing-game-container" class="hidden max-w-4xl mx-auto">
-                <button onclick="closeGame()" class="mb-4 text-sm font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu</button>
-                <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl">
-                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
-                        <div class="text-left"><span class="block text-xs font-bold text-slate-400 uppercase">Waktu</span><span class="text-xl font-bold text-rose-600" id="typing-time">60s</span></div>
-                        <div class="text-center"><span class="block text-xs font-bold text-slate-400 uppercase">WPM</span><span class="text-xl font-bold text-sky-600" id="typing-wpm">0</span></div>
-                        <div class="text-right"><span class="block text-xs font-bold text-slate-400 uppercase">Akurasi</span><span class="text-xl font-bold text-emerald-600" id="typing-acc">100%</span></div>
-                    </div>
-                    
-                    <!-- Instruksi Mobile -->
-                    <p class="text-center text-xs text-slate-400 mb-2 md:hidden"><i class="fa-solid fa-mobile-screen"></i> Ketuk teks di bawah untuk memunculkan keyboard HP Anda.</p>
-
-                    <!-- Area Teks -->
-                    <div id="typing-text-display" class="typing-text-area bg-slate-100 p-4 rounded-xl mb-4 text-lg font-mono leading-relaxed outline-none" onclick="document.getElementById('typing-input').focus()"></div>
-                    
-                    <!-- Input Hidden -->
-                    <input type="text" id="typing-input" class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4 opacity-0 absolute -z-10" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-
-                    <!-- Virtual Keyboard (Hanya tampil di Desktop) -->
-                    <div class="virtual-keyboard bg-slate-800 p-2 rounded-2xl shadow-inner w-full">
-                        <div class="flex flex-col gap-1 items-center w-full">
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-1 max-w-[40px]" data-key="`">~</kbd><kbd class="key flex-1 max-w-[40px]" data-key="1">1</kbd><kbd class="key flex-1 max-w-[40px]" data-key="2">2</kbd><kbd class="key flex-1 max-w-[40px]" data-key="3">3</kbd><kbd class="key flex-1 max-w-[40px]" data-key="4">4</kbd><kbd class="key flex-1 max-w-[40px]" data-key="5">5</kbd><kbd class="key flex-1 max-w-[40px]" data-key="6">6</kbd><kbd class="key flex-1 max-w-[40px]" data-key="7">7</kbd><kbd class="key flex-1 max-w-[40px]" data-key="8">8</kbd><kbd class="key flex-1 max-w-[40px]" data-key="9">9</kbd><kbd class="key flex-1 max-w-[40px]" data-key="0">0</kbd><kbd class="key flex-1 max-w-[40px]" data-key="-">-</kbd><kbd class="key flex-1 max-w-[40px]" data-key="=">=</kbd><kbd class="key flex-[2]" data-key="Backspace">Backspace</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[1.5]" data-key="Tab">Tab</kbd><kbd class="key flex-1" data-key="Q">Q</kbd><kbd class="key flex-1" data-key="W">W</kbd><kbd class="key flex-1" data-key="E">E</kbd><kbd class="key flex-1" data-key="R">R</kbd><kbd class="key flex-1" data-key="T">T</kbd><kbd class="key flex-1" data-key="Y">Y</kbd><kbd class="key flex-1" data-key="U">U</kbd><kbd class="key flex-1" data-key="I">I</kbd><kbd class="key flex-1" data-key="O">O</kbd><kbd class="key flex-1" data-key="P">P</kbd><kbd class="key flex-1" data-key="[">[</kbd><kbd class="key flex-1" data-key="]">]</kbd><kbd class="key flex-[1.5]" data-key="\">\</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[2]" data-key="CapsLock">Caps</kbd><kbd class="key flex-1" data-key="A">A</kbd><kbd class="key flex-1" data-key="S">S</kbd><kbd class="key flex-1" data-key="D">D</kbd><kbd class="key flex-1" data-key="F">F</kbd><kbd class="key flex-1" data-key="G">G</kbd><kbd class="key flex-1" data-key="H">H</kbd><kbd class="key flex-1" data-key="J">J</kbd><kbd class="key flex-1" data-key="K">K</kbd><kbd class="key flex-1" data-key="L">L</kbd><kbd class="key flex-1" data-key=";">;</kbd><kbd class="key flex-1" data-key="'">'</kbd><kbd class="key flex-[2]" data-key="Enter">Enter</kbd></div>
-                            <div class="flex gap-1 w-full justify-center"><kbd class="key flex-[2.5]" data-key="ShiftLeft">Shift</kbd><kbd class="key flex-1" data-key="Z">Z</kbd><kbd class="key flex-1" data-key="X">X</kbd><kbd class="key flex-1" data-key="C">C</kbd><kbd class="key flex-1" data-key="V">V</kbd><kbd class="key flex-1" data-key="B">B</kbd><kbd class="key flex-1" data-key="N">N</kbd><kbd class="key flex-1" data-key="M">M</kbd><kbd class="key flex-1" data-key=",">,</kbd><kbd class="key flex-1" data-key=".">.</kbd><kbd class="key flex-1" data-key="/">/</kbd><kbd class="key flex-[2.5]" data-key="ShiftRight">Shift</kbd></div>
-                            <div class="flex gap-1 w-full justify-center mt-1"><kbd class="key flex-1 max-w-sm" data-key=" ">Space</kbd></div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="startTypingGame()" class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold shadow-lg transition">Mulai Ulang Latihan</button>
-                </div>
-            </div>
+            <div id="shortcut-game-container" class="hidden max-w-2xl mx-auto"></div>
+            <div id="quiz-game-container" class="hidden max-w-2xl mx-auto"></div>
+            <div id="typing-game-container" class="hidden max-w-3xl mx-auto"></div>
         </div>
 
         <!-- VIEW SISWA: TUGAS -->
@@ -309,17 +240,15 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="badges-container"></div>
         </div>
 
-                <!-- VIEW GURU: DASHBOARD -->
+        <!-- VIEW GURU: DASHBOARD -->
         <div id="view-guru-dashboard" class="view hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold text-slate-800">Dashboard Utama Guru</h2>
-                <!-- TOMBOL PREVIEW SERTIFIKAT -->
                 <button onclick="previewCertificate()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition">
                     <i class="fa-solid fa-award mr-1"></i> Preview Sertifikat
                 </button>
             </div>
             
-            <!-- Pengumuman -->
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm mb-6">
                 <h3 class="font-bold text-slate-800 mb-3"><i class="fa-solid fa-bullhorn text-amber-500 mr-2"></i> Buat Pengumuman</h3>
                 <div class="flex gap-2">
@@ -327,8 +256,6 @@
                     <button onclick="kirimPengumuman()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Kirim</button>
                 </div>
             </div>
-
-            <!-- Statistik -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
@@ -341,8 +268,7 @@
                     <p class="text-sm text-slate-500">Tugas Aktif</p>
                 </div>
             </div>
-
-            <!-- LEADERBOARD GURU (BARU) -->
+            
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
                 <h3 class="font-bold text-slate-800 mb-4"><i class="fa-solid fa-ranking-star text-amber-500 mr-2"></i> Peringkat Siswa (Top 10)</h3>
                 <div id="teacher-leaderboard-list" class="space-y-3">
@@ -398,12 +324,26 @@
     </main>
 
     <!-- 6. BOTTOM NAV (MOBILE) -->
+    <!-- 🔥 PERBAIKAN: Menu Absen dimunculkan kembali -->
     <nav id="bottom-nav-siswa" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
-        <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Home</span></button>
-        <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-book-open text-lg mb-1"></i><span class="text-[10px] font-semibold">Materi</span></button>
-        <button onclick="navigate('arena')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-gamepad text-lg mb-1"></i><span class="text-[10px] font-semibold">Arena</span></button>
-        <button onclick="navigate('tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-file-pen text-lg mb-1"></i><span class="text-[10px] font-semibold">Tugas</span></button>
-        <button onclick="navigate('profil')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-user-astronaut text-lg mb-1"></i><span class="text-[10px] font-semibold">Profil</span></button>
+        <button onclick="navigate('home')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-emerald-600">
+            <i class="fa-solid fa-house text-base mb-1"></i><span class="text-[9px] font-semibold">Home</span>
+        </button>
+        <button onclick="navigate('materi')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-book-open text-base mb-1"></i><span class="text-[9px] font-semibold">Materi</span>
+        </button>
+        <button onclick="navigate('arena')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-gamepad text-base mb-1"></i><span class="text-[9px] font-semibold">Arena</span>
+        </button>
+        <button onclick="navigate('tugas')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-file-pen text-base mb-1"></i><span class="text-[9px] font-semibold">Tugas</span>
+        </button>
+        <button onclick="navigate('absen')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-clipboard-user text-base mb-1"></i><span class="text-[9px] font-semibold">Absen</span>
+        </button>
+        <button onclick="navigate('profil')" class="bottom-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-user-astronaut text-base mb-1"></i><span class="text-[9px] font-semibold">Profil</span>
+        </button>
     </nav>
 
     <nav id="bottom-nav-guru" class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden">
