@@ -1,5 +1,5 @@
 // ==========================================
-// TASKS SYSTEM (FINAL DOM API VERSION - CLEAN)
+// TASKS SYSTEM (PURE DOM API - ULTIMATE SAFE)
 // ==========================================
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxu2pRUrXHIex2xABFFANCxvrhWHialnwst3e3VPHZBl9arG8WAWRmcj_U_eFAGWOEZCA/exec";
@@ -17,7 +17,7 @@ const todayStrTasks = new Date().toISOString().split('T')[0];
 document.addEventListener("DOMContentLoaded", () => {
     listenToFirebaseData();
     
-    // EVENT DELEGATION UNTUK TOMBOL (Sangat Aman)
+    // Event Delegation untuk Tombol (Menghindari error onclick)
     document.body.addEventListener('click', function(e) {
         if (e.target.closest('.btn-edit-guru')) {
             window.editTugas(e.target.closest('.btn-edit-guru').dataset.id);
@@ -67,7 +67,7 @@ function forceRender() {
 window.renderGuruTugasList = function() {
     const container = document.getElementById('guru-tugas-list');
     if(!container) return;
-    container.innerHTML = '';
+    container.innerHTML = ''; // Bersihkan wadah
 
     if (allTasks.length === 0) {
         container.innerHTML = `<div class="col-span-full p-8 text-center bg-rose-50 text-rose-600 border border-rose-200 rounded-lg">
@@ -83,7 +83,7 @@ window.renderGuruTugasList = function() {
             const title = t.title || "Tanpa Judul";
             const deadline = t.deadline || "-";
             
-            // Bersihkan deskripsi dari HTML
+            // Bersihkan deskripsi HTML menjadi Teks Biasa
             let tempDiv = document.createElement("div");
             tempDiv.innerHTML = t.desc || "";
             let cleanDesc = tempDiv.textContent || tempDiv.innerText || "";
@@ -98,11 +98,11 @@ window.renderGuruTugasList = function() {
                 }
             }
 
-            // Buat Card dengan DOM API
+            // 1. Buat Kotak (Card) menggunakan document.createElement
             const card = document.createElement('div');
             card.className = "bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
             
-            // Layout HTML statis
+            // 2. Buat kerangka HTML statis (hanya struktur, tanpa data user)
             card.innerHTML = `
                 <div>
                     <div class="flex justify-between items-start mb-2">
@@ -119,11 +119,11 @@ window.renderGuruTugasList = function() {
                 </div>
             `;
 
-            // Masukkan teks menggunakan textContent (Anti-Rusak)
+            // 3. Masukkan data user menggunakan textContent (Anti-XSS)
             card.querySelector('.title-target').textContent = title;
             card.querySelector('.desc-target').textContent = cleanDesc;
 
-            // Buat Tombol
+            // 4. Buat Tombol dan masukkan ke dalam action-target
             const actionContainer = card.querySelector('.action-target');
             
             const btnEdit = document.createElement('button');
@@ -145,10 +145,11 @@ window.renderGuruTugasList = function() {
             btnRekap.dataset.title = title;
             actionContainer.appendChild(btnRekap);
 
+            // 5. Tempelkan Card ke layar
             container.appendChild(card);
 
         } catch (err) {
-            console.error(`❌ Gagal render tugas ke-${index + 1}:`, err);
+            console.error("Gagal render guru:", err);
         }
     });
 };
@@ -229,13 +230,13 @@ function renderSiswaTugas() {
             container.appendChild(card);
 
         } catch (err) {
-            console.error(`❌ Gagal render tugas siswa ke-${index + 1}:`, err);
+            console.error("Gagal render siswa:", err);
         }
     });
 }
 
 // ==========================================
-// 4. FUNGSI LAINNYA (Modal, Edit, Hapus, Kumpul)
+// 4. FUNGSI PENDUKUNG LAINNYA (Modal, Edit, Hapus, dll)
 // ==========================================
 window.initTeacherTasks = function() { forceRender(); };
 
