@@ -19,15 +19,23 @@ var userKeysPressed = [];
 
 function startShortcutGame() {
     document.body.classList.add('hide-nav');
-    document.getElementById('arena-menu').classList.add('hidden');
-    document.getElementById('quiz-game-container').classList.add('hidden');
-    document.getElementById('typing-game-container').classList.add('hidden');
-    document.getElementById('shortcut-game-container').classList.remove('hidden');
+    
+    const arenaMenu = document.getElementById('arena-menu');
+    const quizContainer = document.getElementById('quiz-game-container');
+    const typingContainer = document.getElementById('typing-game-container');
+    const shortcutContainer = document.getElementById('shortcut-game-container');
+    
+    if(arenaMenu) arenaMenu.classList.add('hidden');
+    if(quizContainer) quizContainer.classList.add('hidden');
+    if(typingContainer) typingContainer.classList.add('hidden');
+    if(shortcutContainer) shortcutContainer.classList.remove('hidden');
     
     currentShortcutIndex = 0; shortcutScore = 0;
-    document.getElementById('shortcut-score').innerText = shortcutScore;
     
-    // Render Virtual Keyboard secara dinamis
+    const scoreEl = document.getElementById('shortcut-score');
+    if(scoreEl) scoreEl.innerText = shortcutScore;
+    
+    // Render Virtual Keyboard
     const kbContainer = document.getElementById('shortcut-keyboard');
     if(kbContainer) {
         kbContainer.innerHTML = `
@@ -37,7 +45,6 @@ function startShortcutGame() {
             <div class="flex justify-center gap-1"><kbd class="key w-16" data-key="Ctrl">Ctrl</kbd><kbd class="key w-12" data-key="Alt">Alt</kbd><kbd class="key w-32" data-key="Space">Space</kbd><kbd class="key w-14" data-key="Shift">Shift</kbd><kbd class="key w-16" data-key="Enter">Enter</kbd></div>
         `;
         
-        // Event listener untuk keyboard
         document.querySelectorAll('#shortcut-keyboard .key').forEach(key => {
             key.addEventListener('click', (e) => {
                 var keyValue = e.target.getAttribute('data-key');
@@ -53,17 +60,19 @@ function startShortcutGame() {
                     if (userKeysPressed[i] !== correctAnswer[i]) { isMatch = false; break; }
                 }
                 
+                const feedbackEl = document.getElementById('shortcut-feedback');
                 if (!isMatch) {
-                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah!</span>';
-                    setTimeout(() => { userKeysPressed = []; document.getElementById('shortcut-feedback').innerHTML = ""; }, 1000);
+                    if(feedbackEl) feedbackEl.innerHTML = '<span class="text-rose-500 animate-shake inline-block"><i class="fa-solid fa-xmark"></i> Salah!</span>';
+                    setTimeout(() => { userKeysPressed = []; if(feedbackEl) feedbackEl.innerHTML = ""; }, 1000);
                 } else if (userKeysPressed.length === correctAnswer.length) {
                     shortcutScore += 10;
-                    document.getElementById('shortcut-score').innerText = shortcutScore;
-                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>';
+                    const scoreEl2 = document.getElementById('shortcut-score');
+                    if(scoreEl2) scoreEl2.innerText = shortcutScore;
+                    if(feedbackEl) feedbackEl.innerHTML = '<span class="text-emerald-500 animate-pop inline-block"><i class="fa-solid fa-check"></i> Benar! +10</span>';
                     currentShortcutIndex++;
                     setTimeout(loadShortcutQuestion, 1000);
                 } else {
-                    document.getElementById('shortcut-feedback').innerHTML = '<span class="text-amber-500">Lanjutkan...</span>';
+                    if(feedbackEl) feedbackEl.innerHTML = '<span class="text-amber-500">Lanjutkan...</span>';
                 }
             });
         });
@@ -74,15 +83,23 @@ function startShortcutGame() {
 
 function loadShortcutQuestion() {
     if (currentShortcutIndex >= shortcutData.length) {
-        document.getElementById('shortcut-question').innerText = "Selesai! 🎉";
-        document.getElementById('shortcut-feedback').innerHTML = `<span class="text-emerald-600">Skor Game: ${shortcutScore}</span>`;
+        const qEl = document.getElementById('shortcut-question');
+        const fEl = document.getElementById('shortcut-feedback');
+        if(qEl) qEl.innerText = "Selesai! 🎉";
+        if(fEl) fEl.innerHTML = `<span class="text-emerald-600">Skor Game: ${shortcutScore}</span>`;
         addGlobalScore(shortcutScore); 
         return;
     }
     var currentQ = shortcutData[currentShortcutIndex];
-    document.getElementById('shortcut-question').innerText = currentQ.question;
-    document.getElementById('shortcut-q-count').innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
-    document.getElementById('shortcut-feedback').innerHTML = "";
+    
+    const qEl = document.getElementById('shortcut-question');
+    const countEl = document.getElementById('shortcut-q-count');
+    const fEl = document.getElementById('shortcut-feedback');
+    
+    if(qEl) qEl.innerText = currentQ.question;
+    if(countEl) countEl.innerText = (currentShortcutIndex + 1) + "/" + shortcutData.length;
+    if(fEl) fEl.innerHTML = "";
+    
     userKeysPressed = [];
     document.querySelectorAll('#shortcut-keyboard .key').forEach(k => k.classList.remove('pressed'));
 }
@@ -105,32 +122,43 @@ let currentQuizIndex = 0; let quizScore = 0;
 
 function startMateriQuiz() {
     document.body.classList.add('hide-nav');
-    document.getElementById('arena-menu').classList.add('hidden');
-    document.getElementById('shortcut-game-container').classList.add('hidden');
-    document.getElementById('typing-game-container').classList.add('hidden');
-    document.getElementById('quiz-game-container').classList.remove('hidden');
+    const arenaMenu = document.getElementById('arena-menu');
+    const shortcutContainer = document.getElementById('shortcut-game-container');
+    const typingContainer = document.getElementById('typing-game-container');
+    const quizContainer = document.getElementById('quiz-game-container');
+    
+    if(arenaMenu) arenaMenu.classList.add('hidden');
+    if(shortcutContainer) shortcutContainer.classList.add('hidden');
+    if(typingContainer) typingContainer.classList.add('hidden');
+    if(quizContainer) quizContainer.classList.remove('hidden');
     
     currentQuizIndex = 0; quizScore = 0;
-    document.getElementById('quiz-score').innerText = quizScore;
+    const scoreEl = document.getElementById('quiz-score');
+    if(scoreEl) scoreEl.innerText = quizScore;
     loadQuizQuestion();
 }
 
 function loadQuizQuestion() {
     if (currentQuizIndex >= quizData.length) {
-        document.getElementById('quiz-content').innerHTML = `
-            <div class="text-center py-10">
-                <i class="fa-solid fa-trophy text-6xl text-amber-500 mb-4 animate-bounce"></i>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Kuis Selesai!</h3>
-                <p class="text-slate-600 mb-6">Skor yang Anda dapatkan: <b class="text-emerald-600 text-xl">${quizScore}</b></p>
-            </div>
-        `;
-        document.getElementById('quiz-q-count').innerText = `${quizData.length}/${quizData.length}`;
+        const contentEl = document.getElementById('quiz-content');
+        if(contentEl) {
+            contentEl.innerHTML = `
+                <div class="text-center py-10">
+                    <i class="fa-solid fa-trophy text-6xl text-amber-500 mb-4 animate-bounce"></i>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">Kuis Selesai!</h3>
+                    <p class="text-slate-600 mb-6">Skor yang Anda dapatkan: <b class="text-emerald-600 text-xl">${quizScore}</b></p>
+                </div>
+            `;
+        }
+        const qCount = document.getElementById('quiz-q-count');
+        if(qCount) qCount.innerText = `${quizData.length}/${quizData.length}`;
         addGlobalScore(quizScore); 
         return;
     }
 
     const q = quizData[currentQuizIndex];
-    document.getElementById('quiz-q-count').innerText = `${currentQuizIndex + 1}/${quizData.length}`;
+    const qCount = document.getElementById('quiz-q-count');
+    if(qCount) qCount.innerText = `${currentQuizIndex + 1}/${quizData.length}`;
     
     let html = `<p class="text-sm font-bold text-sky-500 mb-2 uppercase">Soal ${currentQuizIndex + 1}</p>
                 <h3 class="text-lg font-bold text-slate-800 mb-6">${q.question}</h3>`;
@@ -151,7 +179,8 @@ function loadQuizQuestion() {
     }
 
     html += `<div id="quiz-feedback" class="mt-4 text-sm font-bold hidden"></div>`;
-    document.getElementById('quiz-content').innerHTML = html;
+    const contentEl = document.getElementById('quiz-content');
+    if(contentEl) contentEl.innerHTML = html;
 }
 
 function checkQuizMultiple(selected, correct) {
@@ -170,7 +199,8 @@ function checkQuizMultiple(selected, correct) {
         feedback.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Salah.</span>';
     }
     
-    document.getElementById('quiz-score').innerText = quizScore;
+    const scoreEl = document.getElementById('quiz-score');
+    if(scoreEl) scoreEl.innerText = quizScore;
     feedback.classList.remove('hidden');
     
     currentQuizIndex++;
@@ -197,7 +227,8 @@ function checkQuizTyping() {
         feedback.innerHTML = `<span class="text-rose-600"><i class="fa-solid fa-times-circle"></i> Salah. Jawaban yang benar: <b>${quizData[currentQuizIndex].answer}</b></span>`;
     }
     
-    document.getElementById('quiz-score').innerText = quizScore;
+    const scoreEl = document.getElementById('quiz-score');
+    if(scoreEl) scoreEl.innerText = quizScore;
     feedback.classList.remove('hidden');
     
     currentQuizIndex++;
@@ -207,10 +238,15 @@ function checkQuizTyping() {
 // 3. FUNGSI GLOBAL ARENA
 function closeGame() {
     document.body.classList.remove('hide-nav');
-    document.getElementById('arena-menu').classList.remove('hidden');
-    document.getElementById('shortcut-game-container').classList.add('hidden');
-    document.getElementById('quiz-game-container').classList.add('hidden');
-    document.getElementById('typing-game-container').classList.add('hidden');
+    const arenaMenu = document.getElementById('arena-menu');
+    const shortcutContainer = document.getElementById('shortcut-game-container');
+    const quizContainer = document.getElementById('quiz-game-container');
+    const typingContainer = document.getElementById('typing-game-container');
+    
+    if(arenaMenu) arenaMenu.classList.remove('hidden');
+    if(shortcutContainer) shortcutContainer.classList.add('hidden');
+    if(quizContainer) quizContainer.classList.add('hidden');
+    if(typingContainer) typingContainer.classList.add('hidden');
 }
 
 function addGlobalScore(points) {
@@ -220,7 +256,8 @@ function addGlobalScore(points) {
     let newScore = currentScore + points;
     localStorage.setItem("student_score", newScore);
     
-    if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = newScore;
+    const dashScore = document.getElementById('dash-score');
+    if(dashScore) dashScore.innerText = newScore;
     
     const name = localStorage.getItem("student_name");
     const cls = localStorage.getItem("student_class");
