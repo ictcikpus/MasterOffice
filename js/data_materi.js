@@ -1,6 +1,7 @@
 // ==========================================
 // DATABASE MATERI LENGKAP (Slide & Kuis)
 // ==========================================
+
 const materiData = [
     {
         id: 'word',
@@ -10,9 +11,9 @@ const materiData = [
         desc: 'Software pengolah kata untuk dokumen profesional.',
         slides: [
             {
-                title: 'Pengenalan Antarmuka Word',
+                title: 'Halaman 1: Antarmuka Microsoft Word',
                 content: `
-                    <p class="mb-4">Saat membuka Microsoft Word, Anda akan disambut oleh antarmuka yang terdiri dari beberapa bagian utama:</p>
+                    <p class="mb-4">Microsoft Word adalah perangkat lunak pengolah kata andalan. Saat membuka Word, Anda akan melihat beberapa bagian utama:</p>
                     <ul class="list-disc pl-5 space-y-2 mb-4 text-slate-600">
                         <li><b>Quick Access Toolbar:</b> Tombol simpan, undo, redo di pojok kiri atas.</li>
                         <li><b>Ribbon:</b> Deretan menu (Home, Insert, Design, dll) di bagian atas.</li>
@@ -20,7 +21,7 @@ const materiData = [
                         <li><b>Status Bar:</b> Menunjukkan jumlah halaman dan kata di pojok kiri bawah.</li>
                     </ul>
                     <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                        <p class="text-sm text-blue-800"><i class="fa-solid fa-lightbulb"></i> <b>Tips:</b> Tekan tombol <kbd class="bg-white px-2 py-1 rounded border shadow-sm">Ctrl + F1</kbd> untuk menyembunyikan/menampilkan Ribbon agar layar lebih luas.</p>
+                        <p class="text-sm text-blue-800"><i class="fa-solid fa-lightbulb"></i> <b>Tips:</b> Tekan <kbd class="bg-white px-2 py-1 rounded border shadow-sm">Ctrl + F1</kbd> untuk menyembunyikan/menampilkan Ribbon agar layar lebih luas.</p>
                     </div>
                 `,
                 quiz: {
@@ -30,9 +31,9 @@ const materiData = [
                 }
             },
             {
-                title: 'Formatting Teks Dasar',
+                title: 'Halaman 2: Formatting Teks Dasar',
                 content: `
-                    <p class="mb-4">Di tab <b>Home</b>, terdapat grup <b>Font</b> yang berfungsi mengubah tampilan teks:</p>
+                    <p class="mb-4">Di tab <b>Home</b>, grup <b>Font</b> berfungsi mengubah tampilan teks:</p>
                     <div class="grid grid-cols-2 gap-2 mb-4">
                         <div class="bg-slate-100 p-2 rounded"><b>B (Bold):</b> Menebalkan teks</div>
                         <div class="bg-slate-100 p-2 rounded"><b>I (Italic):</b> Memiringkan teks</div>
@@ -48,9 +49,9 @@ const materiData = [
                 }
             },
             {
-                title: 'Pengaturan Paragraf & Spasi',
+                title: 'Halaman 3: Pengaturan Paragraf & Spasi',
                 content: `
-                    <p class="mb-4">Paragraf yang rapi sangat penting untuk dokumen formal. Anda dapat mengaturnya di grup <b>Paragraph</b>.</p>
+                    <p class="mb-4">Paragraf yang rapi penting untuk dokumen formal. Pengaturannya ada di grup <b>Paragraph</b> (Tab Home).</p>
                     <ul class="list-disc pl-5 space-y-2 text-slate-600 mb-4">
                         <li><b>Alignment:</b> Rata kiri (Left), Tengah (Center), Kanan (Right), Rata Kiri-Kanan (Justify).</li>
                         <li><b>Line Spacing:</b> Jarak antar baris (1.0, 1.5, atau 2.0). Standar makalah biasanya 1.5.</li>
@@ -64,36 +65,33 @@ const materiData = [
                 }
             },
             {
-                title: 'Menyisipkan Tabel (Insert Table)',
+                title: 'Halaman 4: Menyisipkan Tabel & Gambar',
                 content: `
-                    <p class="mb-4">Tabel digunakan untuk menyajikan data terstruktur. Masuk ke tab <b>Insert</b> -> <b>Table</b>.</p>
-                    <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4">
-                        <table class="w-full text-sm text-center border-collapse">
-                            <tr class="bg-slate-100"><th class="border p-2">No</th><th class="border p-2">Nama</th><th class="border p-2">Nilai</th></tr>
-                            <tr><td class="border p-2">1</td><td class="border p-2">Budi</td><td class="border p-2">90</td></tr>
-                        </table>
+                    <p class="mb-4">Gunakan tab <b>Insert</b> untuk memperkaya dokumen.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-600 mb-4">
+                        <li><b>Table:</b> Menyajikan data dalam bentuk baris dan kolom.</li>
+                        <li><b>Pictures:</b> Menambahkan gambar dari komputer atau internet.</li>
+                        <li><b>Shapes:</b> Menambahkan bentuk (panah, kotak, lingkaran).</li>
+                    </ul>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 mb-4">
+                        <p class="text-sm text-amber-800"><b>Penting:</b> Gambar yang disisipkan sebaiknya diatur tata letaknya (Layout Options) menjadi <i>Square</i> atau <i>In Line with Text</i> agar tidak berantakan.</p>
                     </div>
-                    <p class="text-sm text-slate-600">Setelah tabel dibuat, Anda bisa mengubah desainnya di tab <b>Table Design</b> dan menambah baris/kolom di tab <b>Layout</b>.</p>
                 `,
                 quiz: {
-                    question: "Tab apa yang digunakan untuk pertama kali menyisipkan tabel?",
+                    question: "Tab apa yang digunakan untuk menyisipkan Tabel dan Gambar?",
                     options: ["Home", "Insert", "Design", "Layout"],
                     correct: 1
                 }
             },
             {
-                title: 'Menyimpan & Format File (Save As)',
+                title: 'Halaman 5: Mail Merge & Cetak PDF',
                 content: `
-                    <p class="mb-4">Menyimpan dokumen Word sangat mudah, namun perhatikan formatnya:</p>
-                    <ul class="list-disc pl-5 space-y-2 mb-4">
-                        <li><b>.docx:</b> Format standar Word (bisa diedit).</li>
-                        <li><b>.pdf:</b> Format dokumen terkunci (tidak bisa diedit, aman untuk dikirim).</li>
-                    </ul>
-                    <p class="text-sm text-slate-500">Gunakan <b>F12</b> atau <b>File -> Save As</b> untuk memilih format dan lokasi penyimpanan.</p>
+                    <p class="mb-4">Fitur <b>Mail Merge</b> (Tab Mailings) sangat berguna untuk membuat sertifikat atau surat massal dengan nama penerima yang berbeda-beda secara otomatis.</p>
+                    <p class="mb-4">Untuk menyimpan dokumen agar tidak bisa diedit orang lain, gunakan <b>File > Save As</b> dan pilih format <b>PDF</b>.</p>
                 `,
                 quiz: {
-                    question: "Jika Anda ingin mengirim dokumen agar tidak bisa diedit orang lain, sebaiknya simpan dalam format...",
-                    options: [".docx", ".txt", ".pdf", ".exe"],
+                    question: "Fitur yang digunakan untuk membuat surat massal dengan nama berbeda secara otomatis adalah...",
+                    options: ["Envelopes", "Labels", "Mail Merge", "Macro"],
                     correct: 2
                 }
             }
@@ -107,7 +105,7 @@ const materiData = [
         desc: 'Spreadsheet pengolah angka dan data statistik.',
         slides: [
             {
-                title: 'Sekilas Tentang Excel',
+                title: 'Halaman 1: Sekilas Tentang Excel',
                 content: `
                     <p class="mb-4">Excel adalah program lembar kerja (spreadsheet) yang terdiri dari baris (Rows) dan kolom (Columns).</p>
                     <ul class="list-disc pl-5 space-y-2 mb-4">
@@ -124,7 +122,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Aturan Penulisan Rumus',
+                title: 'Halaman 2: Aturan Penulisan Rumus',
                 content: `
                     <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4">
                         <p class="text-amber-800 font-bold">PENTING!</p>
@@ -139,7 +137,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Fungsi Matematika Dasar (SUM & AVERAGE)',
+                title: 'Halaman 3: Fungsi Matematika Dasar',
                 content: `
                     <p class="mb-4">Fungsi paling sering digunakan untuk menghitung banyak data sekaligus:</p>
                     <ul class="list-disc pl-5 space-y-2 mb-4">
@@ -156,7 +154,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Fungsi Logika IF',
+                title: 'Halaman 4: Fungsi Logika IF',
                 content: `
                     <p class="mb-4">Fungsi IF digunakan untuk mengambil keputusan berdasarkan kondisi tertentu (True/False).</p>
                     <p class="mb-2">Struktur: <code>=IF(Kondisi, Nilai_Jika_Benar, Nilai_Jika_Salah)</code></p>
@@ -172,7 +170,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Membekukan Baris (Freeze Panes)',
+                title: 'Halaman 5: Fitur Membekukan Baris (Freeze Panes)',
                 content: `
                     <p class="mb-4">Saat bekerja dengan data ratusan baris, judul kolom di atas akan hilang saat Anda scroll ke bawah.</p>
                     <p class="mb-4">Gunakan fitur <b>Freeze Panes</b> di tab <b>View</b> untuk mengunci baris atau kolom tertentu agar selalu terlihat.</p>
@@ -193,7 +191,7 @@ const materiData = [
         desc: 'Software presentasi untuk slide yang menarik.',
         slides: [
             {
-                title: 'Dasar Presentasi',
+                title: 'Halaman 1: Dasar Presentasi',
                 content: `
                     <p class="mb-4">PowerPoint digunakan untuk menyampaikan ide melalui slide visual. Slide terdiri dari:</p>
                     <ul class="list-disc pl-5 space-y-2">
@@ -208,7 +206,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Transisi vs Animasi',
+                title: 'Halaman 2: Transisi vs Animasi',
                 content: `
                     <p class="mb-4">Banyak yang tertukar antara dua fitur ini:</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -229,7 +227,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Menggunakan Slide Master',
+                title: 'Halaman 3: Menggunakan Slide Master',
                 content: `
                     <p class="mb-4">Jika Anda ingin menambahkan Logo sekolah di <b>SEMUA</b> slide tanpa harus copy-paste satu per satu, gunakan fitur <b>Slide Master</b> (di tab View).</p>
                     <p class="text-sm text-slate-500">Perubahan di Slide Master akan otomatis diterapkan ke seluruh halaman presentasi.</p>
@@ -250,7 +248,7 @@ const materiData = [
         desc: 'Word processor berbasis cloud dengan kolaborasi.',
         slides: [
             {
-                title: 'Apa itu Google Docs?',
+                title: 'Halaman 1: Apa itu Google Docs?',
                 content: `
                     <p class="mb-4">Berbeda dengan Microsoft Word yang diinstal di komputer, Google Docs berjalan sepenuhnya di browser web Anda.</p>
                     <ul class="list-disc pl-5 space-y-2 mb-4">
@@ -266,7 +264,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Kolaborasi Real-Time',
+                title: 'Halaman 2: Kolaborasi Real-Time',
                 content: `
                     <p class="mb-4">Ini adalah fitur "killer" Google Docs. Anda dan teman Anda bisa mengetik di dokumen yang <b>SAMA</b> secara bersamaan.</p>
                     <div class="bg-slate-100 p-4 rounded-xl border border-slate-300">
@@ -281,7 +279,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Komentar & Saran (Suggestion Mode)',
+                title: 'Halaman 3: Komentar & Saran (Suggestion Mode)',
                 content: `
                     <p class="mb-4">Saat guru merevisi tugas Anda, guru tidak harus menghapus teks asli Anda. Guru bisa menggunakan mode <b>Suggestion</b>.</p>
                     <p class="text-sm text-slate-600">Teks yang dihapus akan dicoret, dan teks baru akan berwarna. Anda bisa menerima (Accept) atau menolak (Reject) saran tersebut. Anda juga bisa menambahkan komentar di teks tertentu.</p>
@@ -302,7 +300,7 @@ const materiData = [
         desc: 'Spreadsheet berbasis cloud untuk data kolaboratif.',
         slides: [
             {
-                title: 'Google Sheets Dasar',
+                title: 'Halaman 1: Google Sheets Dasar',
                 content: `
                     <p class="mb-4">Konsep Google Sheets hampir sama dengan Microsoft Excel. Terdiri dari baris, kolom, dan sel.</p>
                     <p class="mb-4">Karena berbasis cloud, Anda bisa mengerjakan tugas kelompok dengan teman secara <i>real-time</i> di satu spreadsheet yang sama.</p>
@@ -315,7 +313,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Rumus di Google Sheets',
+                title: 'Halaman 2: Rumus di Google Sheets',
                 content: `
                     <p class="mb-4">Sama seperti Excel, penulisan rumus di Sheets juga diawali dengan tanda sama dengan (=).</p>
                     <p class="mb-2">Contoh fungsi penting yang sama persis:</p>
@@ -341,7 +339,7 @@ const materiData = [
         desc: 'Presentasi cloud dengan fitur kolaborasi.',
         slides: [
             {
-                title: 'Presentasi Kolaboratif',
+                title: 'Halaman 1: Presentasi Kolaboratif',
                 content: `
                     <p class="mb-4">Google Slides memiliki fungsi yang sama dengan PowerPoint, namun berjalan di web.</p>
                     <p class="mb-4">Keunggulannya adalah tim Anda bisa mengedit slide presentasi secara bersamaan. Anda juga bisa membagikan tautan (link) presentasi agar bisa dilihat oleh orang lain tanpa perlu mengunduh file.</p>
@@ -353,7 +351,7 @@ const materiData = [
                 }
             },
             {
-                title: 'Menghubungkan ke Google Meet',
+                title: 'Halaman 2: Menghubungkan ke Google Meet',
                 content: `
                     <p class="mb-4">Saat presentasi online, Google Slides terintegrasi langsung dengan Google Meet.</p>
                     <p class="text-sm text-slate-600">Anda bisa membuka kamera/video call langsung dari dalam mode presentasi, sehingga audiens bisa melihat wajah Anda dan slide secara bersamaan.</p>
