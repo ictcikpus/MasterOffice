@@ -1,5 +1,5 @@
 // ==========================================
-// EXTENDED DASHBOARD (Streak, Announcements, Profile, Certificate)
+// EXTENDED DASHBOARD (FULL VERSION)
 // ==========================================
 
 let allTasksForCert = [];
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkDailyStreak();
         loadAnnouncement();
         
-        // Listener untuk mengecek syarat sertifikat (Tugas)
+        // Listener Tugas untuk Sertifikat
         db.ref('tasks').on('value', snap => {
             allTasksForCert = [];
             snap.forEach(child => allTasksForCert.push({ id: child.key }));
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Listener Pengumpulan Tugas
         db.ref('submissions').on('value', snap => {
             allSubmissionsForCert = snap.val() || {};
             if(document.getElementById('view-profil') && !document.getElementById('view-profil').classList.contains('hidden')) {
@@ -101,7 +102,7 @@ function loadAnnouncement() {
     });
 }
 
-// --- 3. RENDER PROFIL & BADGES & SERTIFIKAT ---
+// --- 3. RENDER PROFIL & BADGES ---
 function renderProfile() {
     const name = localStorage.getItem("student_name") || "Siswa";
     const cls = localStorage.getItem("student_class") || "Kelas Umum";
@@ -142,10 +143,10 @@ function renderProfile() {
         });
     }
 
-    // Cek Kelayakan Sertifikat
     checkCertificateEligibility();
 }
 
+// --- 4. LOGIKA SERTIFIKAT (3 SYARAT) ---
 function checkCertificateEligibility() {
     const certContainer = document.getElementById('certificate-container');
     if (!certContainer) return;
@@ -155,7 +156,7 @@ function checkCertificateEligibility() {
     const score = parseInt(localStorage.getItem("student_score")) || 0;
     const streak = parseInt(localStorage.getItem('login_streak')) || 0;
 
-    // 1. Cek Tugas (Apakah semua tugas di database sudah dikumpulkan?)
+    // Syarat 1: Semua Tugas Selesai
     let allTasksDone = true;
     let missingTasksCount = 0;
     
@@ -168,14 +169,20 @@ function checkCertificateEligibility() {
             }
         });
     } else {
-        allTasksDone = false; // Jika guru belum buat tugas, sertifikat belum bisa dicetak
+        allTasksDone = false; 
     }
 
-    // 2. Cek Streak (Minimal 3 hari)
+    // Syarat 2: Streak Minimal 3 Hari
     const streakDone = streak >= 3;
 
-    // 3. Render UI Tombol
-    if (allTasksDone && streakDone) {
+    // Syarat 3: Semua Materi Selesai (Total ada 6 Modul)
+    const totalMateri = 6; 
+    const completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
+    const materiDone = completedMateri.length >= totalMateri;
+    const sisaMateri = totalMateri - completedMateri.length;
+
+    // Render UI
+    if (allTasksDone && streakDone && materiDone) {
         certContainer.innerHTML = `
             <div class="bg-gradient-to-r from-amber-100 to-amber-200 border border-amber-300 rounded-2xl p-6 text-center shadow-md">
                 <i class="fa-solid fa-award text-5xl text-amber-500 mb-3 animate-bounce"></i>
@@ -188,6 +195,7 @@ function checkCertificateEligibility() {
         `;
     } else {
         let reasons = [];
+        if (!materiDone) reasons.push(`Baca ${sisaMateri} modul materi lagi (${completedMateri.length}/${totalMateri})`);
         if (!allTasksDone) reasons.push(`Selesaikan ${missingTasksCount} tugas yang belum dikumpulkan`);
         if (!streakDone) reasons.push(`Aktif belajar minimal 3 hari (Streak Anda: ${streak})`);
         
