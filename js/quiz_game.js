@@ -2,7 +2,7 @@
 // ARENA LATIHAN (SHORTCUT & KUIS MATERI)
 // ==========================================
 
-// 1. GAME SHORTCUT
+// 1. GAME SHORTCUT (DIPERBANYAK)
 var shortcutData = [
     { question: "Copy (Salin)", answer: ["Ctrl", "C"] }, 
     { question: "Paste (Tempel)", answer: ["Ctrl", "V"] },
@@ -11,7 +11,9 @@ var shortcutData = [
     { question: "Redo (Ulangi)", answer: ["Ctrl", "Y"] }, 
     { question: "Save (Simpan)", answer: ["Ctrl", "S"] },
     { question: "Print (Cetak)", answer: ["Ctrl", "P"] },
-    { question: "Find (Cari)", answer: ["Ctrl", "F"] }
+    { question: "Find (Cari)", answer: ["Ctrl", "F"] },
+    { question: "Bold (Tebal)", answer: ["Ctrl", "B"] },
+    { question: "Select All (Pilih Semua)", answer: ["Ctrl", "A"] }
 ];
 var currentShortcutIndex = 0; 
 var shortcutScore = 0; 
@@ -105,18 +107,33 @@ function loadShortcutQuestion() {
 }
 
 
-// 2. KUIS MATERI INTERAKTIF
+// 2. KUIS MATERI INTERAKTIF (DIPERBANYAK & LEBIH KOMPLEKS)
 const quizData = [
+    // WORD
     { type: "multiple", question: "Apa ekstensi file Microsoft Word yang bisa diedit?", options: [".pdf", ".docx", ".exe", ".jpg"], correct: 1 },
+    { type: "typing", question: "Ketikkan shortcut untuk menyimpan dokumen Word/Excel.", answer: "ctrl+s" },
+    { type: "multiple", question: "Fitur untuk membuat surat massal di Word adalah...", options: ["Mail Merge", "Envelopes", "Watermark", "Macro"], correct: 0 },
+    { type: "multiple", question: "Apa nama bagian Word yang berisi menu Home, Insert, Design?", options: ["Status Bar", "Ribbon", "Document Area", "Scrollbar"], correct: 1 },
+    
+    // EXCEL
     { type: "typing", question: "Ketikkan rumus Excel untuk menjumlahkan A1 sampai A5", answer: "=sum(a1:a5)" },
-    { type: "multiple", question: "Fitur untuk mengunci baris di Excel disebut...", options: ["Freeze Panes", "Lock Cell", "Protect Sheet", "Merge"], correct: 0 },
-    { type: "typing", question: "Apa nama menu yang berisi ikon Home, Insert, Design di Word?", answer: "ribbon" },
-    { type: "multiple", question: "Fitur di Google Docs untuk merevisi tanpa menghapus teks asli adalah...", options: ["Editing", "Suggestion", "Viewing", "Sharing"], correct: 1 },
+    { type: "multiple", question: "Fitur untuk mengunci baris di Excel agar tidak ter-scroll disebut...", options: ["Freeze Panes", "Lock Cell", "Protect Sheet", "Merge"], correct: 0 },
     { type: "multiple", question: "Fungsi Excel untuk mencari nilai rata-rata adalah...", options: ["SUM", "MAX", "MIN", "AVERAGE"], correct: 3 },
-    { type: "typing", question: "Shortcut keyboard untuk menyimpan dokumen adalah...", answer: "ctrl+s" },
+    { type: "typing", question: "Ketikkan rumus Excel untuk mencari nilai tertinggi dari A1 sampai A10", answer: "=max(a1:a10)" },
+    { type: "multiple", question: "Setiap penulisan rumus di Excel WAJIB diawali dengan karakter...", options: ["+", "-", "=", "@"], correct: 2 },
+    { type: "multiple", question: "Fungsi IF digunakan untuk...", options: ["Menghitung rata-rata", "Mengambil keputusan (True/False)", "Membuat grafik", "Menghapus data"], correct: 1 },
+
+    // PPT
     { type: "multiple", question: "Efek perpindahan antar slide di PowerPoint disebut...", options: ["Animation", "Transition", "Motion Path", "Slide Master"], correct: 1 },
+    { type: "multiple", question: "Tombol keyboard untuk memulai presentasi (Slide Show) dari awal adalah...", options: ["F1", "F5", "F12", "Esc"], correct: 1 },
+    { type: "multiple", question: "Fitur untuk menambahkan logo di semua slide secara serentak adalah...", options: ["Slide Layout", "Slide Master", "Design Ideas", "Format Background"], correct: 1 },
+
+    // GOOGLE WORKSPACE
     { type: "multiple", question: "Aplikasi Google yang digunakan untuk membuat spreadsheet adalah...", options: ["Google Docs", "Google Slides", "Google Sheets", "Google Drive"], correct: 2 },
-    { type: "typing", question: "Ketikkan rumus Excel untuk mencari nilai tertinggi dari A1 sampai A10", answer: "=max(a1:a10)" }
+    { type: "multiple", question: "Fitur di Google Docs untuk merevisi tanpa menghapus teks asli adalah...", options: ["Editing", "Suggestion", "Viewing", "Sharing"], correct: 1 },
+    { type: "multiple", question: "Keunggulan utama Google Docs dibanding Ms Word adalah...", options: ["Bisa kolaborasi real-time", "Tidak butuh internet", "Lebih mahal", "Hanya bisa di PC"], correct: 0 },
+    { type: "multiple", question: "Tombol untuk membagikan dokumen Google adalah...", options: ["Publish", "Share", "Send", "Export"], correct: 1 },
+    { type: "multiple", question: "Aplikasi video conference yang terintegrasi dengan Google Slides adalah...", options: ["Zoom", "Teams", "Meet", "Skype"], correct: 2 }
 ];
 let currentQuizIndex = 0; let quizScore = 0;
 
@@ -146,7 +163,7 @@ function loadQuizQuestion() {
                 <div class="text-center py-10">
                     <i class="fa-solid fa-trophy text-6xl text-amber-500 mb-4 animate-bounce"></i>
                     <h3 class="text-2xl font-bold text-slate-800 mb-2">Kuis Selesai!</h3>
-                    <p class="text-slate-600 mb-6">Skor yang Anda dapatkan: <b class="text-emerald-600 text-xl">${quizScore}</b></p>
+                    <p class="text-slate-600 mb-6">Skor yang Anda dapatkan: <b class="text-emerald-600 text-xl">${quizScore}</b> / ${quizData.length * 20}</p>
                 </div>
             `;
         }
@@ -216,6 +233,7 @@ function checkQuizTyping() {
     const btn = document.querySelector('button[onclick="checkQuizTyping()"]');
     if(btn) btn.disabled = true;
 
+    // Hapus spasi agar rumus seperti "=sum(a1:a5)" dan "=sum(a1 : a5)" dianggap sama
     const cleanInput = input.replace(/\s+/g, '');
     const cleanCorrect = correct.replace(/\s+/g, '');
 
