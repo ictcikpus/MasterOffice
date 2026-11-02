@@ -1,20 +1,19 @@
 // ==========================================
-// MAIN APP LOGIC (Database Sync Enabled)
+// MAIN APP LOGIC (FULL VERSION)
 // ==========================================
 
 let currentMateriId = null;
 let currentSlideIndex = 0;
 
+// --- FUNGSI PILIHAN PERAN & PROFIL ---
 function chooseRole(role) {
     const roleModal = document.getElementById('role-selection-modal');
     if(roleModal) roleModal.classList.add('hidden');
 
     if (role === 'siswa') {
-        // Cek apakah siswa sudah punya nama di localStorage
         if (localStorage.getItem('student_name') && localStorage.getItem('student_class')) {
             applyStudentUI();
         } else {
-            // Jika belum, minta isi form
             document.getElementById('profile-modal').classList.remove('hidden');
         }
     } else if (role === 'guru') {
@@ -36,11 +35,9 @@ function applyStudentUI() {
     if(bottomNavSiswa) bottomNavSiswa.classList.remove('hidden');
     
     const name = localStorage.getItem("student_name");
-    const cls = localStorage.getItem("student_class");
-    
-    // Update UI Dashboard
     const dashName = document.getElementById('dashboard-player-name');
     const mobName = document.getElementById('mobile-player-name');
+    
     if(dashName) dashName.innerText = name;
     if(mobName) mobName.innerText = name.split(' ')[0];
     
@@ -52,42 +49,18 @@ function applyStudentUI() {
 }
 
 function saveProfile() {
-    const nameInput = document.getElementById('setup-name');
-    const classInput = document.getElementById('setup-class');
-    const btn = document.querySelector('#profile-modal button[onclick="saveProfile()"]');
-    
-    const name = nameInput.value.trim();
-    const cls = classInput.value;
-
+    const name = document.getElementById('setup-name').value.trim();
+    const cls = document.getElementById('setup-class').value;
     if (!name || !cls) return alert("Harap isi nama dan pilih kelas!");
     
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
-
-    // 🔥 SIMPAN PROFIL SISWA KE DATABASE FIREBASE 🔥
-    // Menggunakan format students/KELAS/NAMA
-    db.ref(`students/${cls}/${name}`).set({
-        name: name,
-        class: cls,
-        lastLogin: firebase.database.ServerValue.TIMESTAMP
-    }).then(() => {
-        // Simpan di localStorage sebagai "sesi login" agar tidak input ulang
-        localStorage.setItem("student_name", name);
-        localStorage.setItem("student_class", cls);
-        
-        document.getElementById('profile-modal').classList.add('hidden');
-        applyStudentUI();
-        
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }).catch(err => {
-        alert("Gagal menyimpan profil ke database: " + err.message);
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    });
+    localStorage.setItem("student_name", name);
+    localStorage.setItem("student_class", cls);
+    
+    document.getElementById('profile-modal').classList.add('hidden');
+    applyStudentUI();
 }
 
+// --- FUNGSI NAVIGASI ---
 function navigate(viewId) {
     if (typeof stopCamera === 'function') stopCamera();
     document.body.classList.remove('hide-nav'); 
@@ -116,6 +89,7 @@ function navigate(viewId) {
     window.scrollTo(0, 0);
 }
 
+// --- FUNGSI MATERI & PELACAKAN SERTIFIKAT ---
 function renderMateri() {
     const container = document.getElementById('materi-container');
     if(!container) return;
@@ -208,7 +182,14 @@ function changeSlide(direction) {
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
-        alert("🎉 Hebat! Anda telah menyelesaikan modul ini.");
+        // 🔥 LOGIKA BARU: Simpan progres materi ke localStorage jika sudah selesai
+        let completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
+        if (!completedMateri.includes(currentMateriId)) {
+            completedMateri.push(currentMateriId);
+            localStorage.setItem("completed_materi", JSON.stringify(completedMateri));
+        }
+        
+        alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Jangan lupa cek kelayakan sertifikat di menu Profil!");
         navigate('materi');
         return;
     }
@@ -218,24 +199,36 @@ function changeSlide(direction) {
     }
 }
 
+// --- FUNGSI LOGOUT & FULLSCREEN ---
 function logoutApp() {
     if(confirm("Yakin ingin keluar dari aplikasi?")) {
         sessionStorage.removeItem('is_teacher');
-        // Hapus localStorage agar kembali ke pilihan peran, tapi tidak menghapus data di database
         location.reload(); 
     }
 }
 
+function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => alert(`Gagal: ${err.message}`));
+    else { if (document.exitFullscreen) document.exitFullscreen(); }
+}
+
+// --- INISIALISASI SAAT HALAMAN DIMUAT ---
 document.addEventListener('DOMContentLoaded', function() {
-    const isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    if (isTeacher) {
+    var isTeacher = sessionStorage.getItem('is_teacher') === 'true';
+    
+    if (!isTeacher) {
+        var name = localStorage.getItem("student_name");
+        if (!name) {
+            document.getElementById('role-selection-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('hidden');
+        } else {
+            document.getElementById('role-selection-modal').classList.add('hidden');
+            applyStudentUI();
+        }
+    } else {
         document.getElementById('role-selection-modal').classList.add('hidden');
-        
-        const navGuru = document.getElementById('nav-guru');
-        const botNavGuru = document.getElementById('bottom-nav-guru');
-        if(navGuru) navGuru.classList.remove('hidden');
-        if(botNavGuru) botNavGuru.classList.remove('hidden');
-        
+        document.getElementById('nav-guru').classList.remove('hidden');
+        document.getElementById('bottom-nav-guru').classList.remove('hidden');
         document.getElementById('mobile-player-name').innerText = "Guru";
         
         if (typeof window.initTeacherAttendance === 'function') window.initTeacherAttendance();
