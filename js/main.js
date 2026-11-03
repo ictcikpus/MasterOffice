@@ -1,5 +1,5 @@
 // ==========================================
-// MAIN APP LOGIC (FULL VERSION)
+// MAIN APP LOGIC (FIXED SESSION LOGOUT)
 // ==========================================
 
 let currentMateriId = null;
@@ -11,6 +11,9 @@ function chooseRole(role) {
     if(roleModal) roleModal.classList.add('hidden');
 
     if (role === 'siswa') {
+        // 🔥 TAMBAHKAN SESI SISWA
+        sessionStorage.setItem('is_student', 'true');
+        
         if (localStorage.getItem('student_name') && localStorage.getItem('student_class')) {
             applyStudentUI();
         } else {
@@ -182,7 +185,7 @@ function changeSlide(direction) {
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
-        // 🔥 LOGIKA BARU: Simpan progres materi ke localStorage jika sudah selesai
+        // Simpan progres materi ke localStorage jika sudah selesai
         let completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
         if (!completedMateri.includes(currentMateriId)) {
             completedMateri.push(currentMateriId);
@@ -202,7 +205,11 @@ function changeSlide(direction) {
 // --- FUNGSI LOGOUT & FULLSCREEN ---
 function logoutApp() {
     if(confirm("Yakin ingin keluar dari aplikasi?")) {
+        // 🔥 HAPUS SEMUA SESI (GURU & SISWA)
         sessionStorage.removeItem('is_teacher');
+        sessionStorage.removeItem('is_student');
+        
+        // Kembali ke Layar Pilihan Peran
         location.reload(); 
     }
 }
@@ -215,17 +222,10 @@ function toggleFullscreen() {
 // --- INISIALISASI SAAT HALAMAN DIMUAT ---
 document.addEventListener('DOMContentLoaded', function() {
     var isTeacher = sessionStorage.getItem('is_teacher') === 'true';
-    
-    if (!isTeacher) {
-        var name = localStorage.getItem("student_name");
-        if (!name) {
-            document.getElementById('role-selection-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('hidden');
-        } else {
-            document.getElementById('role-selection-modal').classList.add('hidden');
-            applyStudentUI();
-        }
-    } else {
+    var isStudent = sessionStorage.getItem('is_student') === 'true';
+
+    if (isTeacher) {
+        // --- SETUP UI GURU ---
         document.getElementById('role-selection-modal').classList.add('hidden');
         document.getElementById('nav-guru').classList.remove('hidden');
         document.getElementById('bottom-nav-guru').classList.remove('hidden');
@@ -235,5 +235,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.initTeacherTasks === 'function') window.initTeacherTasks();
         
         navigate('guru-dashboard');
+
+    } else if (isStudent) {
+        // --- SETUP UI SISWA ---
+        document.getElementById('role-selection-modal').classList.add('hidden');
+        var name = localStorage.getItem("student_name");
+        
+        if (!name) {
+            document.getElementById('profile-modal').classList.remove('hidden');
+        } else {
+            applyStudentUI();
+        }
+
+    } else {
+        // --- JIKA BELUM ADA SESI (PERTAMA KALI BUKA / SETELAH LOGOUT) ---
+        document.getElementById('role-selection-modal').classList.remove('hidden');
+        // Pastikan sidebar dan bottom nav sembunyi
+        document.getElementById('nav-guru').classList.add('hidden');
+        document.getElementById('bottom-nav-guru').classList.add('hidden');
+        document.getElementById('nav-siswa').classList.add('hidden');
+        document.getElementById('bottom-nav-siswa').classList.add('hidden');
     }
 });
