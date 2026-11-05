@@ -1,9 +1,31 @@
 // ==========================================
-// MAIN APP LOGIC (FIXED MATERI PROGRESS)
+// MAIN APP LOGIC (FIXED DASHBOARD STATS)
 // ==========================================
 
 let currentMateriId = null;
 let currentSlideIndex = 0;
+
+// --- FUNGSI UPDATE STATISTIK DASHBOARD ---
+function updateDashboardStats() {
+    const name = localStorage.getItem("student_name");
+    if (!name) return;
+
+    const score = parseInt(localStorage.getItem("student_score")) || 0;
+    const streak = parseInt(localStorage.getItem("login_streak")) || 0;
+    
+    // 🔥 BACA DATA MATERI YANG BARU
+    const completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
+    // Filter agar hanya menghitung ID materi yang valid
+    const validCompleted = completedMateri.filter(id => typeof materiData !== 'undefined' && materiData.some(m => m.id === id));
+    
+    const totalMateri = (typeof materiData !== 'undefined') ? materiData.length : 6;
+
+    if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = score;
+    if(document.getElementById('dash-streak')) document.getElementById('dash-streak').innerText = `🔥 ${streak}`;
+    if(document.getElementById('dash-levels')) {
+        document.getElementById('dash-levels').innerText = `${validCompleted.length}/${totalMateri}`;
+    }
+}
 
 // --- FUNGSI PILIHAN PERAN & PROFIL ---
 function chooseRole(role) {
@@ -42,9 +64,7 @@ function applyStudentUI() {
     if(dashName) dashName.innerText = name;
     if(mobName) mobName.innerText = name.split(' ')[0];
     
-    let score = parseInt(localStorage.getItem("student_score")) || 0;
-    if(document.getElementById('dash-score')) document.getElementById('dash-score').innerText = score;
-    
+    updateDashboardStats(); // Panggil update statistik
     renderMateri();
     navigate('home');
 }
@@ -83,6 +103,11 @@ function navigate(viewId) {
         else activeNav.classList.add('text-emerald-600', 'bg-emerald-50');
     }
     
+    // 🔥 JIKA KEMBALI KE HOME, UPDATE STATISTIK
+    if (viewId === 'home') {
+        updateDashboardStats();
+    }
+
     if (viewId === 'profil' && typeof renderProfile === 'function') renderProfile();
     if (viewId === 'guru-tugas' && typeof window.renderGuruTugasList === 'function') window.renderGuruTugasList();
     if (viewId === 'guru-absen' && typeof window.renderTeacherTable === 'function') window.renderTeacherTable();
@@ -97,19 +122,29 @@ function renderMateri() {
     container.innerHTML = '';
     if (typeof materiData === 'undefined') return;
 
-    // 🔥 UPDATE: Menampilkan persentase progres materi
     const completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
-    const progressPercent = Math.round((completedMateri.length / materiData.length) * 100);
+    const validCompleted = completedMateri.filter(id => materiData.some(m => m.id === id));
+    const progressPercent = Math.round((validCompleted.length / materiData.length) * 100);
+    
     const progText = document.getElementById('materi-progress-text');
-    if (progText) progText.innerText = `${progressPercent}% Selesai (${completedMateri.length}/${materiData.length})`;
+    if (progText) progText.innerText = `${progressPercent}% Selesai (${validCompleted.length}/${materiData.length})`;
 
     materiData.forEach(m => {
+        const isDone = validCompleted.includes(m.id);
+        const checkIcon = isDone ? `<span class="text-emerald-500 text-sm ml-2"><i class="fa-solid fa-circle-check"></i></span>` : '';
+
         container.innerHTML += `
             <div onclick="openMateriDetail('${m.id}')" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md cursor-pointer transition-all">
                 <div class="h-2 w-full bg-${m.color}-500"></div>
                 <div class="p-5 flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-${m.color}-50 text-${m.color}-600 flex items-center justify-center text-2xl"><i class="fa-solid ${m.icon}"></i></div>
-                    <div><h3 class="font-bold text-lg text-slate-800">${m.title}</h3><p class="text-xs text-slate-500 mt-1">${m.desc}</p></div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-lg text-slate-800">${m.title}</h3>
+                            ${checkIcon}
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">${m.desc}</p>
+                    </div>
                 </div>
             </div>`;
     });
@@ -165,12 +200,13 @@ function loadSlide() {
         btnNext.classList.replace('hover:bg-amber-600', 'hover:bg-emerald-700');
     }
 
-    // 🔥 FIX LOGIKA: Tandai materi selesai saat siswa mencapai slide terakhir (tanpa harus klik Selesai)
+    // 🔥 SIMPAN PROGRES SAAT MENCAPAI SLIDE TERAKHIR
     if (currentSlideIndex === materi.slides.length - 1) {
         let completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
         if (!completedMateri.includes(currentMateriId)) {
             completedMateri.push(currentMateriId);
             localStorage.setItem("completed_materi", JSON.stringify(completedMateri));
+            updateDashboardStats(); // Langsung update statistik di belakang layar
         }
     }
 }
@@ -198,13 +234,16 @@ function changeSlide(direction) {
     const newIndex = currentSlideIndex + direction;
     
     if (newIndex >= materi.slides.length) {
+        // Pastikan tersimpan jika siswa menekan tombol Selesai
         let completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
         if (!completedMateri.includes(currentMateriId)) {
             completedMateri.push(currentMateriId);
             localStorage.setItem("completed_materi", JSON.stringify(completedMateri));
         }
+        updateDashboardStats();
+        
         alert("🎉 Hebat! Anda telah menyelesaikan modul ini. Cek syarat sertifikat di menu Profil!");
-        renderMateri(); // Refresh persentase
+        renderMateri(); 
         navigate('materi');
         return;
     }
