@@ -1,5 +1,5 @@
 // ==========================================
-// EXTENDED DASHBOARD (FULL VERSION)
+// EXTENDED DASHBOARD (Sertifikat, Streak, Profil)
 // ==========================================
 
 let allTasksForCert = [];
@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         checkDailyStreak();
         loadAnnouncement();
         
-        // Listener Tugas untuk Sertifikat
         db.ref('tasks').on('value', snap => {
             allTasksForCert = [];
             snap.forEach(child => allTasksForCert.push({ id: child.key }));
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Listener Pengumpulan Tugas
         db.ref('submissions').on('value', snap => {
             allSubmissionsForCert = snap.val() || {};
             if(document.getElementById('view-profil') && !document.getElementById('view-profil').classList.contains('hidden')) {
@@ -175,11 +173,15 @@ function checkCertificateEligibility() {
     // Syarat 2: Streak Minimal 3 Hari
     const streakDone = streak >= 3;
 
-    // Syarat 3: Semua Materi Selesai (Total ada 6 Modul)
-    const totalMateri = 6; 
+    // 🔥 FIX LOGIKA: Total Materi Dinamis mengikuti data_materi.js
+    const totalMateri = materiData.length; 
     const completedMateri = JSON.parse(localStorage.getItem("completed_materi")) || [];
-    const materiDone = completedMateri.length >= totalMateri;
-    const sisaMateri = totalMateri - completedMateri.length;
+    
+    // Pastikan array hanya berisi ID materi yang valid
+    const validCompleted = completedMateri.filter(id => materiData.some(m => m.id === id));
+    
+    const materiDone = validCompleted.length >= totalMateri;
+    const sisaMateri = totalMateri - validCompleted.length;
 
     // Render UI
     if (allTasksDone && streakDone && materiDone) {
@@ -195,7 +197,7 @@ function checkCertificateEligibility() {
         `;
     } else {
         let reasons = [];
-        if (!materiDone) reasons.push(`Baca ${sisaMateri} modul materi lagi (${completedMateri.length}/${totalMateri})`);
+        if (!materiDone) reasons.push(`Baca ${sisaMateri} modul materi lagi (${validCompleted.length}/${totalMateri})`);
         if (!allTasksDone) reasons.push(`Selesaikan ${missingTasksCount} tugas yang belum dikumpulkan`);
         if (!streakDone) reasons.push(`Aktif belajar minimal 3 hari (Streak Anda: ${streak})`);
         
